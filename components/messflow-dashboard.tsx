@@ -574,8 +574,8 @@ export default function MessFlowDashboard() {
       )}
 
       <main className="lg:pl-64">
-        <header className="sticky top-0 z-10 flex min-h-20 items-center justify-between border-b border-border bg-background/95 px-5 py-4 backdrop-blur md:px-8 print:hidden">
-          <div className="flex items-center gap-3">
+        <header className="sticky top-0 z-10 flex flex-col gap-3 border-b border-border bg-background/95 px-4 py-4 backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:px-5 md:px-8 print:hidden">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <IconButton
               label="Open navigation"
               onClick={() => setShowMobileNav(true)}
@@ -591,14 +591,14 @@ export default function MessFlowDashboard() {
               </h1>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setSelectedMonth(changeMonthKey(selectedMonth, -1))}
-              className="hidden rounded-lg border border-border bg-card p-2 text-muted-foreground transition hover:bg-accent sm:flex"
+              className="rounded-lg border border-border bg-card p-2 text-muted-foreground transition hover:bg-accent sm:flex"
             >
               <ChevronLeft size={16} />
             </button>
-            <div className="hidden items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium sm:flex">
+            <div className="items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium hidden sm:flex">
               <CalendarDays size={16} className="text-muted-foreground" />
               {monthKeyToLabel(selectedMonth)}
             </div>
@@ -606,11 +606,11 @@ export default function MessFlowDashboard() {
               type="month"
               value={selectedMonth}
               onChange={(event) => setSelectedMonth(event.target.value)}
-              className="hidden rounded-lg border border-border bg-card px-2 py-2 text-sm text-foreground outline-none transition focus:ring-2 focus:ring-ring sm:block"
+              className="rounded-lg border border-border bg-card px-2 py-2 text-sm text-foreground outline-none transition focus:ring-2 focus:ring-ring sm:block"
             />
             <button
               onClick={() => setSelectedMonth(changeMonthKey(selectedMonth, 1))}
-              className="hidden rounded-lg border border-border bg-card p-2 text-muted-foreground transition hover:bg-accent sm:flex"
+              className="rounded-lg border border-border bg-card p-2 text-muted-foreground transition hover:bg-accent sm:flex"
             >
               <ChevronRight size={16} />
             </button>
@@ -631,7 +631,7 @@ export default function MessFlowDashboard() {
           </div>
         </header>
 
-        <div className="mx-auto max-w-[1500px] px-5 py-8 md:px-8">
+        <div className="mx-auto max-w-[1500px] px-4 py-8 sm:px-5 md:px-8">
           <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div>
               <p className="text-sm font-medium text-primary">
@@ -705,7 +705,7 @@ export default function MessFlowDashboard() {
             />
             <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[780px] text-sm">
+                <table className="w-full text-sm sm:min-w-[780px]">
                   <thead className="border-b border-border bg-muted/50 text-left text-xs uppercase tracking-wider text-muted-foreground">
                     <tr>
                       <th className="w-24 px-4 py-3 font-medium">Date</th>
@@ -782,7 +782,7 @@ export default function MessFlowDashboard() {
             />
             <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[930px] text-sm">
+                <table className="w-full text-sm sm:min-w-[930px]">
                   <thead className="border-b border-border bg-muted/50 text-left text-xs uppercase tracking-wider text-muted-foreground">
                     <tr>
                       <th className="px-4 py-3 font-medium">Member</th>
@@ -886,7 +886,7 @@ export default function MessFlowDashboard() {
               />
               <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
                 <div className="overflow-x-auto">
-                  <table className="w-full min-w-[680px] text-sm">
+                  <table className="w-full text-sm sm:min-w-[680px]">
                     <thead className="border-b border-border bg-muted/50 text-left text-xs uppercase tracking-wider text-muted-foreground">
                       <tr>
                         <th className="px-4 py-3 font-medium">Member</th>
@@ -1043,7 +1043,7 @@ export default function MessFlowDashboard() {
             />
             <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[680px] text-sm">
+                <table className="w-full text-sm sm:text-sm sm:min-w-[680px]">
                   <thead className="border-b border-border bg-muted/50 text-left text-xs uppercase tracking-wider text-muted-foreground">
                     <tr>
                       <th className="px-4 py-3 font-medium">Member</th>
