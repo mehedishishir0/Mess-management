@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+model Household {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  monthKey  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  members   Member[]
+  days      MealDay[]
+  expenses  Expense[]
+  utilities Utility[]
+  overrides Override[]
+
+  @@unique([name, monthKey])
+}
+
+model Member {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  householdId String      @db.ObjectId
+  externalId  String
+  name        String
+  initials    String
+  color       String
+  household   Household   @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  meals       MealEntry[]
+  expenses    Expense[]
+  override    Override?
+
+  @@unique([householdId, externalId])
+  @@index([householdId])
+}
+
+model MealDay {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  householdId String      @db.ObjectId
+  date        String
+  label       String
+  household   Household   @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  entries     MealEntry[]
+
+  @@unique([householdId, date])
+}
+
+model MealEntry {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  dayId    String  @db.ObjectId
+  memberId String  @db.ObjectId
+  count    Int
+  day      MealDay @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  member   Member  @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([dayId, memberId])
+}
+
+model Expense {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  householdId String    @db.ObjectId
+  memberId    String    @db.ObjectId
+  category    String
+  amount      Float
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  member      Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([householdId, memberId, category])
+}
+
+model Utility {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  householdId String    @db.ObjectId
+  externalId  String
+  name        String
+  amount      Float
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@unique([householdId, externalId])
+}
+
+model Override {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  householdId String    @db.ObjectId
+  memberId    String    @unique @db.ObjectId
+  utilities   Float?
+  mealRate    Float?
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  member      Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+}
