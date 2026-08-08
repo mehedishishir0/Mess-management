@@ -24,7 +24,7 @@ import {
   X,
 } from "lucide-react";
 
-type Member = { id: string; name: string; initials: string; color: string };
+type Member = { id: string; name: string; initials: string; color: string; houseRent: number };
 type MealDay = {
   date: string;
   label: string;
@@ -163,11 +163,12 @@ export default function MessFlowDashboard() {
         if (!response.ok) throw new Error("Database unavailable");
         const data = await response.json();
         const nextMembers = data.members.map(
-          (member: Member & { externalId: string }) => ({
+          (member: Member & { externalId: string; houseRent?: number }) => ({
             id: member.externalId,
             name: member.name,
             initials: member.initials,
             color: member.color,
+            houseRent: Number(member.houseRent) || 0,
           }),
         );
         setMembers(nextMembers);
@@ -313,6 +314,21 @@ export default function MessFlowDashboard() {
         balance,
       };
     });
+
+    const totalApartmentRent = members.reduce(
+      (sum, member) => sum + (Number(member.houseRent) || 0),
+      0,
+    );
+
+    const grandSettlements = settlements.map((row) => {
+      const grandTotalPayable = (Number(row.houseRent) || 0) - row.balance;
+      return {
+        ...row,
+        houseRent: Number(row.houseRent) || 0,
+        grandTotalPayable,
+      };
+    });
+
     return {
       totalMeals,
       grocerySpend,
@@ -324,6 +340,8 @@ export default function MessFlowDashboard() {
       remainingUtilityBill,
       defaultUtilityShare,
       settlements,
+      grandSettlements,
+      totalApartmentRent,
       totalCost: grocerySpend + utilityTotal,
     };
   }, [days, expenses, members, utilities, overrides]);
@@ -363,6 +381,7 @@ export default function MessFlowDashboard() {
         name,
         initials: name.slice(0, 2).toUpperCase(),
         color: "bg-primary",
+        houseRent: 0,
       },
     ]);
     setExpenses((current) => ({ ...current, [id]: {} }));
@@ -454,6 +473,18 @@ export default function MessFlowDashboard() {
     });
   }
 
+  function updateHouseRent(memberId: string, houseRentValue: string) {
+    const houseRent = Math.max(0, Number(houseRentValue) || 0);
+    setMembers((current) =>
+      current.map((member) =>
+        member.id === memberId
+          ? { ...member, houseRent }
+          : member,
+      ),
+    );
+    void persist({ action: "rent", memberId, houseRent });
+  }
+
   function addUtility() {
     const name = window.prompt("Utility name")?.trim();
     if (!name) return;
@@ -465,9 +496,10 @@ export default function MessFlowDashboard() {
   }
 
   function exportXlsx() {
-    const rows = calculated.settlements.map(
+    const rows = calculated.grandSettlements.map(
       ({
         name,
+        houseRent,
         meals,
         groceries,
         mealCost,
@@ -475,8 +507,10 @@ export default function MessFlowDashboard() {
         utilityShare,
         finalCost,
         balance,
+        grandTotalPayable,
       }) => ({
         Member: name,
+        "House Rent": houseRent.toFixed(2),
         "Meal Count": meals,
         "Total Given (E)": groceries,
         "Meal Cost (G)": mealCost.toFixed(2),
@@ -485,6 +519,8 @@ export default function MessFlowDashboard() {
         "Total Final Cost (G + I)": finalCost.toFixed(2),
         "Final Settlement Balance": balance.toFixed(2),
         "Final Settlement Status": Math.abs(balance) < 0.005 ? "Clear" : balance > 0 ? `Receive ${money(balance)}` : `Pay ${money(Math.abs(balance))}`,
+        "Grand Total Payable": grandTotalPayable.toFixed(2),
+        "Grand Total Status": Math.abs(grandTotalPayable) < 0.005 ? "No payment" : grandTotalPayable > 0 ? `Total to Pay ${money(grandTotalPayable)}` : `Total to Receive ${money(Math.abs(grandTotalPayable))}`,
       }),
     );
     const sheet = XLSX.utils.json_to_sheet(rows);
@@ -873,79 +909,142 @@ export default function MessFlowDashboard() {
           </section>
 
           <div className="mt-10 grid gap-10 xl:grid-cols-[1fr_1.2fr]">
-            <section>
-              <SectionTitle
-                icon={Receipt}
-                eyebrow="Input ledger"
-                title="Member payments"
-                action={
-                  <span className="text-xs text-muted-foreground">
-                    Update advance, daily market, and big market share
-                  </span>
-                }
-              />
-              <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm sm:min-w-[680px]">
-                    <thead className="border-b border-border bg-muted/50 text-left text-xs uppercase tracking-wider text-muted-foreground">
-                      <tr>
-                        <th className="px-4 py-3 font-medium">Member</th>
-                        {expenseCategories.map((category) => (
-                          <th key={category} className="px-4 py-3 text-right font-medium">
-                            {category}
-                          </th>
-                        ))}
-                        <th className="px-4 py-3 text-right font-medium">Total Given (E)</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border bg-card">
-                      {members.map((member) => {
-                        const memberExpenses = expenses[member.id] ?? {};
-                        const totalGiven = expenseCategories.reduce(
-                          (sum, category) => sum + (Number(memberExpenses[category]) || 0),
-                          0,
-                        );
-                        return (
-                          <tr key={member.id} className="hover:bg-muted/30">
-                            <td className="px-4 py-3 font-semibold">
-                              <div className="flex items-center gap-3">
-                                <span
-                                  className={`flex size-8 items-center justify-center rounded-full text-xs font-semibold text-primary-foreground ${member.color}`}
-                                >
-                                  {member.initials}
-                                </span>
-                                <span>{member.name}</span>
-                              </div>
-                            </td>
-                            {expenseCategories.map((category) => (
-                              <td key={category} className="px-4 py-3 text-right">
+            <section className="space-y-10">
+              <section>
+                <SectionTitle
+                  icon={CircleDollarSign}
+                  eyebrow="Household fixed cost"
+                  title="House Rent & Fixed Expenses"
+                  action={
+                    <span className="text-xs text-muted-foreground">
+                      Monthly room/apartment rent
+                    </span>
+                  }
+                />
+                <div className="mt-4 rounded-2xl border border-border bg-card p-4">
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <MetricCard
+                      label="Total Apartment Rent"
+                      value={money(calculated.totalApartmentRent)}
+                      note={`${members.length} active members`}
+                      icon={CircleDollarSign}
+                    />
+                  </div>
+                  <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm sm:min-w-[660px]">
+                        <thead className="border-b border-border bg-muted/50 text-left text-xs uppercase tracking-wider text-muted-foreground">
+                          <tr>
+                            <th className="px-4 py-3 font-medium">Member</th>
+                            <th className="px-4 py-3 text-right font-medium">
+                              House Rent (BDT)
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border">
+                          {members.map((member) => (
+                            <tr key={member.id} className="hover:bg-muted/30">
+                              <td className="px-4 py-3 font-semibold">
+                                <div className="flex items-center gap-3">
+                                  <span className={`flex size-8 items-center justify-center rounded-full text-xs font-semibold text-primary-foreground ${member.color}`}>{member.initials}</span>
+                                  <span>{member.name}</span>
+                                </div>
+                              </td>
+                              <td className="px-4 py-3 text-right">
                                 <input
                                   type="number"
                                   min={0}
-                                  value={memberExpenses[category] ?? 0}
+                                  value={member.houseRent ?? 0}
                                   onChange={(event) =>
-                                    updateExpense(
-                                      member.id,
-                                      category,
-                                      Number(event.target.value) || 0,
-                                    )
+                                    updateHouseRent(member.id, event.target.value)
                                   }
-                                  className="w-28 rounded-lg border border-input bg-background px-3 py-2 text-right text-sm outline-none focus:ring-2 focus:ring-ring"
+                                  className="w-36 rounded-lg border border-input bg-background px-3 py-2 text-right text-sm outline-none focus:ring-2 focus:ring-ring"
                                 />
                               </td>
-                            ))}
-                            <td className="px-4 py-3 text-right font-semibold">
-                              {money(totalGiven)}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </section>
+
+              <section className="">
+                <SectionTitle
+                  icon={Receipt}
+                  eyebrow="Input ledger"
+                  title="Member payments"
+                  action={
+                    <span className="text-xs text-muted-foreground">
+                      Update advance, daily market, and big market share
+                    </span>
+                  }
+                />
+                <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm sm:min-w-[680px]">
+                      <thead className="border-b border-border bg-muted/50 text-left text-xs uppercase tracking-wider text-muted-foreground">
+                        <tr>
+                          <th className="px-4 py-3 font-medium">Member</th>
+                          {expenseCategories.map((category) => (
+                            <th key={category} className="px-4 py-3 text-right font-medium">
+                              {category}
+                            </th>
+                          ))}
+                          <th className="px-4 py-3 text-right font-medium">Total Given (E)</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border bg-card">
+                        {members.map((member) => {
+                          const memberExpenses = expenses[member.id] ?? {};
+                          const totalGiven = expenseCategories.reduce(
+                            (sum, category) => sum + (Number(memberExpenses[category]) || 0),
+                            0,
+                          );
+                          return (
+                            <tr key={member.id} className="hover:bg-muted/30">
+                              <td className="px-4 py-3 font-semibold">
+                                <div className="flex items-center gap-3">
+                                  <span
+                                    className={`flex size-8 items-center justify-center rounded-full text-xs font-semibold text-primary-foreground ${member.color}`}
+                                  >
+                                    {member.initials}
+                                  </span>
+                                  <span>{member.name}</span>
+                                </div>
+                              </td>
+                              {expenseCategories.map((category) => (
+                                <td key={category} className="px-4 py-3 text-right">
+                                  <input
+                                    type="number"
+                                    min={0}
+                                    value={memberExpenses[category] ?? 0}
+                                    onChange={(event) =>
+                                      updateExpense(
+                                        member.id,
+                                        category,
+                                        Number(event.target.value) || 0,
+                                      )
+                                    }
+                                    className="w-28 rounded-lg border border-input bg-background px-3 py-2 text-right text-sm outline-none focus:ring-2 focus:ring-ring"
+                                  />
+                                </td>
+                              ))}
+                              <td className="px-4 py-3 text-right font-semibold">
+                                {money(totalGiven)}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </section>
             </section>
-            <section>
+
+            <section >
               <SectionTitle
                 icon={Settings2}
                 eyebrow="Shared bills"
@@ -1025,6 +1124,60 @@ export default function MessFlowDashboard() {
               </div>
             </section>
           </div>
+
+          <section className="mt-10">
+            <SectionTitle
+              icon={CircleDollarSign}
+              eyebrow="Full-month cost"
+              title="Grand Monthly Settlement Summary"
+              action={
+                <span className="text-xs text-muted-foreground">
+                  House Rent - Mess Settlement
+                </span>
+              }
+            />
+            <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm sm:min-w-[900px]">
+                  <thead className="border-b border-border bg-muted/50 text-left text-xs uppercase tracking-wider text-muted-foreground">
+                    <tr>
+                      <th className="px-4 py-3 font-medium">Member</th>
+                      <th className="px-4 py-3 text-right font-medium">
+                        House Rent
+                      </th>
+                      <th className="px-4 py-3 text-right font-medium">
+                        Mess/Utility Net Balance
+                      </th>
+                      <th className="px-4 py-3 text-right font-medium">
+                        Grand Total Payable
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {calculated.grandSettlements.map((row) => (
+                      <tr key={row.id} className="hover:bg-muted/30">
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-3">
+                            <span className={`flex size-8 items-center justify-center rounded-full text-xs font-semibold text-primary-foreground ${row.color}`}>{row.initials}</span>
+                            <span className="font-semibold">{row.name}</span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-right font-medium">
+                          {money(row.houseRent)}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${row.balance > 0 ? "bg-emerald-100 text-emerald-800" : row.balance < 0 ? "bg-orange-100 text-orange-800" : "bg-muted text-muted-foreground"}`}>{row.balance > 0 ? "+" : row.balance < 0 ? "-" : ""}{money(Math.abs(row.balance))}</span>
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${row.grandTotalPayable > 0 ? "bg-orange-100 text-orange-800" : row.grandTotalPayable < 0 ? "bg-emerald-100 text-emerald-800" : "bg-muted text-muted-foreground"}`}>{row.grandTotalPayable > 0 ? `Total to Pay ${money(row.grandTotalPayable)}` : row.grandTotalPayable < 0 ? `Total to Receive ${money(Math.abs(row.grandTotalPayable))}` : "No balance"}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
 
           <section className="mt-10">
             <SectionTitle

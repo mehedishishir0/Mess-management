@@ -30,6 +30,7 @@ model Member {
   name        String
   initials    String
   color       String
+  houseRent   Float       @default(0)
   household   Household   @relation(fields: [householdId], references: [id], onDelete: Cascade)
   meals       MealEntry[]
   expenses    Expense[]

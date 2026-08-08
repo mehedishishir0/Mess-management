@@ -2617,8 +2617,18 @@ export namespace Prisma {
 
   export type AggregateMember = {
     _count: MemberCountAggregateOutputType | null
+    _avg: MemberAvgAggregateOutputType | null
+    _sum: MemberSumAggregateOutputType | null
     _min: MemberMinAggregateOutputType | null
     _max: MemberMaxAggregateOutputType | null
+  }
+
+  export type MemberAvgAggregateOutputType = {
+    houseRent: number | null
+  }
+
+  export type MemberSumAggregateOutputType = {
+    houseRent: number | null
   }
 
   export type MemberMinAggregateOutputType = {
@@ -2628,6 +2638,7 @@ export namespace Prisma {
     name: string | null
     initials: string | null
     color: string | null
+    houseRent: number | null
   }
 
   export type MemberMaxAggregateOutputType = {
@@ -2637,6 +2648,7 @@ export namespace Prisma {
     name: string | null
     initials: string | null
     color: string | null
+    houseRent: number | null
   }
 
   export type MemberCountAggregateOutputType = {
@@ -2646,9 +2658,18 @@ export namespace Prisma {
     name: number
     initials: number
     color: number
+    houseRent: number
     _all: number
   }
 
+
+  export type MemberAvgAggregateInputType = {
+    houseRent?: true
+  }
+
+  export type MemberSumAggregateInputType = {
+    houseRent?: true
+  }
 
   export type MemberMinAggregateInputType = {
     id?: true
@@ -2657,6 +2678,7 @@ export namespace Prisma {
     name?: true
     initials?: true
     color?: true
+    houseRent?: true
   }
 
   export type MemberMaxAggregateInputType = {
@@ -2666,6 +2688,7 @@ export namespace Prisma {
     name?: true
     initials?: true
     color?: true
+    houseRent?: true
   }
 
   export type MemberCountAggregateInputType = {
@@ -2675,6 +2698,7 @@ export namespace Prisma {
     name?: true
     initials?: true
     color?: true
+    houseRent?: true
     _all?: true
   }
 
@@ -2716,6 +2740,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: MemberAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MemberSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: MemberMinAggregateInputType
@@ -2746,6 +2782,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: MemberCountAggregateInputType | true
+    _avg?: MemberAvgAggregateInputType
+    _sum?: MemberSumAggregateInputType
     _min?: MemberMinAggregateInputType
     _max?: MemberMaxAggregateInputType
   }
@@ -2757,7 +2795,10 @@ export namespace Prisma {
     name: string
     initials: string
     color: string
+    houseRent: number
     _count: MemberCountAggregateOutputType | null
+    _avg: MemberAvgAggregateOutputType | null
+    _sum: MemberSumAggregateOutputType | null
     _min: MemberMinAggregateOutputType | null
     _max: MemberMaxAggregateOutputType | null
   }
@@ -2783,6 +2824,7 @@ export namespace Prisma {
     name?: boolean
     initials?: boolean
     color?: boolean
+    houseRent?: boolean
     household?: boolean | HouseholdDefaultArgs<ExtArgs>
     meals?: boolean | Member$mealsArgs<ExtArgs>
     expenses?: boolean | Member$expensesArgs<ExtArgs>
@@ -2799,9 +2841,10 @@ export namespace Prisma {
     name?: boolean
     initials?: boolean
     color?: boolean
+    houseRent?: boolean
   }
 
-  export type MemberOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "householdId" | "externalId" | "name" | "initials" | "color", ExtArgs["result"]["member"]>
+  export type MemberOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "householdId" | "externalId" | "name" | "initials" | "color" | "houseRent", ExtArgs["result"]["member"]>
   export type MemberInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     household?: boolean | HouseholdDefaultArgs<ExtArgs>
     meals?: boolean | Member$mealsArgs<ExtArgs>
@@ -2825,6 +2868,7 @@ export namespace Prisma {
       name: string
       initials: string
       color: string
+      houseRent: number
     }, ExtArgs["result"]["member"]>
     composites: {}
   }
@@ -3227,6 +3271,7 @@ export namespace Prisma {
     readonly name: FieldRef<"Member", 'String'>
     readonly initials: FieldRef<"Member", 'String'>
     readonly color: FieldRef<"Member", 'String'>
+    readonly houseRent: FieldRef<"Member", 'Float'>
   }
     
 
@@ -8758,7 +8803,8 @@ export namespace Prisma {
     externalId: 'externalId',
     name: 'name',
     initials: 'initials',
-    color: 'color'
+    color: 'color',
+    houseRent: 'houseRent'
   };
 
   export type MemberScalarFieldEnum = (typeof MemberScalarFieldEnum)[keyof typeof MemberScalarFieldEnum]
@@ -8867,20 +8913,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Int'
-   */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int[]'
-   */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -8891,6 +8923,20 @@ export namespace Prisma {
    * Reference to a field of type 'Float[]'
    */
   export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int'
+   */
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
   /**
    * Deep Input Types
@@ -8975,6 +9021,7 @@ export namespace Prisma {
     name?: StringFilter<"Member"> | string
     initials?: StringFilter<"Member"> | string
     color?: StringFilter<"Member"> | string
+    houseRent?: FloatFilter<"Member"> | number
     household?: XOR<HouseholdScalarRelationFilter, HouseholdWhereInput>
     meals?: MealEntryListRelationFilter
     expenses?: ExpenseListRelationFilter
@@ -8988,6 +9035,7 @@ export namespace Prisma {
     name?: SortOrder
     initials?: SortOrder
     color?: SortOrder
+    houseRent?: SortOrder
     household?: HouseholdOrderByWithRelationInput
     meals?: MealEntryOrderByRelationAggregateInput
     expenses?: ExpenseOrderByRelationAggregateInput
@@ -9005,6 +9053,7 @@ export namespace Prisma {
     name?: StringFilter<"Member"> | string
     initials?: StringFilter<"Member"> | string
     color?: StringFilter<"Member"> | string
+    houseRent?: FloatFilter<"Member"> | number
     household?: XOR<HouseholdScalarRelationFilter, HouseholdWhereInput>
     meals?: MealEntryListRelationFilter
     expenses?: ExpenseListRelationFilter
@@ -9018,9 +9067,12 @@ export namespace Prisma {
     name?: SortOrder
     initials?: SortOrder
     color?: SortOrder
+    houseRent?: SortOrder
     _count?: MemberCountOrderByAggregateInput
+    _avg?: MemberAvgOrderByAggregateInput
     _max?: MemberMaxOrderByAggregateInput
     _min?: MemberMinOrderByAggregateInput
+    _sum?: MemberSumOrderByAggregateInput
   }
 
   export type MemberScalarWhereWithAggregatesInput = {
@@ -9033,6 +9085,7 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"Member"> | string
     initials?: StringWithAggregatesFilter<"Member"> | string
     color?: StringWithAggregatesFilter<"Member"> | string
+    houseRent?: FloatWithAggregatesFilter<"Member"> | number
   }
 
   export type MealDayWhereInput = {
@@ -9402,6 +9455,7 @@ export namespace Prisma {
     name: string
     initials: string
     color: string
+    houseRent?: number
     household: HouseholdCreateNestedOneWithoutMembersInput
     meals?: MealEntryCreateNestedManyWithoutMemberInput
     expenses?: ExpenseCreateNestedManyWithoutMemberInput
@@ -9415,6 +9469,7 @@ export namespace Prisma {
     name: string
     initials: string
     color: string
+    houseRent?: number
     meals?: MealEntryUncheckedCreateNestedManyWithoutMemberInput
     expenses?: ExpenseUncheckedCreateNestedManyWithoutMemberInput
     override?: OverrideUncheckedCreateNestedOneWithoutMemberInput
@@ -9425,6 +9480,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
+    houseRent?: FloatFieldUpdateOperationsInput | number
     household?: HouseholdUpdateOneRequiredWithoutMembersNestedInput
     meals?: MealEntryUpdateManyWithoutMemberNestedInput
     expenses?: ExpenseUpdateManyWithoutMemberNestedInput
@@ -9437,6 +9493,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
+    houseRent?: FloatFieldUpdateOperationsInput | number
     meals?: MealEntryUncheckedUpdateManyWithoutMemberNestedInput
     expenses?: ExpenseUncheckedUpdateManyWithoutMemberNestedInput
     override?: OverrideUncheckedUpdateOneWithoutMemberNestedInput
@@ -9449,6 +9506,7 @@ export namespace Prisma {
     name: string
     initials: string
     color: string
+    houseRent?: number
   }
 
   export type MemberUpdateManyMutationInput = {
@@ -9456,6 +9514,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
+    houseRent?: FloatFieldUpdateOperationsInput | number
   }
 
   export type MemberUncheckedUpdateManyInput = {
@@ -9464,6 +9523,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
+    houseRent?: FloatFieldUpdateOperationsInput | number
   }
 
   export type MealDayCreateInput = {
@@ -9845,6 +9905,17 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type HouseholdScalarRelationFilter = {
     is?: HouseholdWhereInput
     isNot?: HouseholdWhereInput
@@ -9877,6 +9948,11 @@ export namespace Prisma {
     name?: SortOrder
     initials?: SortOrder
     color?: SortOrder
+    houseRent?: SortOrder
+  }
+
+  export type MemberAvgOrderByAggregateInput = {
+    houseRent?: SortOrder
   }
 
   export type MemberMaxOrderByAggregateInput = {
@@ -9886,6 +9962,7 @@ export namespace Prisma {
     name?: SortOrder
     initials?: SortOrder
     color?: SortOrder
+    houseRent?: SortOrder
   }
 
   export type MemberMinOrderByAggregateInput = {
@@ -9895,6 +9972,27 @@ export namespace Prisma {
     name?: SortOrder
     initials?: SortOrder
     color?: SortOrder
+    houseRent?: SortOrder
+  }
+
+  export type MemberSumOrderByAggregateInput = {
+    houseRent?: SortOrder
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type MealDayHouseholdIdDateCompoundUniqueInput = {
@@ -9994,17 +10092,6 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
-  export type FloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
   export type ExpenseHouseholdIdMemberIdCategoryCompoundUniqueInput = {
     householdId: string
     memberId: string
@@ -10041,22 +10128,6 @@ export namespace Prisma {
 
   export type ExpenseSumOrderByAggregateInput = {
     amount?: SortOrder
-  }
-
-  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type UtilityHouseholdIdExternalIdCompoundUniqueInput = {
@@ -10423,6 +10494,14 @@ export namespace Prisma {
     connect?: OverrideWhereUniqueInput
   }
 
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type HouseholdUpdateOneRequiredWithoutMembersNestedInput = {
     create?: XOR<HouseholdCreateWithoutMembersInput, HouseholdUncheckedCreateWithoutMembersInput>
     connectOrCreate?: HouseholdCreateOrConnectWithoutMembersInput
@@ -10611,14 +10690,6 @@ export namespace Prisma {
     connect?: MemberWhereUniqueInput
   }
 
-  export type FloatFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
   export type HouseholdUpdateOneRequiredWithoutExpensesNestedInput = {
     create?: XOR<HouseholdCreateWithoutExpensesInput, HouseholdUncheckedCreateWithoutExpensesInput>
     connectOrCreate?: HouseholdCreateOrConnectWithoutExpensesInput
@@ -10753,22 +10824,6 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
   export type NestedFloatFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -10794,6 +10849,22 @@ export namespace Prisma {
     _sum?: NestedFloatFilter<$PrismaModel>
     _min?: NestedFloatFilter<$PrismaModel>
     _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type NestedFloatNullableFilter<$PrismaModel = never> = {
@@ -10843,6 +10914,7 @@ export namespace Prisma {
     name: string
     initials: string
     color: string
+    houseRent?: number
     meals?: MealEntryCreateNestedManyWithoutMemberInput
     expenses?: ExpenseCreateNestedManyWithoutMemberInput
     override?: OverrideCreateNestedOneWithoutMemberInput
@@ -10854,6 +10926,7 @@ export namespace Prisma {
     name: string
     initials: string
     color: string
+    houseRent?: number
     meals?: MealEntryUncheckedCreateNestedManyWithoutMemberInput
     expenses?: ExpenseUncheckedCreateNestedManyWithoutMemberInput
     override?: OverrideUncheckedCreateNestedOneWithoutMemberInput
@@ -10986,6 +11059,7 @@ export namespace Prisma {
     name?: StringFilter<"Member"> | string
     initials?: StringFilter<"Member"> | string
     color?: StringFilter<"Member"> | string
+    houseRent?: FloatFilter<"Member"> | number
   }
 
   export type MealDayUpsertWithWhereUniqueWithoutHouseholdInput = {
@@ -11409,6 +11483,7 @@ export namespace Prisma {
     name: string
     initials: string
     color: string
+    houseRent?: number
     household: HouseholdCreateNestedOneWithoutMembersInput
     expenses?: ExpenseCreateNestedManyWithoutMemberInput
     override?: OverrideCreateNestedOneWithoutMemberInput
@@ -11421,6 +11496,7 @@ export namespace Prisma {
     name: string
     initials: string
     color: string
+    houseRent?: number
     expenses?: ExpenseUncheckedCreateNestedManyWithoutMemberInput
     override?: OverrideUncheckedCreateNestedOneWithoutMemberInput
   }
@@ -11469,6 +11545,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
+    houseRent?: FloatFieldUpdateOperationsInput | number
     household?: HouseholdUpdateOneRequiredWithoutMembersNestedInput
     expenses?: ExpenseUpdateManyWithoutMemberNestedInput
     override?: OverrideUpdateOneWithoutMemberNestedInput
@@ -11480,6 +11557,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
+    houseRent?: FloatFieldUpdateOperationsInput | number
     expenses?: ExpenseUncheckedUpdateManyWithoutMemberNestedInput
     override?: OverrideUncheckedUpdateOneWithoutMemberNestedInput
   }
@@ -11519,6 +11597,7 @@ export namespace Prisma {
     name: string
     initials: string
     color: string
+    houseRent?: number
     household: HouseholdCreateNestedOneWithoutMembersInput
     meals?: MealEntryCreateNestedManyWithoutMemberInput
     override?: OverrideCreateNestedOneWithoutMemberInput
@@ -11531,6 +11610,7 @@ export namespace Prisma {
     name: string
     initials: string
     color: string
+    houseRent?: number
     meals?: MealEntryUncheckedCreateNestedManyWithoutMemberInput
     override?: OverrideUncheckedCreateNestedOneWithoutMemberInput
   }
@@ -11589,6 +11669,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
+    houseRent?: FloatFieldUpdateOperationsInput | number
     household?: HouseholdUpdateOneRequiredWithoutMembersNestedInput
     meals?: MealEntryUpdateManyWithoutMemberNestedInput
     override?: OverrideUpdateOneWithoutMemberNestedInput
@@ -11600,6 +11681,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
+    houseRent?: FloatFieldUpdateOperationsInput | number
     meals?: MealEntryUncheckedUpdateManyWithoutMemberNestedInput
     override?: OverrideUncheckedUpdateOneWithoutMemberNestedInput
   }
@@ -11701,6 +11783,7 @@ export namespace Prisma {
     name: string
     initials: string
     color: string
+    houseRent?: number
     household: HouseholdCreateNestedOneWithoutMembersInput
     meals?: MealEntryCreateNestedManyWithoutMemberInput
     expenses?: ExpenseCreateNestedManyWithoutMemberInput
@@ -11713,6 +11796,7 @@ export namespace Prisma {
     name: string
     initials: string
     color: string
+    houseRent?: number
     meals?: MealEntryUncheckedCreateNestedManyWithoutMemberInput
     expenses?: ExpenseUncheckedCreateNestedManyWithoutMemberInput
   }
@@ -11771,6 +11855,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
+    houseRent?: FloatFieldUpdateOperationsInput | number
     household?: HouseholdUpdateOneRequiredWithoutMembersNestedInput
     meals?: MealEntryUpdateManyWithoutMemberNestedInput
     expenses?: ExpenseUpdateManyWithoutMemberNestedInput
@@ -11782,6 +11867,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
+    houseRent?: FloatFieldUpdateOperationsInput | number
     meals?: MealEntryUncheckedUpdateManyWithoutMemberNestedInput
     expenses?: ExpenseUncheckedUpdateManyWithoutMemberNestedInput
   }
@@ -11792,6 +11878,7 @@ export namespace Prisma {
     name: string
     initials: string
     color: string
+    houseRent?: number
   }
 
   export type MealDayCreateManyHouseholdInput = {
@@ -11826,6 +11913,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
+    houseRent?: FloatFieldUpdateOperationsInput | number
     meals?: MealEntryUpdateManyWithoutMemberNestedInput
     expenses?: ExpenseUpdateManyWithoutMemberNestedInput
     override?: OverrideUpdateOneWithoutMemberNestedInput
@@ -11836,6 +11924,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
+    houseRent?: FloatFieldUpdateOperationsInput | number
     meals?: MealEntryUncheckedUpdateManyWithoutMemberNestedInput
     expenses?: ExpenseUncheckedUpdateManyWithoutMemberNestedInput
     override?: OverrideUncheckedUpdateOneWithoutMemberNestedInput
@@ -11846,6 +11935,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
+    houseRent?: FloatFieldUpdateOperationsInput | number
   }
 
   export type MealDayUpdateWithoutHouseholdInput = {

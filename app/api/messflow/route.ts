@@ -10,7 +10,8 @@ const memberUpdateSchema = z.object({ action: z.literal('memberUpdate'), memberI
 const memberRemoveSchema = z.object({ action: z.literal('memberRemove'), memberId: z.string() })
 const utilityRemoveSchema = z.object({ action: z.literal('utilityRemove'), id: z.string() })
 const overrideSchema = z.object({ action: z.literal('override'), memberId: z.string(), utilities: z.number().finite().min(0).nullable().optional(), mealRate: z.number().finite().min(0).nullable().optional() })
-const bodySchema = z.discriminatedUnion('action', [expenseSchema, mealSchema, utilitySchema, memberSchema, memberUpdateSchema, memberRemoveSchema, utilityRemoveSchema, overrideSchema])
+const rentSchema = z.object({ action: z.literal('rent'), memberId: z.string(), houseRent: z.number().finite().min(0) })
+const bodySchema = z.discriminatedUnion('action', [expenseSchema, mealSchema, utilitySchema, memberSchema, memberUpdateSchema, memberRemoveSchema, utilityRemoveSchema, overrideSchema, rentSchema])
 
 function currentMonthKey() {
   const now = new Date()
@@ -99,8 +100,13 @@ export async function POST(request: Request) {
       const member = await prisma.member.findUniqueOrThrow({ where: { householdId_externalId: { householdId: household.id, externalId: input.memberId } } })
       await prisma.override.upsert({ where: { memberId: member.id }, update: { utilities: input.utilities ?? null, mealRate: input.mealRate ?? null }, create: { householdId: household.id, memberId: member.id, utilities: input.utilities ?? null, mealRate: input.mealRate ?? null } })
     }
+    if (input.action === 'rent') {
+      const member = await prisma.member.findUniqueOrThrow({ where: { householdId_externalId: { householdId: household.id, externalId: input.memberId } } })
+      await prisma.member.update({ where: { id: member.id }, data: { houseRent: input.houseRent } })
+    }
     return await GET(request)
   } catch (error) {
+    console.error('messflow POST error:', error)
     if (error instanceof z.ZodError) return NextResponse.json({ error: error.issues[0]?.message }, { status: 400 })
     return NextResponse.json({ error: 'Unable to save data to MongoDB' }, { status: 500 })
   }
