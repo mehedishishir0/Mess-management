@@ -8,47 +8,49 @@ datasource db {
   url      = env("MONGODB_URI")
 }
 
-model Household {
-  id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  monthKey  String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  members   Member[]
-  days      MealDay[]
-  expenses  Expense[]
-  utilities Utility[]
-  overrides Override[]
-
-  @@unique([name, monthKey])
+model Mess {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  messName    String      @unique
+  managerName String
+  email       String      @unique
+  password    String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  members     Member[]
+  days        MealDay[]
+  expenses    Expense[]
+  utilities   Utility[]
+  overrides   Override[]
+  houseRents  HouseRent[]
 }
 
 model Member {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  householdId String      @db.ObjectId
-  externalId  String
-  name        String
-  initials    String
-  color       String
-  houseRent   Float       @default(0)
-  household   Household   @relation(fields: [householdId], references: [id], onDelete: Cascade)
-  meals       MealEntry[]
-  expenses    Expense[]
-  override    Override?
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  messId     String      @db.ObjectId
+  externalId String
+  name       String
+  initials   String
+  color      String
+  houseRent  Float       @default(0)
+  mess       Mess        @relation(fields: [messId], references: [id], onDelete: Cascade)
+  meals      MealEntry[]
+  expenses   Expense[]
+  overrides  Override?
+  houseRents HouseRent[]
 
-  @@unique([householdId, externalId])
-  @@index([householdId])
+  @@unique([messId, externalId])
+  @@index([messId])
 }
 
 model MealDay {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  householdId String      @db.ObjectId
-  date        String
-  label       String
-  household   Household   @relation(fields: [householdId], references: [id], onDelete: Cascade)
-  entries     MealEntry[]
+  id      String      @id @default(auto()) @map("_id") @db.ObjectId
+  messId  String      @db.ObjectId
+  date    String
+  label   String
+  mess    Mess        @relation(fields: [messId], references: [id], onDelete: Cascade)
+  entries MealEntry[]
 
-  @@unique([householdId, date])
+  @@unique([messId, date])
 }
 
 model MealEntry {
@@ -63,34 +65,47 @@ model MealEntry {
 }
 
 model Expense {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  householdId String    @db.ObjectId
-  memberId    String    @db.ObjectId
-  category    String
-  amount      Float
-  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
-  member      Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  messId   String @db.ObjectId
+  memberId String @db.ObjectId
+  category String
+  amount   Float
+  mess     Mess   @relation(fields: [messId], references: [id], onDelete: Cascade)
+  member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
 
-  @@unique([householdId, memberId, category])
+  @@unique([messId, memberId, category])
 }
 
 model Utility {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  householdId String    @db.ObjectId
-  externalId  String
-  name        String
-  amount      Float
-  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  messId     String @db.ObjectId
+  externalId String
+  name       String
+  amount     Float
+  mess       Mess   @relation(fields: [messId], references: [id], onDelete: Cascade)
 
-  @@unique([householdId, externalId])
+  @@unique([messId, externalId])
 }
 
 model Override {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  householdId String    @db.ObjectId
-  memberId    String    @unique @db.ObjectId
-  utilities   Float?
-  mealRate    Float?
-  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
-  member      Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  messId    String @db.ObjectId
+  memberId  String @unique @db.ObjectId
+  utilities Float?
+  mealRate  Float?
+  mess      Mess   @relation(fields: [messId], references: [id], onDelete: Cascade)
+  member    Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+}
+
+model HouseRent {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  messId   String @db.ObjectId
+  memberId String @db.ObjectId
+  amount   Float
+  monthKey String
+  mess     Mess   @relation(fields: [messId], references: [id], onDelete: Cascade)
+  member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([messId, memberId, monthKey])
+  @@index([messId])
 }

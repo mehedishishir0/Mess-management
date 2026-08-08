@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from 'next/navigation'
 import * as XLSX from "xlsx";
 import {
   ArrowDownToLine,
@@ -132,6 +133,7 @@ function SectionTitle({
 }
 
 export default function MessFlowDashboard() {
+  const router = useRouter()
   const [members, setMembers] = useState<Member[]>([]);
   const [days, setDays] = useState<MealDay[]>([]);
   const [expenses, setExpenses] = useState<MemberExpenses>({});
@@ -141,6 +143,7 @@ export default function MessFlowDashboard() {
   const [activeNav, setActiveNav] = useState("Overview");
   const [showMobileNav, setShowMobileNav] = useState(false);
   const [syncStatus, setSyncStatus] = useState("Loading shared data…");
+  const [messProfile, setMessProfile] = useState<{ messName?: string; managerName?: string } | null>(null);
 
   async function persist(payload: Record<string, unknown>) {
     setSyncStatus("Saving…");
@@ -157,7 +160,27 @@ export default function MessFlowDashboard() {
     }
   }
 
+  async function logout() {
+    const confirmed = window.confirm('Log out of MessFlow?');
+    if (!confirmed) return;
+
+    await fetch('/api/auth/logout', { method: 'POST' });
+    router.push('/login');
+  }
+
   useEffect(() => {
+    fetch('/api/auth/session')
+      .then(async (response) => {
+        const session = await response.json();
+        if (session?.authenticated) {
+          setMessProfile({
+            messName: session.user?.messName,
+            managerName: session.user?.managerName,
+          });
+        }
+      })
+      .catch(() => undefined);
+
     fetch(`/api/messflow?month=${selectedMonth}`)
       .then(async (response) => {
         if (!response.ok) throw new Error("Database unavailable");
@@ -542,6 +565,7 @@ export default function MessFlowDashboard() {
     { label: "Expenses", icon: Receipt },
     { label: "Utilities", icon: SlidersHorizontal },
     { label: "Members", icon: Users },
+    { label: "Settings", icon: Settings2 },
   ];
 
   return (
@@ -620,10 +644,10 @@ export default function MessFlowDashboard() {
             </IconButton>
             <div>
               <p className="text-xs font-medium text-muted-foreground">
-                Good evening, Arjun
+                {messProfile?.managerName ? `Good evening, ${messProfile.managerName}` : 'Good evening'}
               </p>
               <h1 className="text-xl font-semibold tracking-tight">
-                {activeNav === "Overview" ? "Mess overview" : activeNav}
+                {messProfile?.messName ?? 'Your Mess'} · {activeNav === "Overview" ? "Mess overview" : activeNav}
               </h1>
             </div>
           </div>
@@ -664,6 +688,12 @@ export default function MessFlowDashboard() {
               <FileText size={16} />
               PDF
             </button>
+            <button
+              onClick={logout}
+              className="rounded-lg border border-destructive/40 px-3 py-2 text-sm font-semibold text-destructive transition hover:bg-destructive/10"
+            >
+              Logout
+            </button>
           </div>
         </header>
 
@@ -671,7 +701,7 @@ export default function MessFlowDashboard() {
           <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div>
               <p className="text-sm font-medium text-primary">
-                {monthKeyToLabel(selectedMonth)} · Apartment 4B
+                {monthKeyToLabel(selectedMonth)} · {messProfile?.messName ?? 'Your Mess'}
               </p>
               <h2 className="mt-2 max-w-2xl text-3xl font-semibold tracking-tight text-balance md:text-4xl">
                 A clearer view of what everyone owes.
@@ -686,6 +716,25 @@ export default function MessFlowDashboard() {
               {members.length} active members
             </div>
           </div>
+
+          {members.length === 0 && (
+            <section className="mb-8 rounded-3xl border border-dashed border-primary/50 bg-primary/6 p-6">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.22em] text-primary">First-time setup</p>
+                  <h2 className="mt-2 text-2xl font-semibold tracking-tight">Welcome to MessFlow</h2>
+                  <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+                    Start your first month with members, utility bills, and daily meal tracking.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button onClick={addMember} className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">Add initial members</button>
+                  <button onClick={addUtility} className="rounded-xl border border-border px-4 py-2 text-sm font-semibold hover:bg-accent">Log utility bills</button>
+                  <button className="rounded-xl border border-border px-4 py-2 text-sm font-semibold hover:bg-accent">Start logging meals</button>
+                </div>
+              </div>
+            </section>
+          )}
 
           <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <MetricCard

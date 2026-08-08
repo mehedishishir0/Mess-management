@@ -1,5 +1,5 @@
-import MessFlowDashboard from '@/components/messflow-dashboard'
+import MessFlowLandingPage from '@/components/landing-page'
 
 export default function Page() {
-  return <MessFlowDashboard />
+  return <MessFlowLandingPage />
 }

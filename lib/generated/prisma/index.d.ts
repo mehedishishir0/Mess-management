@@ -14,10 +14,10 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
 
 
 /**
- * Model Household
+ * Model Mess
  * 
  */
-export type Household = $Result.DefaultSelection<Prisma.$HouseholdPayload>
+export type Mess = $Result.DefaultSelection<Prisma.$MessPayload>
 /**
  * Model Member
  * 
@@ -48,6 +48,11 @@ export type Utility = $Result.DefaultSelection<Prisma.$UtilityPayload>
  * 
  */
 export type Override = $Result.DefaultSelection<Prisma.$OverridePayload>
+/**
+ * Model HouseRent
+ * 
+ */
+export type HouseRent = $Result.DefaultSelection<Prisma.$HouseRentPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -56,8 +61,8 @@ export type Override = $Result.DefaultSelection<Prisma.$OverridePayload>
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Households
- * const households = await prisma.household.findMany()
+ * // Fetch zero or more Messes
+ * const messes = await prisma.mess.findMany()
  * ```
  *
  *
@@ -77,8 +82,8 @@ export class PrismaClient<
    * @example
    * ```
    * const prisma = new PrismaClient()
-   * // Fetch zero or more Households
-   * const households = await prisma.household.findMany()
+   * // Fetch zero or more Messes
+   * const messes = await prisma.mess.findMany()
    * ```
    *
    *
@@ -135,14 +140,14 @@ export class PrismaClient<
   }>>
 
       /**
-   * `prisma.household`: Exposes CRUD operations for the **Household** model.
+   * `prisma.mess`: Exposes CRUD operations for the **Mess** model.
     * Example usage:
     * ```ts
-    * // Fetch zero or more Households
-    * const households = await prisma.household.findMany()
+    * // Fetch zero or more Messes
+    * const messes = await prisma.mess.findMany()
     * ```
     */
-  get household(): Prisma.HouseholdDelegate<ExtArgs, ClientOptions>;
+  get mess(): Prisma.MessDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.member`: Exposes CRUD operations for the **Member** model.
@@ -203,6 +208,16 @@ export class PrismaClient<
     * ```
     */
   get override(): Prisma.OverrideDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.houseRent`: Exposes CRUD operations for the **HouseRent** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more HouseRents
+    * const houseRents = await prisma.houseRent.findMany()
+    * ```
+    */
+  get houseRent(): Prisma.HouseRentDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -644,13 +659,14 @@ export namespace Prisma {
 
 
   export const ModelName: {
-    Household: 'Household',
+    Mess: 'Mess',
     Member: 'Member',
     MealDay: 'MealDay',
     MealEntry: 'MealEntry',
     Expense: 'Expense',
     Utility: 'Utility',
-    Override: 'Override'
+    Override: 'Override',
+    HouseRent: 'HouseRent'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -669,81 +685,81 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "household" | "member" | "mealDay" | "mealEntry" | "expense" | "utility" | "override"
+      modelProps: "mess" | "member" | "mealDay" | "mealEntry" | "expense" | "utility" | "override" | "houseRent"
       txIsolationLevel: never
     }
     model: {
-      Household: {
-        payload: Prisma.$HouseholdPayload<ExtArgs>
-        fields: Prisma.HouseholdFieldRefs
+      Mess: {
+        payload: Prisma.$MessPayload<ExtArgs>
+        fields: Prisma.MessFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.HouseholdFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$HouseholdPayload> | null
+            args: Prisma.MessFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessPayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.HouseholdFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$HouseholdPayload>
+            args: Prisma.MessFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessPayload>
           }
           findFirst: {
-            args: Prisma.HouseholdFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$HouseholdPayload> | null
+            args: Prisma.MessFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessPayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.HouseholdFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$HouseholdPayload>
+            args: Prisma.MessFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessPayload>
           }
           findMany: {
-            args: Prisma.HouseholdFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$HouseholdPayload>[]
+            args: Prisma.MessFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessPayload>[]
           }
           create: {
-            args: Prisma.HouseholdCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$HouseholdPayload>
+            args: Prisma.MessCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessPayload>
           }
           createMany: {
-            args: Prisma.HouseholdCreateManyArgs<ExtArgs>
+            args: Prisma.MessCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
           delete: {
-            args: Prisma.HouseholdDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$HouseholdPayload>
+            args: Prisma.MessDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessPayload>
           }
           update: {
-            args: Prisma.HouseholdUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$HouseholdPayload>
+            args: Prisma.MessUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessPayload>
           }
           deleteMany: {
-            args: Prisma.HouseholdDeleteManyArgs<ExtArgs>
+            args: Prisma.MessDeleteManyArgs<ExtArgs>
             result: BatchPayload
           }
           updateMany: {
-            args: Prisma.HouseholdUpdateManyArgs<ExtArgs>
+            args: Prisma.MessUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
           upsert: {
-            args: Prisma.HouseholdUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$HouseholdPayload>
+            args: Prisma.MessUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessPayload>
           }
           aggregate: {
-            args: Prisma.HouseholdAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateHousehold>
+            args: Prisma.MessAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMess>
           }
           groupBy: {
-            args: Prisma.HouseholdGroupByArgs<ExtArgs>
-            result: $Utils.Optional<HouseholdGroupByOutputType>[]
+            args: Prisma.MessGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MessGroupByOutputType>[]
           }
           findRaw: {
-            args: Prisma.HouseholdFindRawArgs<ExtArgs>
+            args: Prisma.MessFindRawArgs<ExtArgs>
             result: JsonObject
           }
           aggregateRaw: {
-            args: Prisma.HouseholdAggregateRawArgs<ExtArgs>
+            args: Prisma.MessAggregateRawArgs<ExtArgs>
             result: JsonObject
           }
           count: {
-            args: Prisma.HouseholdCountArgs<ExtArgs>
-            result: $Utils.Optional<HouseholdCountAggregateOutputType> | number
+            args: Prisma.MessCountArgs<ExtArgs>
+            result: $Utils.Optional<MessCountAggregateOutputType> | number
           }
         }
       }
@@ -1191,6 +1207,80 @@ export namespace Prisma {
           }
         }
       }
+      HouseRent: {
+        payload: Prisma.$HouseRentPayload<ExtArgs>
+        fields: Prisma.HouseRentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.HouseRentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HouseRentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.HouseRentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HouseRentPayload>
+          }
+          findFirst: {
+            args: Prisma.HouseRentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HouseRentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.HouseRentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HouseRentPayload>
+          }
+          findMany: {
+            args: Prisma.HouseRentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HouseRentPayload>[]
+          }
+          create: {
+            args: Prisma.HouseRentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HouseRentPayload>
+          }
+          createMany: {
+            args: Prisma.HouseRentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.HouseRentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HouseRentPayload>
+          }
+          update: {
+            args: Prisma.HouseRentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HouseRentPayload>
+          }
+          deleteMany: {
+            args: Prisma.HouseRentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.HouseRentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.HouseRentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HouseRentPayload>
+          }
+          aggregate: {
+            args: Prisma.HouseRentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateHouseRent>
+          }
+          groupBy: {
+            args: Prisma.HouseRentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<HouseRentGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.HouseRentFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.HouseRentAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.HouseRentCountArgs<ExtArgs>
+            result: $Utils.Optional<HouseRentCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1270,13 +1360,14 @@ export namespace Prisma {
     omit?: Prisma.GlobalOmitConfig
   }
   export type GlobalOmitConfig = {
-    household?: HouseholdOmit
+    mess?: MessOmit
     member?: MemberOmit
     mealDay?: MealDayOmit
     mealEntry?: MealEntryOmit
     expense?: ExpenseOmit
     utility?: UtilityOmit
     override?: OverrideOmit
+    houseRent?: HouseRentOmit
   }
 
   /* Types for Logging */
@@ -1353,69 +1444,78 @@ export namespace Prisma {
 
 
   /**
-   * Count Type HouseholdCountOutputType
+   * Count Type MessCountOutputType
    */
 
-  export type HouseholdCountOutputType = {
+  export type MessCountOutputType = {
     members: number
     days: number
     expenses: number
     utilities: number
     overrides: number
+    houseRents: number
   }
 
-  export type HouseholdCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    members?: boolean | HouseholdCountOutputTypeCountMembersArgs
-    days?: boolean | HouseholdCountOutputTypeCountDaysArgs
-    expenses?: boolean | HouseholdCountOutputTypeCountExpensesArgs
-    utilities?: boolean | HouseholdCountOutputTypeCountUtilitiesArgs
-    overrides?: boolean | HouseholdCountOutputTypeCountOverridesArgs
+  export type MessCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    members?: boolean | MessCountOutputTypeCountMembersArgs
+    days?: boolean | MessCountOutputTypeCountDaysArgs
+    expenses?: boolean | MessCountOutputTypeCountExpensesArgs
+    utilities?: boolean | MessCountOutputTypeCountUtilitiesArgs
+    overrides?: boolean | MessCountOutputTypeCountOverridesArgs
+    houseRents?: boolean | MessCountOutputTypeCountHouseRentsArgs
   }
 
   // Custom InputTypes
   /**
-   * HouseholdCountOutputType without action
+   * MessCountOutputType without action
    */
-  export type HouseholdCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the HouseholdCountOutputType
+     * Select specific fields to fetch from the MessCountOutputType
      */
-    select?: HouseholdCountOutputTypeSelect<ExtArgs> | null
+    select?: MessCountOutputTypeSelect<ExtArgs> | null
   }
 
   /**
-   * HouseholdCountOutputType without action
+   * MessCountOutputType without action
    */
-  export type HouseholdCountOutputTypeCountMembersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessCountOutputTypeCountMembersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: MemberWhereInput
   }
 
   /**
-   * HouseholdCountOutputType without action
+   * MessCountOutputType without action
    */
-  export type HouseholdCountOutputTypeCountDaysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessCountOutputTypeCountDaysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: MealDayWhereInput
   }
 
   /**
-   * HouseholdCountOutputType without action
+   * MessCountOutputType without action
    */
-  export type HouseholdCountOutputTypeCountExpensesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessCountOutputTypeCountExpensesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ExpenseWhereInput
   }
 
   /**
-   * HouseholdCountOutputType without action
+   * MessCountOutputType without action
    */
-  export type HouseholdCountOutputTypeCountUtilitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessCountOutputTypeCountUtilitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UtilityWhereInput
   }
 
   /**
-   * HouseholdCountOutputType without action
+   * MessCountOutputType without action
    */
-  export type HouseholdCountOutputTypeCountOverridesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessCountOutputTypeCountOverridesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: OverrideWhereInput
+  }
+
+  /**
+   * MessCountOutputType without action
+   */
+  export type MessCountOutputTypeCountHouseRentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HouseRentWhereInput
   }
 
 
@@ -1426,11 +1526,13 @@ export namespace Prisma {
   export type MemberCountOutputType = {
     meals: number
     expenses: number
+    houseRents: number
   }
 
   export type MemberCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     meals?: boolean | MemberCountOutputTypeCountMealsArgs
     expenses?: boolean | MemberCountOutputTypeCountExpensesArgs
+    houseRents?: boolean | MemberCountOutputTypeCountHouseRentsArgs
   }
 
   // Custom InputTypes
@@ -1456,6 +1558,13 @@ export namespace Prisma {
    */
   export type MemberCountOutputTypeCountExpensesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ExpenseWhereInput
+  }
+
+  /**
+   * MemberCountOutputType without action
+   */
+  export type MemberCountOutputTypeCountHouseRentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HouseRentWhereInput
   }
 
 
@@ -1495,349 +1604,372 @@ export namespace Prisma {
    */
 
   /**
-   * Model Household
+   * Model Mess
    */
 
-  export type AggregateHousehold = {
-    _count: HouseholdCountAggregateOutputType | null
-    _min: HouseholdMinAggregateOutputType | null
-    _max: HouseholdMaxAggregateOutputType | null
+  export type AggregateMess = {
+    _count: MessCountAggregateOutputType | null
+    _min: MessMinAggregateOutputType | null
+    _max: MessMaxAggregateOutputType | null
   }
 
-  export type HouseholdMinAggregateOutputType = {
+  export type MessMinAggregateOutputType = {
     id: string | null
-    name: string | null
-    monthKey: string | null
+    messName: string | null
+    managerName: string | null
+    email: string | null
+    password: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
 
-  export type HouseholdMaxAggregateOutputType = {
+  export type MessMaxAggregateOutputType = {
     id: string | null
-    name: string | null
-    monthKey: string | null
+    messName: string | null
+    managerName: string | null
+    email: string | null
+    password: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
 
-  export type HouseholdCountAggregateOutputType = {
+  export type MessCountAggregateOutputType = {
     id: number
-    name: number
-    monthKey: number
+    messName: number
+    managerName: number
+    email: number
+    password: number
     createdAt: number
     updatedAt: number
     _all: number
   }
 
 
-  export type HouseholdMinAggregateInputType = {
+  export type MessMinAggregateInputType = {
     id?: true
-    name?: true
-    monthKey?: true
+    messName?: true
+    managerName?: true
+    email?: true
+    password?: true
     createdAt?: true
     updatedAt?: true
   }
 
-  export type HouseholdMaxAggregateInputType = {
+  export type MessMaxAggregateInputType = {
     id?: true
-    name?: true
-    monthKey?: true
+    messName?: true
+    managerName?: true
+    email?: true
+    password?: true
     createdAt?: true
     updatedAt?: true
   }
 
-  export type HouseholdCountAggregateInputType = {
+  export type MessCountAggregateInputType = {
     id?: true
-    name?: true
-    monthKey?: true
+    messName?: true
+    managerName?: true
+    email?: true
+    password?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
   }
 
-  export type HouseholdAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which Household to aggregate.
+     * Filter which Mess to aggregate.
      */
-    where?: HouseholdWhereInput
+    where?: MessWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Households to fetch.
+     * Determine the order of Messes to fetch.
      */
-    orderBy?: HouseholdOrderByWithRelationInput | HouseholdOrderByWithRelationInput[]
+    orderBy?: MessOrderByWithRelationInput | MessOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
      */
-    cursor?: HouseholdWhereUniqueInput
+    cursor?: MessWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Households from the position of the cursor.
+     * Take `±n` Messes from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Households.
+     * Skip the first `n` Messes.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Count returned Households
+     * Count returned Messes
     **/
-    _count?: true | HouseholdCountAggregateInputType
+    _count?: true | MessCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the minimum value
     **/
-    _min?: HouseholdMinAggregateInputType
+    _min?: MessMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the maximum value
     **/
-    _max?: HouseholdMaxAggregateInputType
+    _max?: MessMaxAggregateInputType
   }
 
-  export type GetHouseholdAggregateType<T extends HouseholdAggregateArgs> = {
-        [P in keyof T & keyof AggregateHousehold]: P extends '_count' | 'count'
+  export type GetMessAggregateType<T extends MessAggregateArgs> = {
+        [P in keyof T & keyof AggregateMess]: P extends '_count' | 'count'
       ? T[P] extends true
         ? number
-        : GetScalarType<T[P], AggregateHousehold[P]>
-      : GetScalarType<T[P], AggregateHousehold[P]>
+        : GetScalarType<T[P], AggregateMess[P]>
+      : GetScalarType<T[P], AggregateMess[P]>
   }
 
 
 
 
-  export type HouseholdGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: HouseholdWhereInput
-    orderBy?: HouseholdOrderByWithAggregationInput | HouseholdOrderByWithAggregationInput[]
-    by: HouseholdScalarFieldEnum[] | HouseholdScalarFieldEnum
-    having?: HouseholdScalarWhereWithAggregatesInput
+  export type MessGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MessWhereInput
+    orderBy?: MessOrderByWithAggregationInput | MessOrderByWithAggregationInput[]
+    by: MessScalarFieldEnum[] | MessScalarFieldEnum
+    having?: MessScalarWhereWithAggregatesInput
     take?: number
     skip?: number
-    _count?: HouseholdCountAggregateInputType | true
-    _min?: HouseholdMinAggregateInputType
-    _max?: HouseholdMaxAggregateInputType
+    _count?: MessCountAggregateInputType | true
+    _min?: MessMinAggregateInputType
+    _max?: MessMaxAggregateInputType
   }
 
-  export type HouseholdGroupByOutputType = {
+  export type MessGroupByOutputType = {
     id: string
-    name: string
-    monthKey: string
+    messName: string
+    managerName: string
+    email: string
+    password: string
     createdAt: Date
     updatedAt: Date
-    _count: HouseholdCountAggregateOutputType | null
-    _min: HouseholdMinAggregateOutputType | null
-    _max: HouseholdMaxAggregateOutputType | null
+    _count: MessCountAggregateOutputType | null
+    _min: MessMinAggregateOutputType | null
+    _max: MessMaxAggregateOutputType | null
   }
 
-  type GetHouseholdGroupByPayload<T extends HouseholdGroupByArgs> = Prisma.PrismaPromise<
+  type GetMessGroupByPayload<T extends MessGroupByArgs> = Prisma.PrismaPromise<
     Array<
-      PickEnumerable<HouseholdGroupByOutputType, T['by']> &
+      PickEnumerable<MessGroupByOutputType, T['by']> &
         {
-          [P in ((keyof T) & (keyof HouseholdGroupByOutputType))]: P extends '_count'
+          [P in ((keyof T) & (keyof MessGroupByOutputType))]: P extends '_count'
             ? T[P] extends boolean
               ? number
-              : GetScalarType<T[P], HouseholdGroupByOutputType[P]>
-            : GetScalarType<T[P], HouseholdGroupByOutputType[P]>
+              : GetScalarType<T[P], MessGroupByOutputType[P]>
+            : GetScalarType<T[P], MessGroupByOutputType[P]>
         }
       >
     >
 
 
-  export type HouseholdSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type MessSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    name?: boolean
-    monthKey?: boolean
+    messName?: boolean
+    managerName?: boolean
+    email?: boolean
+    password?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    members?: boolean | Household$membersArgs<ExtArgs>
-    days?: boolean | Household$daysArgs<ExtArgs>
-    expenses?: boolean | Household$expensesArgs<ExtArgs>
-    utilities?: boolean | Household$utilitiesArgs<ExtArgs>
-    overrides?: boolean | Household$overridesArgs<ExtArgs>
-    _count?: boolean | HouseholdCountOutputTypeDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["household"]>
+    members?: boolean | Mess$membersArgs<ExtArgs>
+    days?: boolean | Mess$daysArgs<ExtArgs>
+    expenses?: boolean | Mess$expensesArgs<ExtArgs>
+    utilities?: boolean | Mess$utilitiesArgs<ExtArgs>
+    overrides?: boolean | Mess$overridesArgs<ExtArgs>
+    houseRents?: boolean | Mess$houseRentsArgs<ExtArgs>
+    _count?: boolean | MessCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["mess"]>
 
 
 
-  export type HouseholdSelectScalar = {
+  export type MessSelectScalar = {
     id?: boolean
-    name?: boolean
-    monthKey?: boolean
+    messName?: boolean
+    managerName?: boolean
+    email?: boolean
+    password?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type HouseholdOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "monthKey" | "createdAt" | "updatedAt", ExtArgs["result"]["household"]>
-  export type HouseholdInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    members?: boolean | Household$membersArgs<ExtArgs>
-    days?: boolean | Household$daysArgs<ExtArgs>
-    expenses?: boolean | Household$expensesArgs<ExtArgs>
-    utilities?: boolean | Household$utilitiesArgs<ExtArgs>
-    overrides?: boolean | Household$overridesArgs<ExtArgs>
-    _count?: boolean | HouseholdCountOutputTypeDefaultArgs<ExtArgs>
+  export type MessOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "messName" | "managerName" | "email" | "password" | "createdAt" | "updatedAt", ExtArgs["result"]["mess"]>
+  export type MessInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    members?: boolean | Mess$membersArgs<ExtArgs>
+    days?: boolean | Mess$daysArgs<ExtArgs>
+    expenses?: boolean | Mess$expensesArgs<ExtArgs>
+    utilities?: boolean | Mess$utilitiesArgs<ExtArgs>
+    overrides?: boolean | Mess$overridesArgs<ExtArgs>
+    houseRents?: boolean | Mess$houseRentsArgs<ExtArgs>
+    _count?: boolean | MessCountOutputTypeDefaultArgs<ExtArgs>
   }
 
-  export type $HouseholdPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Household"
+  export type $MessPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Mess"
     objects: {
       members: Prisma.$MemberPayload<ExtArgs>[]
       days: Prisma.$MealDayPayload<ExtArgs>[]
       expenses: Prisma.$ExpensePayload<ExtArgs>[]
       utilities: Prisma.$UtilityPayload<ExtArgs>[]
       overrides: Prisma.$OverridePayload<ExtArgs>[]
+      houseRents: Prisma.$HouseRentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      name: string
-      monthKey: string
+      messName: string
+      managerName: string
+      email: string
+      password: string
       createdAt: Date
       updatedAt: Date
-    }, ExtArgs["result"]["household"]>
+    }, ExtArgs["result"]["mess"]>
     composites: {}
   }
 
-  type HouseholdGetPayload<S extends boolean | null | undefined | HouseholdDefaultArgs> = $Result.GetResult<Prisma.$HouseholdPayload, S>
+  type MessGetPayload<S extends boolean | null | undefined | MessDefaultArgs> = $Result.GetResult<Prisma.$MessPayload, S>
 
-  type HouseholdCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<HouseholdFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: HouseholdCountAggregateInputType | true
+  type MessCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MessFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MessCountAggregateInputType | true
     }
 
-  export interface HouseholdDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Household'], meta: { name: 'Household' } }
+  export interface MessDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Mess'], meta: { name: 'Mess' } }
     /**
-     * Find zero or one Household that matches the filter.
-     * @param {HouseholdFindUniqueArgs} args - Arguments to find a Household
+     * Find zero or one Mess that matches the filter.
+     * @param {MessFindUniqueArgs} args - Arguments to find a Mess
      * @example
-     * // Get one Household
-     * const household = await prisma.household.findUnique({
+     * // Get one Mess
+     * const mess = await prisma.mess.findUnique({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUnique<T extends HouseholdFindUniqueArgs>(args: SelectSubset<T, HouseholdFindUniqueArgs<ExtArgs>>): Prisma__HouseholdClient<$Result.GetResult<Prisma.$HouseholdPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    findUnique<T extends MessFindUniqueArgs>(args: SelectSubset<T, MessFindUniqueArgs<ExtArgs>>): Prisma__MessClient<$Result.GetResult<Prisma.$MessPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one Household that matches the filter or throw an error with `error.code='P2025'`
+     * Find one Mess that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
-     * @param {HouseholdFindUniqueOrThrowArgs} args - Arguments to find a Household
+     * @param {MessFindUniqueOrThrowArgs} args - Arguments to find a Mess
      * @example
-     * // Get one Household
-     * const household = await prisma.household.findUniqueOrThrow({
+     * // Get one Mess
+     * const mess = await prisma.mess.findUniqueOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUniqueOrThrow<T extends HouseholdFindUniqueOrThrowArgs>(args: SelectSubset<T, HouseholdFindUniqueOrThrowArgs<ExtArgs>>): Prisma__HouseholdClient<$Result.GetResult<Prisma.$HouseholdPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    findUniqueOrThrow<T extends MessFindUniqueOrThrowArgs>(args: SelectSubset<T, MessFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MessClient<$Result.GetResult<Prisma.$MessPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find the first Household that matches the filter.
+     * Find the first Mess that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {HouseholdFindFirstArgs} args - Arguments to find a Household
+     * @param {MessFindFirstArgs} args - Arguments to find a Mess
      * @example
-     * // Get one Household
-     * const household = await prisma.household.findFirst({
+     * // Get one Mess
+     * const mess = await prisma.mess.findFirst({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirst<T extends HouseholdFindFirstArgs>(args?: SelectSubset<T, HouseholdFindFirstArgs<ExtArgs>>): Prisma__HouseholdClient<$Result.GetResult<Prisma.$HouseholdPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    findFirst<T extends MessFindFirstArgs>(args?: SelectSubset<T, MessFindFirstArgs<ExtArgs>>): Prisma__MessClient<$Result.GetResult<Prisma.$MessPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find the first Household that matches the filter or
+     * Find the first Mess that matches the filter or
      * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {HouseholdFindFirstOrThrowArgs} args - Arguments to find a Household
+     * @param {MessFindFirstOrThrowArgs} args - Arguments to find a Mess
      * @example
-     * // Get one Household
-     * const household = await prisma.household.findFirstOrThrow({
+     * // Get one Mess
+     * const mess = await prisma.mess.findFirstOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirstOrThrow<T extends HouseholdFindFirstOrThrowArgs>(args?: SelectSubset<T, HouseholdFindFirstOrThrowArgs<ExtArgs>>): Prisma__HouseholdClient<$Result.GetResult<Prisma.$HouseholdPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    findFirstOrThrow<T extends MessFindFirstOrThrowArgs>(args?: SelectSubset<T, MessFindFirstOrThrowArgs<ExtArgs>>): Prisma__MessClient<$Result.GetResult<Prisma.$MessPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find zero or more Households that matches the filter.
+     * Find zero or more Messes that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {HouseholdFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @param {MessFindManyArgs} args - Arguments to filter and select certain fields only.
      * @example
-     * // Get all Households
-     * const households = await prisma.household.findMany()
+     * // Get all Messes
+     * const messes = await prisma.mess.findMany()
      * 
-     * // Get first 10 Households
-     * const households = await prisma.household.findMany({ take: 10 })
+     * // Get first 10 Messes
+     * const messes = await prisma.mess.findMany({ take: 10 })
      * 
      * // Only select the `id`
-     * const householdWithIdOnly = await prisma.household.findMany({ select: { id: true } })
+     * const messWithIdOnly = await prisma.mess.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends HouseholdFindManyArgs>(args?: SelectSubset<T, HouseholdFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HouseholdPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+    findMany<T extends MessFindManyArgs>(args?: SelectSubset<T, MessFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
-     * Create a Household.
-     * @param {HouseholdCreateArgs} args - Arguments to create a Household.
+     * Create a Mess.
+     * @param {MessCreateArgs} args - Arguments to create a Mess.
      * @example
-     * // Create one Household
-     * const Household = await prisma.household.create({
+     * // Create one Mess
+     * const Mess = await prisma.mess.create({
      *   data: {
-     *     // ... data to create a Household
+     *     // ... data to create a Mess
      *   }
      * })
      * 
      */
-    create<T extends HouseholdCreateArgs>(args: SelectSubset<T, HouseholdCreateArgs<ExtArgs>>): Prisma__HouseholdClient<$Result.GetResult<Prisma.$HouseholdPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    create<T extends MessCreateArgs>(args: SelectSubset<T, MessCreateArgs<ExtArgs>>): Prisma__MessClient<$Result.GetResult<Prisma.$MessPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Create many Households.
-     * @param {HouseholdCreateManyArgs} args - Arguments to create many Households.
+     * Create many Messes.
+     * @param {MessCreateManyArgs} args - Arguments to create many Messes.
      * @example
-     * // Create many Households
-     * const household = await prisma.household.createMany({
+     * // Create many Messes
+     * const mess = await prisma.mess.createMany({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      *     
      */
-    createMany<T extends HouseholdCreateManyArgs>(args?: SelectSubset<T, HouseholdCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    createMany<T extends MessCreateManyArgs>(args?: SelectSubset<T, MessCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Delete a Household.
-     * @param {HouseholdDeleteArgs} args - Arguments to delete one Household.
+     * Delete a Mess.
+     * @param {MessDeleteArgs} args - Arguments to delete one Mess.
      * @example
-     * // Delete one Household
-     * const Household = await prisma.household.delete({
+     * // Delete one Mess
+     * const Mess = await prisma.mess.delete({
      *   where: {
-     *     // ... filter to delete one Household
+     *     // ... filter to delete one Mess
      *   }
      * })
      * 
      */
-    delete<T extends HouseholdDeleteArgs>(args: SelectSubset<T, HouseholdDeleteArgs<ExtArgs>>): Prisma__HouseholdClient<$Result.GetResult<Prisma.$HouseholdPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    delete<T extends MessDeleteArgs>(args: SelectSubset<T, MessDeleteArgs<ExtArgs>>): Prisma__MessClient<$Result.GetResult<Prisma.$MessPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Update one Household.
-     * @param {HouseholdUpdateArgs} args - Arguments to update one Household.
+     * Update one Mess.
+     * @param {MessUpdateArgs} args - Arguments to update one Mess.
      * @example
-     * // Update one Household
-     * const household = await prisma.household.update({
+     * // Update one Mess
+     * const mess = await prisma.mess.update({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -1847,30 +1979,30 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends HouseholdUpdateArgs>(args: SelectSubset<T, HouseholdUpdateArgs<ExtArgs>>): Prisma__HouseholdClient<$Result.GetResult<Prisma.$HouseholdPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    update<T extends MessUpdateArgs>(args: SelectSubset<T, MessUpdateArgs<ExtArgs>>): Prisma__MessClient<$Result.GetResult<Prisma.$MessPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Delete zero or more Households.
-     * @param {HouseholdDeleteManyArgs} args - Arguments to filter Households to delete.
+     * Delete zero or more Messes.
+     * @param {MessDeleteManyArgs} args - Arguments to filter Messes to delete.
      * @example
-     * // Delete a few Households
-     * const { count } = await prisma.household.deleteMany({
+     * // Delete a few Messes
+     * const { count } = await prisma.mess.deleteMany({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      * 
      */
-    deleteMany<T extends HouseholdDeleteManyArgs>(args?: SelectSubset<T, HouseholdDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    deleteMany<T extends MessDeleteManyArgs>(args?: SelectSubset<T, MessDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more Households.
+     * Update zero or more Messes.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {HouseholdUpdateManyArgs} args - Arguments to update one or more rows.
+     * @param {MessUpdateManyArgs} args - Arguments to update one or more rows.
      * @example
-     * // Update many Households
-     * const household = await prisma.household.updateMany({
+     * // Update many Messes
+     * const mess = await prisma.mess.updateMany({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -1880,79 +2012,79 @@ export namespace Prisma {
      * })
      * 
      */
-    updateMany<T extends HouseholdUpdateManyArgs>(args: SelectSubset<T, HouseholdUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    updateMany<T extends MessUpdateManyArgs>(args: SelectSubset<T, MessUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Create or update one Household.
-     * @param {HouseholdUpsertArgs} args - Arguments to update or create a Household.
+     * Create or update one Mess.
+     * @param {MessUpsertArgs} args - Arguments to update or create a Mess.
      * @example
-     * // Update or create a Household
-     * const household = await prisma.household.upsert({
+     * // Update or create a Mess
+     * const mess = await prisma.mess.upsert({
      *   create: {
-     *     // ... data to create a Household
+     *     // ... data to create a Mess
      *   },
      *   update: {
      *     // ... in case it already exists, update
      *   },
      *   where: {
-     *     // ... the filter for the Household we want to update
+     *     // ... the filter for the Mess we want to update
      *   }
      * })
      */
-    upsert<T extends HouseholdUpsertArgs>(args: SelectSubset<T, HouseholdUpsertArgs<ExtArgs>>): Prisma__HouseholdClient<$Result.GetResult<Prisma.$HouseholdPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    upsert<T extends MessUpsertArgs>(args: SelectSubset<T, MessUpsertArgs<ExtArgs>>): Prisma__MessClient<$Result.GetResult<Prisma.$MessPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find zero or more Households that matches the filter.
-     * @param {HouseholdFindRawArgs} args - Select which filters you would like to apply.
+     * Find zero or more Messes that matches the filter.
+     * @param {MessFindRawArgs} args - Select which filters you would like to apply.
      * @example
-     * const household = await prisma.household.findRaw({
+     * const mess = await prisma.mess.findRaw({
      *   filter: { age: { $gt: 25 } }
      * })
      */
-    findRaw(args?: HouseholdFindRawArgs): Prisma.PrismaPromise<JsonObject>
+    findRaw(args?: MessFindRawArgs): Prisma.PrismaPromise<JsonObject>
 
     /**
-     * Perform aggregation operations on a Household.
-     * @param {HouseholdAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * Perform aggregation operations on a Mess.
+     * @param {MessAggregateRawArgs} args - Select which aggregations you would like to apply.
      * @example
-     * const household = await prisma.household.aggregateRaw({
+     * const mess = await prisma.mess.aggregateRaw({
      *   pipeline: [
      *     { $match: { status: "registered" } },
      *     { $group: { _id: "$country", total: { $sum: 1 } } }
      *   ]
      * })
      */
-    aggregateRaw(args?: HouseholdAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+    aggregateRaw(args?: MessAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
 
 
     /**
-     * Count the number of Households.
+     * Count the number of Messes.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {HouseholdCountArgs} args - Arguments to filter Households to count.
+     * @param {MessCountArgs} args - Arguments to filter Messes to count.
      * @example
-     * // Count the number of Households
-     * const count = await prisma.household.count({
+     * // Count the number of Messes
+     * const count = await prisma.mess.count({
      *   where: {
-     *     // ... the filter for the Households we want to count
+     *     // ... the filter for the Messes we want to count
      *   }
      * })
     **/
-    count<T extends HouseholdCountArgs>(
-      args?: Subset<T, HouseholdCountArgs>,
+    count<T extends MessCountArgs>(
+      args?: Subset<T, MessCountArgs>,
     ): Prisma.PrismaPromise<
       T extends $Utils.Record<'select', any>
         ? T['select'] extends true
           ? number
-          : GetScalarType<T['select'], HouseholdCountAggregateOutputType>
+          : GetScalarType<T['select'], MessCountAggregateOutputType>
         : number
     >
 
     /**
-     * Allows you to perform aggregations operations on a Household.
+     * Allows you to perform aggregations operations on a Mess.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {HouseholdAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @param {MessAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
      * @example
      * // Ordered by age ascending
      * // Where email contains prisma.io
@@ -1972,13 +2104,13 @@ export namespace Prisma {
      *   take: 10,
      * })
     **/
-    aggregate<T extends HouseholdAggregateArgs>(args: Subset<T, HouseholdAggregateArgs>): Prisma.PrismaPromise<GetHouseholdAggregateType<T>>
+    aggregate<T extends MessAggregateArgs>(args: Subset<T, MessAggregateArgs>): Prisma.PrismaPromise<GetMessAggregateType<T>>
 
     /**
-     * Group by Household.
+     * Group by Mess.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {HouseholdGroupByArgs} args - Group by arguments.
+     * @param {MessGroupByArgs} args - Group by arguments.
      * @example
      * // Group by city, order by createdAt, get count
      * const result = await prisma.user.groupBy({
@@ -1993,14 +2125,14 @@ export namespace Prisma {
      * 
     **/
     groupBy<
-      T extends HouseholdGroupByArgs,
+      T extends MessGroupByArgs,
       HasSelectOrTake extends Or<
         Extends<'skip', Keys<T>>,
         Extends<'take', Keys<T>>
       >,
       OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: HouseholdGroupByArgs['orderBy'] }
-        : { orderBy?: HouseholdGroupByArgs['orderBy'] },
+        ? { orderBy: MessGroupByArgs['orderBy'] }
+        : { orderBy?: MessGroupByArgs['orderBy'] },
       OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
       ByFields extends MaybeTupleToUnion<T['by']>,
       ByValid extends Has<ByFields, OrderFields>,
@@ -2049,26 +2181,27 @@ export namespace Prisma {
             ? never
             : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
         }[OrderFields]
-    >(args: SubsetIntersection<T, HouseholdGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetHouseholdGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+    >(args: SubsetIntersection<T, MessGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMessGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
   /**
-   * Fields of the Household model
+   * Fields of the Mess model
    */
-  readonly fields: HouseholdFieldRefs;
+  readonly fields: MessFieldRefs;
   }
 
   /**
-   * The delegate class that acts as a "Promise-like" for Household.
+   * The delegate class that acts as a "Promise-like" for Mess.
    * Why is this prefixed with `Prisma__`?
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__HouseholdClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__MessClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    members<T extends Household$membersArgs<ExtArgs> = {}>(args?: Subset<T, Household$membersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    days<T extends Household$daysArgs<ExtArgs> = {}>(args?: Subset<T, Household$daysArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MealDayPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    expenses<T extends Household$expensesArgs<ExtArgs> = {}>(args?: Subset<T, Household$expensesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    utilities<T extends Household$utilitiesArgs<ExtArgs> = {}>(args?: Subset<T, Household$utilitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UtilityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    overrides<T extends Household$overridesArgs<ExtArgs> = {}>(args?: Subset<T, Household$overridesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OverridePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    members<T extends Mess$membersArgs<ExtArgs> = {}>(args?: Subset<T, Mess$membersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    days<T extends Mess$daysArgs<ExtArgs> = {}>(args?: Subset<T, Mess$daysArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MealDayPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    expenses<T extends Mess$expensesArgs<ExtArgs> = {}>(args?: Subset<T, Mess$expensesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    utilities<T extends Mess$utilitiesArgs<ExtArgs> = {}>(args?: Subset<T, Mess$utilitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UtilityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    overrides<T extends Mess$overridesArgs<ExtArgs> = {}>(args?: Subset<T, Mess$overridesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OverridePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    houseRents<T extends Mess$houseRentsArgs<ExtArgs> = {}>(args?: Subset<T, Mess$houseRentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HouseRentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2095,359 +2228,361 @@ export namespace Prisma {
 
 
   /**
-   * Fields of the Household model
+   * Fields of the Mess model
    */
-  interface HouseholdFieldRefs {
-    readonly id: FieldRef<"Household", 'String'>
-    readonly name: FieldRef<"Household", 'String'>
-    readonly monthKey: FieldRef<"Household", 'String'>
-    readonly createdAt: FieldRef<"Household", 'DateTime'>
-    readonly updatedAt: FieldRef<"Household", 'DateTime'>
+  interface MessFieldRefs {
+    readonly id: FieldRef<"Mess", 'String'>
+    readonly messName: FieldRef<"Mess", 'String'>
+    readonly managerName: FieldRef<"Mess", 'String'>
+    readonly email: FieldRef<"Mess", 'String'>
+    readonly password: FieldRef<"Mess", 'String'>
+    readonly createdAt: FieldRef<"Mess", 'DateTime'>
+    readonly updatedAt: FieldRef<"Mess", 'DateTime'>
   }
     
 
   // Custom InputTypes
   /**
-   * Household findUnique
+   * Mess findUnique
    */
-  export type HouseholdFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Household
+     * Select specific fields to fetch from the Mess
      */
-    select?: HouseholdSelect<ExtArgs> | null
+    select?: MessSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Household
+     * Omit specific fields from the Mess
      */
-    omit?: HouseholdOmit<ExtArgs> | null
+    omit?: MessOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: HouseholdInclude<ExtArgs> | null
+    include?: MessInclude<ExtArgs> | null
     /**
-     * Filter, which Household to fetch.
+     * Filter, which Mess to fetch.
      */
-    where: HouseholdWhereUniqueInput
+    where: MessWhereUniqueInput
   }
 
   /**
-   * Household findUniqueOrThrow
+   * Mess findUniqueOrThrow
    */
-  export type HouseholdFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Household
+     * Select specific fields to fetch from the Mess
      */
-    select?: HouseholdSelect<ExtArgs> | null
+    select?: MessSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Household
+     * Omit specific fields from the Mess
      */
-    omit?: HouseholdOmit<ExtArgs> | null
+    omit?: MessOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: HouseholdInclude<ExtArgs> | null
+    include?: MessInclude<ExtArgs> | null
     /**
-     * Filter, which Household to fetch.
+     * Filter, which Mess to fetch.
      */
-    where: HouseholdWhereUniqueInput
+    where: MessWhereUniqueInput
   }
 
   /**
-   * Household findFirst
+   * Mess findFirst
    */
-  export type HouseholdFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Household
+     * Select specific fields to fetch from the Mess
      */
-    select?: HouseholdSelect<ExtArgs> | null
+    select?: MessSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Household
+     * Omit specific fields from the Mess
      */
-    omit?: HouseholdOmit<ExtArgs> | null
+    omit?: MessOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: HouseholdInclude<ExtArgs> | null
+    include?: MessInclude<ExtArgs> | null
     /**
-     * Filter, which Household to fetch.
+     * Filter, which Mess to fetch.
      */
-    where?: HouseholdWhereInput
+    where?: MessWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Households to fetch.
+     * Determine the order of Messes to fetch.
      */
-    orderBy?: HouseholdOrderByWithRelationInput | HouseholdOrderByWithRelationInput[]
+    orderBy?: MessOrderByWithRelationInput | MessOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for Households.
+     * Sets the position for searching for Messes.
      */
-    cursor?: HouseholdWhereUniqueInput
+    cursor?: MessWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Households from the position of the cursor.
+     * Take `±n` Messes from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Households.
+     * Skip the first `n` Messes.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of Households.
+     * Filter by unique combinations of Messes.
      */
-    distinct?: HouseholdScalarFieldEnum | HouseholdScalarFieldEnum[]
+    distinct?: MessScalarFieldEnum | MessScalarFieldEnum[]
   }
 
   /**
-   * Household findFirstOrThrow
+   * Mess findFirstOrThrow
    */
-  export type HouseholdFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Household
+     * Select specific fields to fetch from the Mess
      */
-    select?: HouseholdSelect<ExtArgs> | null
+    select?: MessSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Household
+     * Omit specific fields from the Mess
      */
-    omit?: HouseholdOmit<ExtArgs> | null
+    omit?: MessOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: HouseholdInclude<ExtArgs> | null
+    include?: MessInclude<ExtArgs> | null
     /**
-     * Filter, which Household to fetch.
+     * Filter, which Mess to fetch.
      */
-    where?: HouseholdWhereInput
+    where?: MessWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Households to fetch.
+     * Determine the order of Messes to fetch.
      */
-    orderBy?: HouseholdOrderByWithRelationInput | HouseholdOrderByWithRelationInput[]
+    orderBy?: MessOrderByWithRelationInput | MessOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for Households.
+     * Sets the position for searching for Messes.
      */
-    cursor?: HouseholdWhereUniqueInput
+    cursor?: MessWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Households from the position of the cursor.
+     * Take `±n` Messes from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Households.
+     * Skip the first `n` Messes.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of Households.
+     * Filter by unique combinations of Messes.
      */
-    distinct?: HouseholdScalarFieldEnum | HouseholdScalarFieldEnum[]
+    distinct?: MessScalarFieldEnum | MessScalarFieldEnum[]
   }
 
   /**
-   * Household findMany
+   * Mess findMany
    */
-  export type HouseholdFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Household
+     * Select specific fields to fetch from the Mess
      */
-    select?: HouseholdSelect<ExtArgs> | null
+    select?: MessSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Household
+     * Omit specific fields from the Mess
      */
-    omit?: HouseholdOmit<ExtArgs> | null
+    omit?: MessOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: HouseholdInclude<ExtArgs> | null
+    include?: MessInclude<ExtArgs> | null
     /**
-     * Filter, which Households to fetch.
+     * Filter, which Messes to fetch.
      */
-    where?: HouseholdWhereInput
+    where?: MessWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Households to fetch.
+     * Determine the order of Messes to fetch.
      */
-    orderBy?: HouseholdOrderByWithRelationInput | HouseholdOrderByWithRelationInput[]
+    orderBy?: MessOrderByWithRelationInput | MessOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing Households.
+     * Sets the position for listing Messes.
      */
-    cursor?: HouseholdWhereUniqueInput
+    cursor?: MessWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Households from the position of the cursor.
+     * Take `±n` Messes from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Households.
+     * Skip the first `n` Messes.
      */
     skip?: number
-    distinct?: HouseholdScalarFieldEnum | HouseholdScalarFieldEnum[]
+    distinct?: MessScalarFieldEnum | MessScalarFieldEnum[]
   }
 
   /**
-   * Household create
+   * Mess create
    */
-  export type HouseholdCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Household
+     * Select specific fields to fetch from the Mess
      */
-    select?: HouseholdSelect<ExtArgs> | null
+    select?: MessSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Household
+     * Omit specific fields from the Mess
      */
-    omit?: HouseholdOmit<ExtArgs> | null
+    omit?: MessOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: HouseholdInclude<ExtArgs> | null
+    include?: MessInclude<ExtArgs> | null
     /**
-     * The data needed to create a Household.
+     * The data needed to create a Mess.
      */
-    data: XOR<HouseholdCreateInput, HouseholdUncheckedCreateInput>
+    data: XOR<MessCreateInput, MessUncheckedCreateInput>
   }
 
   /**
-   * Household createMany
+   * Mess createMany
    */
-  export type HouseholdCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to create many Households.
+     * The data used to create many Messes.
      */
-    data: HouseholdCreateManyInput | HouseholdCreateManyInput[]
+    data: MessCreateManyInput | MessCreateManyInput[]
   }
 
   /**
-   * Household update
+   * Mess update
    */
-  export type HouseholdUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Household
+     * Select specific fields to fetch from the Mess
      */
-    select?: HouseholdSelect<ExtArgs> | null
+    select?: MessSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Household
+     * Omit specific fields from the Mess
      */
-    omit?: HouseholdOmit<ExtArgs> | null
+    omit?: MessOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: HouseholdInclude<ExtArgs> | null
+    include?: MessInclude<ExtArgs> | null
     /**
-     * The data needed to update a Household.
+     * The data needed to update a Mess.
      */
-    data: XOR<HouseholdUpdateInput, HouseholdUncheckedUpdateInput>
+    data: XOR<MessUpdateInput, MessUncheckedUpdateInput>
     /**
-     * Choose, which Household to update.
+     * Choose, which Mess to update.
      */
-    where: HouseholdWhereUniqueInput
+    where: MessWhereUniqueInput
   }
 
   /**
-   * Household updateMany
+   * Mess updateMany
    */
-  export type HouseholdUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to update Households.
+     * The data used to update Messes.
      */
-    data: XOR<HouseholdUpdateManyMutationInput, HouseholdUncheckedUpdateManyInput>
+    data: XOR<MessUpdateManyMutationInput, MessUncheckedUpdateManyInput>
     /**
-     * Filter which Households to update
+     * Filter which Messes to update
      */
-    where?: HouseholdWhereInput
+    where?: MessWhereInput
     /**
-     * Limit how many Households to update.
+     * Limit how many Messes to update.
      */
     limit?: number
   }
 
   /**
-   * Household upsert
+   * Mess upsert
    */
-  export type HouseholdUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Household
+     * Select specific fields to fetch from the Mess
      */
-    select?: HouseholdSelect<ExtArgs> | null
+    select?: MessSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Household
+     * Omit specific fields from the Mess
      */
-    omit?: HouseholdOmit<ExtArgs> | null
+    omit?: MessOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: HouseholdInclude<ExtArgs> | null
+    include?: MessInclude<ExtArgs> | null
     /**
-     * The filter to search for the Household to update in case it exists.
+     * The filter to search for the Mess to update in case it exists.
      */
-    where: HouseholdWhereUniqueInput
+    where: MessWhereUniqueInput
     /**
-     * In case the Household found by the `where` argument doesn't exist, create a new Household with this data.
+     * In case the Mess found by the `where` argument doesn't exist, create a new Mess with this data.
      */
-    create: XOR<HouseholdCreateInput, HouseholdUncheckedCreateInput>
+    create: XOR<MessCreateInput, MessUncheckedCreateInput>
     /**
-     * In case the Household was found with the provided `where` argument, update it with this data.
+     * In case the Mess was found with the provided `where` argument, update it with this data.
      */
-    update: XOR<HouseholdUpdateInput, HouseholdUncheckedUpdateInput>
+    update: XOR<MessUpdateInput, MessUncheckedUpdateInput>
   }
 
   /**
-   * Household delete
+   * Mess delete
    */
-  export type HouseholdDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Household
+     * Select specific fields to fetch from the Mess
      */
-    select?: HouseholdSelect<ExtArgs> | null
+    select?: MessSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Household
+     * Omit specific fields from the Mess
      */
-    omit?: HouseholdOmit<ExtArgs> | null
+    omit?: MessOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: HouseholdInclude<ExtArgs> | null
+    include?: MessInclude<ExtArgs> | null
     /**
-     * Filter which Household to delete.
+     * Filter which Mess to delete.
      */
-    where: HouseholdWhereUniqueInput
+    where: MessWhereUniqueInput
   }
 
   /**
-   * Household deleteMany
+   * Mess deleteMany
    */
-  export type HouseholdDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which Households to delete
+     * Filter which Messes to delete
      */
-    where?: HouseholdWhereInput
+    where?: MessWhereInput
     /**
-     * Limit how many Households to delete.
+     * Limit how many Messes to delete.
      */
     limit?: number
   }
 
   /**
-   * Household findRaw
+   * Mess findRaw
    */
-  export type HouseholdFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
      */
@@ -2459,9 +2594,9 @@ export namespace Prisma {
   }
 
   /**
-   * Household aggregateRaw
+   * Mess aggregateRaw
    */
-  export type HouseholdAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type MessAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
      */
@@ -2473,9 +2608,9 @@ export namespace Prisma {
   }
 
   /**
-   * Household.members
+   * Mess.members
    */
-  export type Household$membersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Mess$membersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Member
      */
@@ -2497,9 +2632,9 @@ export namespace Prisma {
   }
 
   /**
-   * Household.days
+   * Mess.days
    */
-  export type Household$daysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Mess$daysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the MealDay
      */
@@ -2521,9 +2656,9 @@ export namespace Prisma {
   }
 
   /**
-   * Household.expenses
+   * Mess.expenses
    */
-  export type Household$expensesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Mess$expensesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Expense
      */
@@ -2545,9 +2680,9 @@ export namespace Prisma {
   }
 
   /**
-   * Household.utilities
+   * Mess.utilities
    */
-  export type Household$utilitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Mess$utilitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Utility
      */
@@ -2569,9 +2704,9 @@ export namespace Prisma {
   }
 
   /**
-   * Household.overrides
+   * Mess.overrides
    */
-  export type Household$overridesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Mess$overridesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Override
      */
@@ -2593,21 +2728,45 @@ export namespace Prisma {
   }
 
   /**
-   * Household without action
+   * Mess.houseRents
    */
-  export type HouseholdDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Mess$houseRentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Household
+     * Select specific fields to fetch from the HouseRent
      */
-    select?: HouseholdSelect<ExtArgs> | null
+    select?: HouseRentSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Household
+     * Omit specific fields from the HouseRent
      */
-    omit?: HouseholdOmit<ExtArgs> | null
+    omit?: HouseRentOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: HouseholdInclude<ExtArgs> | null
+    include?: HouseRentInclude<ExtArgs> | null
+    where?: HouseRentWhereInput
+    orderBy?: HouseRentOrderByWithRelationInput | HouseRentOrderByWithRelationInput[]
+    cursor?: HouseRentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: HouseRentScalarFieldEnum | HouseRentScalarFieldEnum[]
+  }
+
+  /**
+   * Mess without action
+   */
+  export type MessDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Mess
+     */
+    select?: MessSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Mess
+     */
+    omit?: MessOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessInclude<ExtArgs> | null
   }
 
 
@@ -2633,7 +2792,7 @@ export namespace Prisma {
 
   export type MemberMinAggregateOutputType = {
     id: string | null
-    householdId: string | null
+    messId: string | null
     externalId: string | null
     name: string | null
     initials: string | null
@@ -2643,7 +2802,7 @@ export namespace Prisma {
 
   export type MemberMaxAggregateOutputType = {
     id: string | null
-    householdId: string | null
+    messId: string | null
     externalId: string | null
     name: string | null
     initials: string | null
@@ -2653,7 +2812,7 @@ export namespace Prisma {
 
   export type MemberCountAggregateOutputType = {
     id: number
-    householdId: number
+    messId: number
     externalId: number
     name: number
     initials: number
@@ -2673,7 +2832,7 @@ export namespace Prisma {
 
   export type MemberMinAggregateInputType = {
     id?: true
-    householdId?: true
+    messId?: true
     externalId?: true
     name?: true
     initials?: true
@@ -2683,7 +2842,7 @@ export namespace Prisma {
 
   export type MemberMaxAggregateInputType = {
     id?: true
-    householdId?: true
+    messId?: true
     externalId?: true
     name?: true
     initials?: true
@@ -2693,7 +2852,7 @@ export namespace Prisma {
 
   export type MemberCountAggregateInputType = {
     id?: true
-    householdId?: true
+    messId?: true
     externalId?: true
     name?: true
     initials?: true
@@ -2790,7 +2949,7 @@ export namespace Prisma {
 
   export type MemberGroupByOutputType = {
     id: string
-    householdId: string
+    messId: string
     externalId: string
     name: string
     initials: string
@@ -2819,16 +2978,17 @@ export namespace Prisma {
 
   export type MemberSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    householdId?: boolean
+    messId?: boolean
     externalId?: boolean
     name?: boolean
     initials?: boolean
     color?: boolean
     houseRent?: boolean
-    household?: boolean | HouseholdDefaultArgs<ExtArgs>
+    mess?: boolean | MessDefaultArgs<ExtArgs>
     meals?: boolean | Member$mealsArgs<ExtArgs>
     expenses?: boolean | Member$expensesArgs<ExtArgs>
-    override?: boolean | Member$overrideArgs<ExtArgs>
+    overrides?: boolean | Member$overridesArgs<ExtArgs>
+    houseRents?: boolean | Member$houseRentsArgs<ExtArgs>
     _count?: boolean | MemberCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["member"]>
 
@@ -2836,7 +2996,7 @@ export namespace Prisma {
 
   export type MemberSelectScalar = {
     id?: boolean
-    householdId?: boolean
+    messId?: boolean
     externalId?: boolean
     name?: boolean
     initials?: boolean
@@ -2844,26 +3004,28 @@ export namespace Prisma {
     houseRent?: boolean
   }
 
-  export type MemberOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "householdId" | "externalId" | "name" | "initials" | "color" | "houseRent", ExtArgs["result"]["member"]>
+  export type MemberOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "messId" | "externalId" | "name" | "initials" | "color" | "houseRent", ExtArgs["result"]["member"]>
   export type MemberInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    household?: boolean | HouseholdDefaultArgs<ExtArgs>
+    mess?: boolean | MessDefaultArgs<ExtArgs>
     meals?: boolean | Member$mealsArgs<ExtArgs>
     expenses?: boolean | Member$expensesArgs<ExtArgs>
-    override?: boolean | Member$overrideArgs<ExtArgs>
+    overrides?: boolean | Member$overridesArgs<ExtArgs>
+    houseRents?: boolean | Member$houseRentsArgs<ExtArgs>
     _count?: boolean | MemberCountOutputTypeDefaultArgs<ExtArgs>
   }
 
   export type $MemberPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Member"
     objects: {
-      household: Prisma.$HouseholdPayload<ExtArgs>
+      mess: Prisma.$MessPayload<ExtArgs>
       meals: Prisma.$MealEntryPayload<ExtArgs>[]
       expenses: Prisma.$ExpensePayload<ExtArgs>[]
-      override: Prisma.$OverridePayload<ExtArgs> | null
+      overrides: Prisma.$OverridePayload<ExtArgs> | null
+      houseRents: Prisma.$HouseRentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      householdId: string
+      messId: string
       externalId: string
       name: string
       initials: string
@@ -3232,10 +3394,11 @@ export namespace Prisma {
    */
   export interface Prisma__MemberClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    household<T extends HouseholdDefaultArgs<ExtArgs> = {}>(args?: Subset<T, HouseholdDefaultArgs<ExtArgs>>): Prisma__HouseholdClient<$Result.GetResult<Prisma.$HouseholdPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    mess<T extends MessDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MessDefaultArgs<ExtArgs>>): Prisma__MessClient<$Result.GetResult<Prisma.$MessPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     meals<T extends Member$mealsArgs<ExtArgs> = {}>(args?: Subset<T, Member$mealsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MealEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     expenses<T extends Member$expensesArgs<ExtArgs> = {}>(args?: Subset<T, Member$expensesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    override<T extends Member$overrideArgs<ExtArgs> = {}>(args?: Subset<T, Member$overrideArgs<ExtArgs>>): Prisma__OverrideClient<$Result.GetResult<Prisma.$OverridePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    overrides<T extends Member$overridesArgs<ExtArgs> = {}>(args?: Subset<T, Member$overridesArgs<ExtArgs>>): Prisma__OverrideClient<$Result.GetResult<Prisma.$OverridePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    houseRents<T extends Member$houseRentsArgs<ExtArgs> = {}>(args?: Subset<T, Member$houseRentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HouseRentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3266,7 +3429,7 @@ export namespace Prisma {
    */
   interface MemberFieldRefs {
     readonly id: FieldRef<"Member", 'String'>
-    readonly householdId: FieldRef<"Member", 'String'>
+    readonly messId: FieldRef<"Member", 'String'>
     readonly externalId: FieldRef<"Member", 'String'>
     readonly name: FieldRef<"Member", 'String'>
     readonly initials: FieldRef<"Member", 'String'>
@@ -3690,9 +3853,9 @@ export namespace Prisma {
   }
 
   /**
-   * Member.override
+   * Member.overrides
    */
-  export type Member$overrideArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Member$overridesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Override
      */
@@ -3706,6 +3869,30 @@ export namespace Prisma {
      */
     include?: OverrideInclude<ExtArgs> | null
     where?: OverrideWhereInput
+  }
+
+  /**
+   * Member.houseRents
+   */
+  export type Member$houseRentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HouseRent
+     */
+    select?: HouseRentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HouseRent
+     */
+    omit?: HouseRentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HouseRentInclude<ExtArgs> | null
+    where?: HouseRentWhereInput
+    orderBy?: HouseRentOrderByWithRelationInput | HouseRentOrderByWithRelationInput[]
+    cursor?: HouseRentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: HouseRentScalarFieldEnum | HouseRentScalarFieldEnum[]
   }
 
   /**
@@ -3739,21 +3926,21 @@ export namespace Prisma {
 
   export type MealDayMinAggregateOutputType = {
     id: string | null
-    householdId: string | null
+    messId: string | null
     date: string | null
     label: string | null
   }
 
   export type MealDayMaxAggregateOutputType = {
     id: string | null
-    householdId: string | null
+    messId: string | null
     date: string | null
     label: string | null
   }
 
   export type MealDayCountAggregateOutputType = {
     id: number
-    householdId: number
+    messId: number
     date: number
     label: number
     _all: number
@@ -3762,21 +3949,21 @@ export namespace Prisma {
 
   export type MealDayMinAggregateInputType = {
     id?: true
-    householdId?: true
+    messId?: true
     date?: true
     label?: true
   }
 
   export type MealDayMaxAggregateInputType = {
     id?: true
-    householdId?: true
+    messId?: true
     date?: true
     label?: true
   }
 
   export type MealDayCountAggregateInputType = {
     id?: true
-    householdId?: true
+    messId?: true
     date?: true
     label?: true
     _all?: true
@@ -3856,7 +4043,7 @@ export namespace Prisma {
 
   export type MealDayGroupByOutputType = {
     id: string
-    householdId: string
+    messId: string
     date: string
     label: string
     _count: MealDayCountAggregateOutputType | null
@@ -3880,10 +4067,10 @@ export namespace Prisma {
 
   export type MealDaySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    householdId?: boolean
+    messId?: boolean
     date?: boolean
     label?: boolean
-    household?: boolean | HouseholdDefaultArgs<ExtArgs>
+    mess?: boolean | MessDefaultArgs<ExtArgs>
     entries?: boolean | MealDay$entriesArgs<ExtArgs>
     _count?: boolean | MealDayCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["mealDay"]>
@@ -3892,14 +4079,14 @@ export namespace Prisma {
 
   export type MealDaySelectScalar = {
     id?: boolean
-    householdId?: boolean
+    messId?: boolean
     date?: boolean
     label?: boolean
   }
 
-  export type MealDayOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "householdId" | "date" | "label", ExtArgs["result"]["mealDay"]>
+  export type MealDayOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "messId" | "date" | "label", ExtArgs["result"]["mealDay"]>
   export type MealDayInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    household?: boolean | HouseholdDefaultArgs<ExtArgs>
+    mess?: boolean | MessDefaultArgs<ExtArgs>
     entries?: boolean | MealDay$entriesArgs<ExtArgs>
     _count?: boolean | MealDayCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -3907,12 +4094,12 @@ export namespace Prisma {
   export type $MealDayPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "MealDay"
     objects: {
-      household: Prisma.$HouseholdPayload<ExtArgs>
+      mess: Prisma.$MessPayload<ExtArgs>
       entries: Prisma.$MealEntryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      householdId: string
+      messId: string
       date: string
       label: string
     }, ExtArgs["result"]["mealDay"]>
@@ -4278,7 +4465,7 @@ export namespace Prisma {
    */
   export interface Prisma__MealDayClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    household<T extends HouseholdDefaultArgs<ExtArgs> = {}>(args?: Subset<T, HouseholdDefaultArgs<ExtArgs>>): Prisma__HouseholdClient<$Result.GetResult<Prisma.$HouseholdPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    mess<T extends MessDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MessDefaultArgs<ExtArgs>>): Prisma__MessClient<$Result.GetResult<Prisma.$MessPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     entries<T extends MealDay$entriesArgs<ExtArgs> = {}>(args?: Subset<T, MealDay$entriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MealEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -4310,7 +4497,7 @@ export namespace Prisma {
    */
   interface MealDayFieldRefs {
     readonly id: FieldRef<"MealDay", 'String'>
-    readonly householdId: FieldRef<"MealDay", 'String'>
+    readonly messId: FieldRef<"MealDay", 'String'>
     readonly date: FieldRef<"MealDay", 'String'>
     readonly label: FieldRef<"MealDay", 'String'>
   }
@@ -5753,7 +5940,7 @@ export namespace Prisma {
 
   export type ExpenseMinAggregateOutputType = {
     id: string | null
-    householdId: string | null
+    messId: string | null
     memberId: string | null
     category: string | null
     amount: number | null
@@ -5761,7 +5948,7 @@ export namespace Prisma {
 
   export type ExpenseMaxAggregateOutputType = {
     id: string | null
-    householdId: string | null
+    messId: string | null
     memberId: string | null
     category: string | null
     amount: number | null
@@ -5769,7 +5956,7 @@ export namespace Prisma {
 
   export type ExpenseCountAggregateOutputType = {
     id: number
-    householdId: number
+    messId: number
     memberId: number
     category: number
     amount: number
@@ -5787,7 +5974,7 @@ export namespace Prisma {
 
   export type ExpenseMinAggregateInputType = {
     id?: true
-    householdId?: true
+    messId?: true
     memberId?: true
     category?: true
     amount?: true
@@ -5795,7 +5982,7 @@ export namespace Prisma {
 
   export type ExpenseMaxAggregateInputType = {
     id?: true
-    householdId?: true
+    messId?: true
     memberId?: true
     category?: true
     amount?: true
@@ -5803,7 +5990,7 @@ export namespace Prisma {
 
   export type ExpenseCountAggregateInputType = {
     id?: true
-    householdId?: true
+    messId?: true
     memberId?: true
     category?: true
     amount?: true
@@ -5898,7 +6085,7 @@ export namespace Prisma {
 
   export type ExpenseGroupByOutputType = {
     id: string
-    householdId: string
+    messId: string
     memberId: string
     category: string
     amount: number
@@ -5925,11 +6112,11 @@ export namespace Prisma {
 
   export type ExpenseSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    householdId?: boolean
+    messId?: boolean
     memberId?: boolean
     category?: boolean
     amount?: boolean
-    household?: boolean | HouseholdDefaultArgs<ExtArgs>
+    mess?: boolean | MessDefaultArgs<ExtArgs>
     member?: boolean | MemberDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["expense"]>
 
@@ -5937,27 +6124,27 @@ export namespace Prisma {
 
   export type ExpenseSelectScalar = {
     id?: boolean
-    householdId?: boolean
+    messId?: boolean
     memberId?: boolean
     category?: boolean
     amount?: boolean
   }
 
-  export type ExpenseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "householdId" | "memberId" | "category" | "amount", ExtArgs["result"]["expense"]>
+  export type ExpenseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "messId" | "memberId" | "category" | "amount", ExtArgs["result"]["expense"]>
   export type ExpenseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    household?: boolean | HouseholdDefaultArgs<ExtArgs>
+    mess?: boolean | MessDefaultArgs<ExtArgs>
     member?: boolean | MemberDefaultArgs<ExtArgs>
   }
 
   export type $ExpensePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Expense"
     objects: {
-      household: Prisma.$HouseholdPayload<ExtArgs>
+      mess: Prisma.$MessPayload<ExtArgs>
       member: Prisma.$MemberPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      householdId: string
+      messId: string
       memberId: string
       category: string
       amount: number
@@ -6324,7 +6511,7 @@ export namespace Prisma {
    */
   export interface Prisma__ExpenseClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    household<T extends HouseholdDefaultArgs<ExtArgs> = {}>(args?: Subset<T, HouseholdDefaultArgs<ExtArgs>>): Prisma__HouseholdClient<$Result.GetResult<Prisma.$HouseholdPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    mess<T extends MessDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MessDefaultArgs<ExtArgs>>): Prisma__MessClient<$Result.GetResult<Prisma.$MessPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     member<T extends MemberDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MemberDefaultArgs<ExtArgs>>): Prisma__MemberClient<$Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -6356,7 +6543,7 @@ export namespace Prisma {
    */
   interface ExpenseFieldRefs {
     readonly id: FieldRef<"Expense", 'String'>
-    readonly householdId: FieldRef<"Expense", 'String'>
+    readonly messId: FieldRef<"Expense", 'String'>
     readonly memberId: FieldRef<"Expense", 'String'>
     readonly category: FieldRef<"Expense", 'String'>
     readonly amount: FieldRef<"Expense", 'Float'>
@@ -6770,7 +6957,7 @@ export namespace Prisma {
 
   export type UtilityMinAggregateOutputType = {
     id: string | null
-    householdId: string | null
+    messId: string | null
     externalId: string | null
     name: string | null
     amount: number | null
@@ -6778,7 +6965,7 @@ export namespace Prisma {
 
   export type UtilityMaxAggregateOutputType = {
     id: string | null
-    householdId: string | null
+    messId: string | null
     externalId: string | null
     name: string | null
     amount: number | null
@@ -6786,7 +6973,7 @@ export namespace Prisma {
 
   export type UtilityCountAggregateOutputType = {
     id: number
-    householdId: number
+    messId: number
     externalId: number
     name: number
     amount: number
@@ -6804,7 +6991,7 @@ export namespace Prisma {
 
   export type UtilityMinAggregateInputType = {
     id?: true
-    householdId?: true
+    messId?: true
     externalId?: true
     name?: true
     amount?: true
@@ -6812,7 +6999,7 @@ export namespace Prisma {
 
   export type UtilityMaxAggregateInputType = {
     id?: true
-    householdId?: true
+    messId?: true
     externalId?: true
     name?: true
     amount?: true
@@ -6820,7 +7007,7 @@ export namespace Prisma {
 
   export type UtilityCountAggregateInputType = {
     id?: true
-    householdId?: true
+    messId?: true
     externalId?: true
     name?: true
     amount?: true
@@ -6915,7 +7102,7 @@ export namespace Prisma {
 
   export type UtilityGroupByOutputType = {
     id: string
-    householdId: string
+    messId: string
     externalId: string
     name: string
     amount: number
@@ -6942,36 +7129,36 @@ export namespace Prisma {
 
   export type UtilitySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    householdId?: boolean
+    messId?: boolean
     externalId?: boolean
     name?: boolean
     amount?: boolean
-    household?: boolean | HouseholdDefaultArgs<ExtArgs>
+    mess?: boolean | MessDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["utility"]>
 
 
 
   export type UtilitySelectScalar = {
     id?: boolean
-    householdId?: boolean
+    messId?: boolean
     externalId?: boolean
     name?: boolean
     amount?: boolean
   }
 
-  export type UtilityOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "householdId" | "externalId" | "name" | "amount", ExtArgs["result"]["utility"]>
+  export type UtilityOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "messId" | "externalId" | "name" | "amount", ExtArgs["result"]["utility"]>
   export type UtilityInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    household?: boolean | HouseholdDefaultArgs<ExtArgs>
+    mess?: boolean | MessDefaultArgs<ExtArgs>
   }
 
   export type $UtilityPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Utility"
     objects: {
-      household: Prisma.$HouseholdPayload<ExtArgs>
+      mess: Prisma.$MessPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      householdId: string
+      messId: string
       externalId: string
       name: string
       amount: number
@@ -7338,7 +7525,7 @@ export namespace Prisma {
    */
   export interface Prisma__UtilityClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    household<T extends HouseholdDefaultArgs<ExtArgs> = {}>(args?: Subset<T, HouseholdDefaultArgs<ExtArgs>>): Prisma__HouseholdClient<$Result.GetResult<Prisma.$HouseholdPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    mess<T extends MessDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MessDefaultArgs<ExtArgs>>): Prisma__MessClient<$Result.GetResult<Prisma.$MessPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7369,7 +7556,7 @@ export namespace Prisma {
    */
   interface UtilityFieldRefs {
     readonly id: FieldRef<"Utility", 'String'>
-    readonly householdId: FieldRef<"Utility", 'String'>
+    readonly messId: FieldRef<"Utility", 'String'>
     readonly externalId: FieldRef<"Utility", 'String'>
     readonly name: FieldRef<"Utility", 'String'>
     readonly amount: FieldRef<"Utility", 'Float'>
@@ -7785,7 +7972,7 @@ export namespace Prisma {
 
   export type OverrideMinAggregateOutputType = {
     id: string | null
-    householdId: string | null
+    messId: string | null
     memberId: string | null
     utilities: number | null
     mealRate: number | null
@@ -7793,7 +7980,7 @@ export namespace Prisma {
 
   export type OverrideMaxAggregateOutputType = {
     id: string | null
-    householdId: string | null
+    messId: string | null
     memberId: string | null
     utilities: number | null
     mealRate: number | null
@@ -7801,7 +7988,7 @@ export namespace Prisma {
 
   export type OverrideCountAggregateOutputType = {
     id: number
-    householdId: number
+    messId: number
     memberId: number
     utilities: number
     mealRate: number
@@ -7821,7 +8008,7 @@ export namespace Prisma {
 
   export type OverrideMinAggregateInputType = {
     id?: true
-    householdId?: true
+    messId?: true
     memberId?: true
     utilities?: true
     mealRate?: true
@@ -7829,7 +8016,7 @@ export namespace Prisma {
 
   export type OverrideMaxAggregateInputType = {
     id?: true
-    householdId?: true
+    messId?: true
     memberId?: true
     utilities?: true
     mealRate?: true
@@ -7837,7 +8024,7 @@ export namespace Prisma {
 
   export type OverrideCountAggregateInputType = {
     id?: true
-    householdId?: true
+    messId?: true
     memberId?: true
     utilities?: true
     mealRate?: true
@@ -7932,7 +8119,7 @@ export namespace Prisma {
 
   export type OverrideGroupByOutputType = {
     id: string
-    householdId: string
+    messId: string
     memberId: string
     utilities: number | null
     mealRate: number | null
@@ -7959,11 +8146,11 @@ export namespace Prisma {
 
   export type OverrideSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    householdId?: boolean
+    messId?: boolean
     memberId?: boolean
     utilities?: boolean
     mealRate?: boolean
-    household?: boolean | HouseholdDefaultArgs<ExtArgs>
+    mess?: boolean | MessDefaultArgs<ExtArgs>
     member?: boolean | MemberDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["override"]>
 
@@ -7971,27 +8158,27 @@ export namespace Prisma {
 
   export type OverrideSelectScalar = {
     id?: boolean
-    householdId?: boolean
+    messId?: boolean
     memberId?: boolean
     utilities?: boolean
     mealRate?: boolean
   }
 
-  export type OverrideOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "householdId" | "memberId" | "utilities" | "mealRate", ExtArgs["result"]["override"]>
+  export type OverrideOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "messId" | "memberId" | "utilities" | "mealRate", ExtArgs["result"]["override"]>
   export type OverrideInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    household?: boolean | HouseholdDefaultArgs<ExtArgs>
+    mess?: boolean | MessDefaultArgs<ExtArgs>
     member?: boolean | MemberDefaultArgs<ExtArgs>
   }
 
   export type $OverridePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Override"
     objects: {
-      household: Prisma.$HouseholdPayload<ExtArgs>
+      mess: Prisma.$MessPayload<ExtArgs>
       member: Prisma.$MemberPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      householdId: string
+      messId: string
       memberId: string
       utilities: number | null
       mealRate: number | null
@@ -8358,7 +8545,7 @@ export namespace Prisma {
    */
   export interface Prisma__OverrideClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    household<T extends HouseholdDefaultArgs<ExtArgs> = {}>(args?: Subset<T, HouseholdDefaultArgs<ExtArgs>>): Prisma__HouseholdClient<$Result.GetResult<Prisma.$HouseholdPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    mess<T extends MessDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MessDefaultArgs<ExtArgs>>): Prisma__MessClient<$Result.GetResult<Prisma.$MessPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     member<T extends MemberDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MemberDefaultArgs<ExtArgs>>): Prisma__MemberClient<$Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -8390,7 +8577,7 @@ export namespace Prisma {
    */
   interface OverrideFieldRefs {
     readonly id: FieldRef<"Override", 'String'>
-    readonly householdId: FieldRef<"Override", 'String'>
+    readonly messId: FieldRef<"Override", 'String'>
     readonly memberId: FieldRef<"Override", 'String'>
     readonly utilities: FieldRef<"Override", 'Float'>
     readonly mealRate: FieldRef<"Override", 'Float'>
@@ -8783,23 +8970,1042 @@ export namespace Prisma {
 
 
   /**
+   * Model HouseRent
+   */
+
+  export type AggregateHouseRent = {
+    _count: HouseRentCountAggregateOutputType | null
+    _avg: HouseRentAvgAggregateOutputType | null
+    _sum: HouseRentSumAggregateOutputType | null
+    _min: HouseRentMinAggregateOutputType | null
+    _max: HouseRentMaxAggregateOutputType | null
+  }
+
+  export type HouseRentAvgAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type HouseRentSumAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type HouseRentMinAggregateOutputType = {
+    id: string | null
+    messId: string | null
+    memberId: string | null
+    amount: number | null
+    monthKey: string | null
+  }
+
+  export type HouseRentMaxAggregateOutputType = {
+    id: string | null
+    messId: string | null
+    memberId: string | null
+    amount: number | null
+    monthKey: string | null
+  }
+
+  export type HouseRentCountAggregateOutputType = {
+    id: number
+    messId: number
+    memberId: number
+    amount: number
+    monthKey: number
+    _all: number
+  }
+
+
+  export type HouseRentAvgAggregateInputType = {
+    amount?: true
+  }
+
+  export type HouseRentSumAggregateInputType = {
+    amount?: true
+  }
+
+  export type HouseRentMinAggregateInputType = {
+    id?: true
+    messId?: true
+    memberId?: true
+    amount?: true
+    monthKey?: true
+  }
+
+  export type HouseRentMaxAggregateInputType = {
+    id?: true
+    messId?: true
+    memberId?: true
+    amount?: true
+    monthKey?: true
+  }
+
+  export type HouseRentCountAggregateInputType = {
+    id?: true
+    messId?: true
+    memberId?: true
+    amount?: true
+    monthKey?: true
+    _all?: true
+  }
+
+  export type HouseRentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which HouseRent to aggregate.
+     */
+    where?: HouseRentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HouseRents to fetch.
+     */
+    orderBy?: HouseRentOrderByWithRelationInput | HouseRentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: HouseRentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HouseRents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HouseRents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned HouseRents
+    **/
+    _count?: true | HouseRentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: HouseRentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: HouseRentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: HouseRentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: HouseRentMaxAggregateInputType
+  }
+
+  export type GetHouseRentAggregateType<T extends HouseRentAggregateArgs> = {
+        [P in keyof T & keyof AggregateHouseRent]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateHouseRent[P]>
+      : GetScalarType<T[P], AggregateHouseRent[P]>
+  }
+
+
+
+
+  export type HouseRentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HouseRentWhereInput
+    orderBy?: HouseRentOrderByWithAggregationInput | HouseRentOrderByWithAggregationInput[]
+    by: HouseRentScalarFieldEnum[] | HouseRentScalarFieldEnum
+    having?: HouseRentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: HouseRentCountAggregateInputType | true
+    _avg?: HouseRentAvgAggregateInputType
+    _sum?: HouseRentSumAggregateInputType
+    _min?: HouseRentMinAggregateInputType
+    _max?: HouseRentMaxAggregateInputType
+  }
+
+  export type HouseRentGroupByOutputType = {
+    id: string
+    messId: string
+    memberId: string
+    amount: number
+    monthKey: string
+    _count: HouseRentCountAggregateOutputType | null
+    _avg: HouseRentAvgAggregateOutputType | null
+    _sum: HouseRentSumAggregateOutputType | null
+    _min: HouseRentMinAggregateOutputType | null
+    _max: HouseRentMaxAggregateOutputType | null
+  }
+
+  type GetHouseRentGroupByPayload<T extends HouseRentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<HouseRentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof HouseRentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], HouseRentGroupByOutputType[P]>
+            : GetScalarType<T[P], HouseRentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type HouseRentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    messId?: boolean
+    memberId?: boolean
+    amount?: boolean
+    monthKey?: boolean
+    mess?: boolean | MessDefaultArgs<ExtArgs>
+    member?: boolean | MemberDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["houseRent"]>
+
+
+
+  export type HouseRentSelectScalar = {
+    id?: boolean
+    messId?: boolean
+    memberId?: boolean
+    amount?: boolean
+    monthKey?: boolean
+  }
+
+  export type HouseRentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "messId" | "memberId" | "amount" | "monthKey", ExtArgs["result"]["houseRent"]>
+  export type HouseRentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    mess?: boolean | MessDefaultArgs<ExtArgs>
+    member?: boolean | MemberDefaultArgs<ExtArgs>
+  }
+
+  export type $HouseRentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "HouseRent"
+    objects: {
+      mess: Prisma.$MessPayload<ExtArgs>
+      member: Prisma.$MemberPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      messId: string
+      memberId: string
+      amount: number
+      monthKey: string
+    }, ExtArgs["result"]["houseRent"]>
+    composites: {}
+  }
+
+  type HouseRentGetPayload<S extends boolean | null | undefined | HouseRentDefaultArgs> = $Result.GetResult<Prisma.$HouseRentPayload, S>
+
+  type HouseRentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<HouseRentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: HouseRentCountAggregateInputType | true
+    }
+
+  export interface HouseRentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['HouseRent'], meta: { name: 'HouseRent' } }
+    /**
+     * Find zero or one HouseRent that matches the filter.
+     * @param {HouseRentFindUniqueArgs} args - Arguments to find a HouseRent
+     * @example
+     * // Get one HouseRent
+     * const houseRent = await prisma.houseRent.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends HouseRentFindUniqueArgs>(args: SelectSubset<T, HouseRentFindUniqueArgs<ExtArgs>>): Prisma__HouseRentClient<$Result.GetResult<Prisma.$HouseRentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one HouseRent that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {HouseRentFindUniqueOrThrowArgs} args - Arguments to find a HouseRent
+     * @example
+     * // Get one HouseRent
+     * const houseRent = await prisma.houseRent.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends HouseRentFindUniqueOrThrowArgs>(args: SelectSubset<T, HouseRentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__HouseRentClient<$Result.GetResult<Prisma.$HouseRentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first HouseRent that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HouseRentFindFirstArgs} args - Arguments to find a HouseRent
+     * @example
+     * // Get one HouseRent
+     * const houseRent = await prisma.houseRent.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends HouseRentFindFirstArgs>(args?: SelectSubset<T, HouseRentFindFirstArgs<ExtArgs>>): Prisma__HouseRentClient<$Result.GetResult<Prisma.$HouseRentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first HouseRent that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HouseRentFindFirstOrThrowArgs} args - Arguments to find a HouseRent
+     * @example
+     * // Get one HouseRent
+     * const houseRent = await prisma.houseRent.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends HouseRentFindFirstOrThrowArgs>(args?: SelectSubset<T, HouseRentFindFirstOrThrowArgs<ExtArgs>>): Prisma__HouseRentClient<$Result.GetResult<Prisma.$HouseRentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more HouseRents that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HouseRentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all HouseRents
+     * const houseRents = await prisma.houseRent.findMany()
+     * 
+     * // Get first 10 HouseRents
+     * const houseRents = await prisma.houseRent.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const houseRentWithIdOnly = await prisma.houseRent.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends HouseRentFindManyArgs>(args?: SelectSubset<T, HouseRentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HouseRentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a HouseRent.
+     * @param {HouseRentCreateArgs} args - Arguments to create a HouseRent.
+     * @example
+     * // Create one HouseRent
+     * const HouseRent = await prisma.houseRent.create({
+     *   data: {
+     *     // ... data to create a HouseRent
+     *   }
+     * })
+     * 
+     */
+    create<T extends HouseRentCreateArgs>(args: SelectSubset<T, HouseRentCreateArgs<ExtArgs>>): Prisma__HouseRentClient<$Result.GetResult<Prisma.$HouseRentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many HouseRents.
+     * @param {HouseRentCreateManyArgs} args - Arguments to create many HouseRents.
+     * @example
+     * // Create many HouseRents
+     * const houseRent = await prisma.houseRent.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends HouseRentCreateManyArgs>(args?: SelectSubset<T, HouseRentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a HouseRent.
+     * @param {HouseRentDeleteArgs} args - Arguments to delete one HouseRent.
+     * @example
+     * // Delete one HouseRent
+     * const HouseRent = await prisma.houseRent.delete({
+     *   where: {
+     *     // ... filter to delete one HouseRent
+     *   }
+     * })
+     * 
+     */
+    delete<T extends HouseRentDeleteArgs>(args: SelectSubset<T, HouseRentDeleteArgs<ExtArgs>>): Prisma__HouseRentClient<$Result.GetResult<Prisma.$HouseRentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one HouseRent.
+     * @param {HouseRentUpdateArgs} args - Arguments to update one HouseRent.
+     * @example
+     * // Update one HouseRent
+     * const houseRent = await prisma.houseRent.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends HouseRentUpdateArgs>(args: SelectSubset<T, HouseRentUpdateArgs<ExtArgs>>): Prisma__HouseRentClient<$Result.GetResult<Prisma.$HouseRentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more HouseRents.
+     * @param {HouseRentDeleteManyArgs} args - Arguments to filter HouseRents to delete.
+     * @example
+     * // Delete a few HouseRents
+     * const { count } = await prisma.houseRent.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends HouseRentDeleteManyArgs>(args?: SelectSubset<T, HouseRentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more HouseRents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HouseRentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many HouseRents
+     * const houseRent = await prisma.houseRent.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends HouseRentUpdateManyArgs>(args: SelectSubset<T, HouseRentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one HouseRent.
+     * @param {HouseRentUpsertArgs} args - Arguments to update or create a HouseRent.
+     * @example
+     * // Update or create a HouseRent
+     * const houseRent = await prisma.houseRent.upsert({
+     *   create: {
+     *     // ... data to create a HouseRent
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the HouseRent we want to update
+     *   }
+     * })
+     */
+    upsert<T extends HouseRentUpsertArgs>(args: SelectSubset<T, HouseRentUpsertArgs<ExtArgs>>): Prisma__HouseRentClient<$Result.GetResult<Prisma.$HouseRentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more HouseRents that matches the filter.
+     * @param {HouseRentFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const houseRent = await prisma.houseRent.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: HouseRentFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a HouseRent.
+     * @param {HouseRentAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const houseRent = await prisma.houseRent.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: HouseRentAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of HouseRents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HouseRentCountArgs} args - Arguments to filter HouseRents to count.
+     * @example
+     * // Count the number of HouseRents
+     * const count = await prisma.houseRent.count({
+     *   where: {
+     *     // ... the filter for the HouseRents we want to count
+     *   }
+     * })
+    **/
+    count<T extends HouseRentCountArgs>(
+      args?: Subset<T, HouseRentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], HouseRentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a HouseRent.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HouseRentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends HouseRentAggregateArgs>(args: Subset<T, HouseRentAggregateArgs>): Prisma.PrismaPromise<GetHouseRentAggregateType<T>>
+
+    /**
+     * Group by HouseRent.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HouseRentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends HouseRentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: HouseRentGroupByArgs['orderBy'] }
+        : { orderBy?: HouseRentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, HouseRentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetHouseRentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the HouseRent model
+   */
+  readonly fields: HouseRentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for HouseRent.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__HouseRentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    mess<T extends MessDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MessDefaultArgs<ExtArgs>>): Prisma__MessClient<$Result.GetResult<Prisma.$MessPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    member<T extends MemberDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MemberDefaultArgs<ExtArgs>>): Prisma__MemberClient<$Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the HouseRent model
+   */
+  interface HouseRentFieldRefs {
+    readonly id: FieldRef<"HouseRent", 'String'>
+    readonly messId: FieldRef<"HouseRent", 'String'>
+    readonly memberId: FieldRef<"HouseRent", 'String'>
+    readonly amount: FieldRef<"HouseRent", 'Float'>
+    readonly monthKey: FieldRef<"HouseRent", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * HouseRent findUnique
+   */
+  export type HouseRentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HouseRent
+     */
+    select?: HouseRentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HouseRent
+     */
+    omit?: HouseRentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HouseRentInclude<ExtArgs> | null
+    /**
+     * Filter, which HouseRent to fetch.
+     */
+    where: HouseRentWhereUniqueInput
+  }
+
+  /**
+   * HouseRent findUniqueOrThrow
+   */
+  export type HouseRentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HouseRent
+     */
+    select?: HouseRentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HouseRent
+     */
+    omit?: HouseRentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HouseRentInclude<ExtArgs> | null
+    /**
+     * Filter, which HouseRent to fetch.
+     */
+    where: HouseRentWhereUniqueInput
+  }
+
+  /**
+   * HouseRent findFirst
+   */
+  export type HouseRentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HouseRent
+     */
+    select?: HouseRentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HouseRent
+     */
+    omit?: HouseRentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HouseRentInclude<ExtArgs> | null
+    /**
+     * Filter, which HouseRent to fetch.
+     */
+    where?: HouseRentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HouseRents to fetch.
+     */
+    orderBy?: HouseRentOrderByWithRelationInput | HouseRentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for HouseRents.
+     */
+    cursor?: HouseRentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HouseRents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HouseRents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of HouseRents.
+     */
+    distinct?: HouseRentScalarFieldEnum | HouseRentScalarFieldEnum[]
+  }
+
+  /**
+   * HouseRent findFirstOrThrow
+   */
+  export type HouseRentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HouseRent
+     */
+    select?: HouseRentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HouseRent
+     */
+    omit?: HouseRentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HouseRentInclude<ExtArgs> | null
+    /**
+     * Filter, which HouseRent to fetch.
+     */
+    where?: HouseRentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HouseRents to fetch.
+     */
+    orderBy?: HouseRentOrderByWithRelationInput | HouseRentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for HouseRents.
+     */
+    cursor?: HouseRentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HouseRents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HouseRents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of HouseRents.
+     */
+    distinct?: HouseRentScalarFieldEnum | HouseRentScalarFieldEnum[]
+  }
+
+  /**
+   * HouseRent findMany
+   */
+  export type HouseRentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HouseRent
+     */
+    select?: HouseRentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HouseRent
+     */
+    omit?: HouseRentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HouseRentInclude<ExtArgs> | null
+    /**
+     * Filter, which HouseRents to fetch.
+     */
+    where?: HouseRentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HouseRents to fetch.
+     */
+    orderBy?: HouseRentOrderByWithRelationInput | HouseRentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing HouseRents.
+     */
+    cursor?: HouseRentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HouseRents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HouseRents.
+     */
+    skip?: number
+    distinct?: HouseRentScalarFieldEnum | HouseRentScalarFieldEnum[]
+  }
+
+  /**
+   * HouseRent create
+   */
+  export type HouseRentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HouseRent
+     */
+    select?: HouseRentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HouseRent
+     */
+    omit?: HouseRentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HouseRentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a HouseRent.
+     */
+    data: XOR<HouseRentCreateInput, HouseRentUncheckedCreateInput>
+  }
+
+  /**
+   * HouseRent createMany
+   */
+  export type HouseRentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many HouseRents.
+     */
+    data: HouseRentCreateManyInput | HouseRentCreateManyInput[]
+  }
+
+  /**
+   * HouseRent update
+   */
+  export type HouseRentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HouseRent
+     */
+    select?: HouseRentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HouseRent
+     */
+    omit?: HouseRentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HouseRentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a HouseRent.
+     */
+    data: XOR<HouseRentUpdateInput, HouseRentUncheckedUpdateInput>
+    /**
+     * Choose, which HouseRent to update.
+     */
+    where: HouseRentWhereUniqueInput
+  }
+
+  /**
+   * HouseRent updateMany
+   */
+  export type HouseRentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update HouseRents.
+     */
+    data: XOR<HouseRentUpdateManyMutationInput, HouseRentUncheckedUpdateManyInput>
+    /**
+     * Filter which HouseRents to update
+     */
+    where?: HouseRentWhereInput
+    /**
+     * Limit how many HouseRents to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * HouseRent upsert
+   */
+  export type HouseRentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HouseRent
+     */
+    select?: HouseRentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HouseRent
+     */
+    omit?: HouseRentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HouseRentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the HouseRent to update in case it exists.
+     */
+    where: HouseRentWhereUniqueInput
+    /**
+     * In case the HouseRent found by the `where` argument doesn't exist, create a new HouseRent with this data.
+     */
+    create: XOR<HouseRentCreateInput, HouseRentUncheckedCreateInput>
+    /**
+     * In case the HouseRent was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<HouseRentUpdateInput, HouseRentUncheckedUpdateInput>
+  }
+
+  /**
+   * HouseRent delete
+   */
+  export type HouseRentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HouseRent
+     */
+    select?: HouseRentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HouseRent
+     */
+    omit?: HouseRentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HouseRentInclude<ExtArgs> | null
+    /**
+     * Filter which HouseRent to delete.
+     */
+    where: HouseRentWhereUniqueInput
+  }
+
+  /**
+   * HouseRent deleteMany
+   */
+  export type HouseRentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which HouseRents to delete
+     */
+    where?: HouseRentWhereInput
+    /**
+     * Limit how many HouseRents to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * HouseRent findRaw
+   */
+  export type HouseRentFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * HouseRent aggregateRaw
+   */
+  export type HouseRentAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * HouseRent without action
+   */
+  export type HouseRentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HouseRent
+     */
+    select?: HouseRentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HouseRent
+     */
+    omit?: HouseRentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HouseRentInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
-  export const HouseholdScalarFieldEnum: {
+  export const MessScalarFieldEnum: {
     id: 'id',
-    name: 'name',
-    monthKey: 'monthKey',
+    messName: 'messName',
+    managerName: 'managerName',
+    email: 'email',
+    password: 'password',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
-  export type HouseholdScalarFieldEnum = (typeof HouseholdScalarFieldEnum)[keyof typeof HouseholdScalarFieldEnum]
+  export type MessScalarFieldEnum = (typeof MessScalarFieldEnum)[keyof typeof MessScalarFieldEnum]
 
 
   export const MemberScalarFieldEnum: {
     id: 'id',
-    householdId: 'householdId',
+    messId: 'messId',
     externalId: 'externalId',
     name: 'name',
     initials: 'initials',
@@ -8812,7 +10018,7 @@ export namespace Prisma {
 
   export const MealDayScalarFieldEnum: {
     id: 'id',
-    householdId: 'householdId',
+    messId: 'messId',
     date: 'date',
     label: 'label'
   };
@@ -8832,7 +10038,7 @@ export namespace Prisma {
 
   export const ExpenseScalarFieldEnum: {
     id: 'id',
-    householdId: 'householdId',
+    messId: 'messId',
     memberId: 'memberId',
     category: 'category',
     amount: 'amount'
@@ -8843,7 +10049,7 @@ export namespace Prisma {
 
   export const UtilityScalarFieldEnum: {
     id: 'id',
-    householdId: 'householdId',
+    messId: 'messId',
     externalId: 'externalId',
     name: 'name',
     amount: 'amount'
@@ -8854,13 +10060,24 @@ export namespace Prisma {
 
   export const OverrideScalarFieldEnum: {
     id: 'id',
-    householdId: 'householdId',
+    messId: 'messId',
     memberId: 'memberId',
     utilities: 'utilities',
     mealRate: 'mealRate'
   };
 
   export type OverrideScalarFieldEnum = (typeof OverrideScalarFieldEnum)[keyof typeof OverrideScalarFieldEnum]
+
+
+  export const HouseRentScalarFieldEnum: {
+    id: 'id',
+    messId: 'messId',
+    memberId: 'memberId',
+    amount: 'amount',
+    monthKey: 'monthKey'
+  };
+
+  export type HouseRentScalarFieldEnum = (typeof HouseRentScalarFieldEnum)[keyof typeof HouseRentScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -8943,26 +10160,31 @@ export namespace Prisma {
    */
 
 
-  export type HouseholdWhereInput = {
-    AND?: HouseholdWhereInput | HouseholdWhereInput[]
-    OR?: HouseholdWhereInput[]
-    NOT?: HouseholdWhereInput | HouseholdWhereInput[]
-    id?: StringFilter<"Household"> | string
-    name?: StringFilter<"Household"> | string
-    monthKey?: StringFilter<"Household"> | string
-    createdAt?: DateTimeFilter<"Household"> | Date | string
-    updatedAt?: DateTimeFilter<"Household"> | Date | string
+  export type MessWhereInput = {
+    AND?: MessWhereInput | MessWhereInput[]
+    OR?: MessWhereInput[]
+    NOT?: MessWhereInput | MessWhereInput[]
+    id?: StringFilter<"Mess"> | string
+    messName?: StringFilter<"Mess"> | string
+    managerName?: StringFilter<"Mess"> | string
+    email?: StringFilter<"Mess"> | string
+    password?: StringFilter<"Mess"> | string
+    createdAt?: DateTimeFilter<"Mess"> | Date | string
+    updatedAt?: DateTimeFilter<"Mess"> | Date | string
     members?: MemberListRelationFilter
     days?: MealDayListRelationFilter
     expenses?: ExpenseListRelationFilter
     utilities?: UtilityListRelationFilter
     overrides?: OverrideListRelationFilter
+    houseRents?: HouseRentListRelationFilter
   }
 
-  export type HouseholdOrderByWithRelationInput = {
+  export type MessOrderByWithRelationInput = {
     id?: SortOrder
-    name?: SortOrder
-    monthKey?: SortOrder
+    messName?: SortOrder
+    managerName?: SortOrder
+    email?: SortOrder
+    password?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     members?: MemberOrderByRelationAggregateInput
@@ -8970,45 +10192,52 @@ export namespace Prisma {
     expenses?: ExpenseOrderByRelationAggregateInput
     utilities?: UtilityOrderByRelationAggregateInput
     overrides?: OverrideOrderByRelationAggregateInput
+    houseRents?: HouseRentOrderByRelationAggregateInput
   }
 
-  export type HouseholdWhereUniqueInput = Prisma.AtLeast<{
+  export type MessWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    name_monthKey?: HouseholdNameMonthKeyCompoundUniqueInput
-    AND?: HouseholdWhereInput | HouseholdWhereInput[]
-    OR?: HouseholdWhereInput[]
-    NOT?: HouseholdWhereInput | HouseholdWhereInput[]
-    name?: StringFilter<"Household"> | string
-    monthKey?: StringFilter<"Household"> | string
-    createdAt?: DateTimeFilter<"Household"> | Date | string
-    updatedAt?: DateTimeFilter<"Household"> | Date | string
+    messName?: string
+    email?: string
+    AND?: MessWhereInput | MessWhereInput[]
+    OR?: MessWhereInput[]
+    NOT?: MessWhereInput | MessWhereInput[]
+    managerName?: StringFilter<"Mess"> | string
+    password?: StringFilter<"Mess"> | string
+    createdAt?: DateTimeFilter<"Mess"> | Date | string
+    updatedAt?: DateTimeFilter<"Mess"> | Date | string
     members?: MemberListRelationFilter
     days?: MealDayListRelationFilter
     expenses?: ExpenseListRelationFilter
     utilities?: UtilityListRelationFilter
     overrides?: OverrideListRelationFilter
-  }, "id" | "name_monthKey">
+    houseRents?: HouseRentListRelationFilter
+  }, "id" | "messName" | "email">
 
-  export type HouseholdOrderByWithAggregationInput = {
+  export type MessOrderByWithAggregationInput = {
     id?: SortOrder
-    name?: SortOrder
-    monthKey?: SortOrder
+    messName?: SortOrder
+    managerName?: SortOrder
+    email?: SortOrder
+    password?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    _count?: HouseholdCountOrderByAggregateInput
-    _max?: HouseholdMaxOrderByAggregateInput
-    _min?: HouseholdMinOrderByAggregateInput
+    _count?: MessCountOrderByAggregateInput
+    _max?: MessMaxOrderByAggregateInput
+    _min?: MessMinOrderByAggregateInput
   }
 
-  export type HouseholdScalarWhereWithAggregatesInput = {
-    AND?: HouseholdScalarWhereWithAggregatesInput | HouseholdScalarWhereWithAggregatesInput[]
-    OR?: HouseholdScalarWhereWithAggregatesInput[]
-    NOT?: HouseholdScalarWhereWithAggregatesInput | HouseholdScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Household"> | string
-    name?: StringWithAggregatesFilter<"Household"> | string
-    monthKey?: StringWithAggregatesFilter<"Household"> | string
-    createdAt?: DateTimeWithAggregatesFilter<"Household"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Household"> | Date | string
+  export type MessScalarWhereWithAggregatesInput = {
+    AND?: MessScalarWhereWithAggregatesInput | MessScalarWhereWithAggregatesInput[]
+    OR?: MessScalarWhereWithAggregatesInput[]
+    NOT?: MessScalarWhereWithAggregatesInput | MessScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Mess"> | string
+    messName?: StringWithAggregatesFilter<"Mess"> | string
+    managerName?: StringWithAggregatesFilter<"Mess"> | string
+    email?: StringWithAggregatesFilter<"Mess"> | string
+    password?: StringWithAggregatesFilter<"Mess"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Mess"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Mess"> | Date | string
   }
 
   export type MemberWhereInput = {
@@ -9016,53 +10245,56 @@ export namespace Prisma {
     OR?: MemberWhereInput[]
     NOT?: MemberWhereInput | MemberWhereInput[]
     id?: StringFilter<"Member"> | string
-    householdId?: StringFilter<"Member"> | string
+    messId?: StringFilter<"Member"> | string
     externalId?: StringFilter<"Member"> | string
     name?: StringFilter<"Member"> | string
     initials?: StringFilter<"Member"> | string
     color?: StringFilter<"Member"> | string
     houseRent?: FloatFilter<"Member"> | number
-    household?: XOR<HouseholdScalarRelationFilter, HouseholdWhereInput>
+    mess?: XOR<MessScalarRelationFilter, MessWhereInput>
     meals?: MealEntryListRelationFilter
     expenses?: ExpenseListRelationFilter
-    override?: XOR<OverrideNullableScalarRelationFilter, OverrideWhereInput> | null
+    overrides?: XOR<OverrideNullableScalarRelationFilter, OverrideWhereInput> | null
+    houseRents?: HouseRentListRelationFilter
   }
 
   export type MemberOrderByWithRelationInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     externalId?: SortOrder
     name?: SortOrder
     initials?: SortOrder
     color?: SortOrder
     houseRent?: SortOrder
-    household?: HouseholdOrderByWithRelationInput
+    mess?: MessOrderByWithRelationInput
     meals?: MealEntryOrderByRelationAggregateInput
     expenses?: ExpenseOrderByRelationAggregateInput
-    override?: OverrideOrderByWithRelationInput
+    overrides?: OverrideOrderByWithRelationInput
+    houseRents?: HouseRentOrderByRelationAggregateInput
   }
 
   export type MemberWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    householdId_externalId?: MemberHouseholdIdExternalIdCompoundUniqueInput
+    messId_externalId?: MemberMessIdExternalIdCompoundUniqueInput
     AND?: MemberWhereInput | MemberWhereInput[]
     OR?: MemberWhereInput[]
     NOT?: MemberWhereInput | MemberWhereInput[]
-    householdId?: StringFilter<"Member"> | string
+    messId?: StringFilter<"Member"> | string
     externalId?: StringFilter<"Member"> | string
     name?: StringFilter<"Member"> | string
     initials?: StringFilter<"Member"> | string
     color?: StringFilter<"Member"> | string
     houseRent?: FloatFilter<"Member"> | number
-    household?: XOR<HouseholdScalarRelationFilter, HouseholdWhereInput>
+    mess?: XOR<MessScalarRelationFilter, MessWhereInput>
     meals?: MealEntryListRelationFilter
     expenses?: ExpenseListRelationFilter
-    override?: XOR<OverrideNullableScalarRelationFilter, OverrideWhereInput> | null
-  }, "id" | "householdId_externalId">
+    overrides?: XOR<OverrideNullableScalarRelationFilter, OverrideWhereInput> | null
+    houseRents?: HouseRentListRelationFilter
+  }, "id" | "messId_externalId">
 
   export type MemberOrderByWithAggregationInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     externalId?: SortOrder
     name?: SortOrder
     initials?: SortOrder
@@ -9080,7 +10312,7 @@ export namespace Prisma {
     OR?: MemberScalarWhereWithAggregatesInput[]
     NOT?: MemberScalarWhereWithAggregatesInput | MemberScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Member"> | string
-    householdId?: StringWithAggregatesFilter<"Member"> | string
+    messId?: StringWithAggregatesFilter<"Member"> | string
     externalId?: StringWithAggregatesFilter<"Member"> | string
     name?: StringWithAggregatesFilter<"Member"> | string
     initials?: StringWithAggregatesFilter<"Member"> | string
@@ -9093,38 +10325,38 @@ export namespace Prisma {
     OR?: MealDayWhereInput[]
     NOT?: MealDayWhereInput | MealDayWhereInput[]
     id?: StringFilter<"MealDay"> | string
-    householdId?: StringFilter<"MealDay"> | string
+    messId?: StringFilter<"MealDay"> | string
     date?: StringFilter<"MealDay"> | string
     label?: StringFilter<"MealDay"> | string
-    household?: XOR<HouseholdScalarRelationFilter, HouseholdWhereInput>
+    mess?: XOR<MessScalarRelationFilter, MessWhereInput>
     entries?: MealEntryListRelationFilter
   }
 
   export type MealDayOrderByWithRelationInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     date?: SortOrder
     label?: SortOrder
-    household?: HouseholdOrderByWithRelationInput
+    mess?: MessOrderByWithRelationInput
     entries?: MealEntryOrderByRelationAggregateInput
   }
 
   export type MealDayWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    householdId_date?: MealDayHouseholdIdDateCompoundUniqueInput
+    messId_date?: MealDayMessIdDateCompoundUniqueInput
     AND?: MealDayWhereInput | MealDayWhereInput[]
     OR?: MealDayWhereInput[]
     NOT?: MealDayWhereInput | MealDayWhereInput[]
-    householdId?: StringFilter<"MealDay"> | string
+    messId?: StringFilter<"MealDay"> | string
     date?: StringFilter<"MealDay"> | string
     label?: StringFilter<"MealDay"> | string
-    household?: XOR<HouseholdScalarRelationFilter, HouseholdWhereInput>
+    mess?: XOR<MessScalarRelationFilter, MessWhereInput>
     entries?: MealEntryListRelationFilter
-  }, "id" | "householdId_date">
+  }, "id" | "messId_date">
 
   export type MealDayOrderByWithAggregationInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     date?: SortOrder
     label?: SortOrder
     _count?: MealDayCountOrderByAggregateInput
@@ -9137,7 +10369,7 @@ export namespace Prisma {
     OR?: MealDayScalarWhereWithAggregatesInput[]
     NOT?: MealDayScalarWhereWithAggregatesInput | MealDayScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"MealDay"> | string
-    householdId?: StringWithAggregatesFilter<"MealDay"> | string
+    messId?: StringWithAggregatesFilter<"MealDay"> | string
     date?: StringWithAggregatesFilter<"MealDay"> | string
     label?: StringWithAggregatesFilter<"MealDay"> | string
   }
@@ -9203,41 +10435,41 @@ export namespace Prisma {
     OR?: ExpenseWhereInput[]
     NOT?: ExpenseWhereInput | ExpenseWhereInput[]
     id?: StringFilter<"Expense"> | string
-    householdId?: StringFilter<"Expense"> | string
+    messId?: StringFilter<"Expense"> | string
     memberId?: StringFilter<"Expense"> | string
     category?: StringFilter<"Expense"> | string
     amount?: FloatFilter<"Expense"> | number
-    household?: XOR<HouseholdScalarRelationFilter, HouseholdWhereInput>
+    mess?: XOR<MessScalarRelationFilter, MessWhereInput>
     member?: XOR<MemberScalarRelationFilter, MemberWhereInput>
   }
 
   export type ExpenseOrderByWithRelationInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     memberId?: SortOrder
     category?: SortOrder
     amount?: SortOrder
-    household?: HouseholdOrderByWithRelationInput
+    mess?: MessOrderByWithRelationInput
     member?: MemberOrderByWithRelationInput
   }
 
   export type ExpenseWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    householdId_memberId_category?: ExpenseHouseholdIdMemberIdCategoryCompoundUniqueInput
+    messId_memberId_category?: ExpenseMessIdMemberIdCategoryCompoundUniqueInput
     AND?: ExpenseWhereInput | ExpenseWhereInput[]
     OR?: ExpenseWhereInput[]
     NOT?: ExpenseWhereInput | ExpenseWhereInput[]
-    householdId?: StringFilter<"Expense"> | string
+    messId?: StringFilter<"Expense"> | string
     memberId?: StringFilter<"Expense"> | string
     category?: StringFilter<"Expense"> | string
     amount?: FloatFilter<"Expense"> | number
-    household?: XOR<HouseholdScalarRelationFilter, HouseholdWhereInput>
+    mess?: XOR<MessScalarRelationFilter, MessWhereInput>
     member?: XOR<MemberScalarRelationFilter, MemberWhereInput>
-  }, "id" | "householdId_memberId_category">
+  }, "id" | "messId_memberId_category">
 
   export type ExpenseOrderByWithAggregationInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     memberId?: SortOrder
     category?: SortOrder
     amount?: SortOrder
@@ -9253,7 +10485,7 @@ export namespace Prisma {
     OR?: ExpenseScalarWhereWithAggregatesInput[]
     NOT?: ExpenseScalarWhereWithAggregatesInput | ExpenseScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Expense"> | string
-    householdId?: StringWithAggregatesFilter<"Expense"> | string
+    messId?: StringWithAggregatesFilter<"Expense"> | string
     memberId?: StringWithAggregatesFilter<"Expense"> | string
     category?: StringWithAggregatesFilter<"Expense"> | string
     amount?: FloatWithAggregatesFilter<"Expense"> | number
@@ -9264,38 +10496,38 @@ export namespace Prisma {
     OR?: UtilityWhereInput[]
     NOT?: UtilityWhereInput | UtilityWhereInput[]
     id?: StringFilter<"Utility"> | string
-    householdId?: StringFilter<"Utility"> | string
+    messId?: StringFilter<"Utility"> | string
     externalId?: StringFilter<"Utility"> | string
     name?: StringFilter<"Utility"> | string
     amount?: FloatFilter<"Utility"> | number
-    household?: XOR<HouseholdScalarRelationFilter, HouseholdWhereInput>
+    mess?: XOR<MessScalarRelationFilter, MessWhereInput>
   }
 
   export type UtilityOrderByWithRelationInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     externalId?: SortOrder
     name?: SortOrder
     amount?: SortOrder
-    household?: HouseholdOrderByWithRelationInput
+    mess?: MessOrderByWithRelationInput
   }
 
   export type UtilityWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    householdId_externalId?: UtilityHouseholdIdExternalIdCompoundUniqueInput
+    messId_externalId?: UtilityMessIdExternalIdCompoundUniqueInput
     AND?: UtilityWhereInput | UtilityWhereInput[]
     OR?: UtilityWhereInput[]
     NOT?: UtilityWhereInput | UtilityWhereInput[]
-    householdId?: StringFilter<"Utility"> | string
+    messId?: StringFilter<"Utility"> | string
     externalId?: StringFilter<"Utility"> | string
     name?: StringFilter<"Utility"> | string
     amount?: FloatFilter<"Utility"> | number
-    household?: XOR<HouseholdScalarRelationFilter, HouseholdWhereInput>
-  }, "id" | "householdId_externalId">
+    mess?: XOR<MessScalarRelationFilter, MessWhereInput>
+  }, "id" | "messId_externalId">
 
   export type UtilityOrderByWithAggregationInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     externalId?: SortOrder
     name?: SortOrder
     amount?: SortOrder
@@ -9311,7 +10543,7 @@ export namespace Prisma {
     OR?: UtilityScalarWhereWithAggregatesInput[]
     NOT?: UtilityScalarWhereWithAggregatesInput | UtilityScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Utility"> | string
-    householdId?: StringWithAggregatesFilter<"Utility"> | string
+    messId?: StringWithAggregatesFilter<"Utility"> | string
     externalId?: StringWithAggregatesFilter<"Utility"> | string
     name?: StringWithAggregatesFilter<"Utility"> | string
     amount?: FloatWithAggregatesFilter<"Utility"> | number
@@ -9322,21 +10554,21 @@ export namespace Prisma {
     OR?: OverrideWhereInput[]
     NOT?: OverrideWhereInput | OverrideWhereInput[]
     id?: StringFilter<"Override"> | string
-    householdId?: StringFilter<"Override"> | string
+    messId?: StringFilter<"Override"> | string
     memberId?: StringFilter<"Override"> | string
     utilities?: FloatNullableFilter<"Override"> | number | null
     mealRate?: FloatNullableFilter<"Override"> | number | null
-    household?: XOR<HouseholdScalarRelationFilter, HouseholdWhereInput>
+    mess?: XOR<MessScalarRelationFilter, MessWhereInput>
     member?: XOR<MemberScalarRelationFilter, MemberWhereInput>
   }
 
   export type OverrideOrderByWithRelationInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     memberId?: SortOrder
     utilities?: SortOrder
     mealRate?: SortOrder
-    household?: HouseholdOrderByWithRelationInput
+    mess?: MessOrderByWithRelationInput
     member?: MemberOrderByWithRelationInput
   }
 
@@ -9346,16 +10578,16 @@ export namespace Prisma {
     AND?: OverrideWhereInput | OverrideWhereInput[]
     OR?: OverrideWhereInput[]
     NOT?: OverrideWhereInput | OverrideWhereInput[]
-    householdId?: StringFilter<"Override"> | string
+    messId?: StringFilter<"Override"> | string
     utilities?: FloatNullableFilter<"Override"> | number | null
     mealRate?: FloatNullableFilter<"Override"> | number | null
-    household?: XOR<HouseholdScalarRelationFilter, HouseholdWhereInput>
+    mess?: XOR<MessScalarRelationFilter, MessWhereInput>
     member?: XOR<MemberScalarRelationFilter, MemberWhereInput>
   }, "id" | "memberId">
 
   export type OverrideOrderByWithAggregationInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     memberId?: SortOrder
     utilities?: SortOrder
     mealRate?: SortOrder
@@ -9371,80 +10603,159 @@ export namespace Prisma {
     OR?: OverrideScalarWhereWithAggregatesInput[]
     NOT?: OverrideScalarWhereWithAggregatesInput | OverrideScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Override"> | string
-    householdId?: StringWithAggregatesFilter<"Override"> | string
+    messId?: StringWithAggregatesFilter<"Override"> | string
     memberId?: StringWithAggregatesFilter<"Override"> | string
     utilities?: FloatNullableWithAggregatesFilter<"Override"> | number | null
     mealRate?: FloatNullableWithAggregatesFilter<"Override"> | number | null
   }
 
-  export type HouseholdCreateInput = {
+  export type HouseRentWhereInput = {
+    AND?: HouseRentWhereInput | HouseRentWhereInput[]
+    OR?: HouseRentWhereInput[]
+    NOT?: HouseRentWhereInput | HouseRentWhereInput[]
+    id?: StringFilter<"HouseRent"> | string
+    messId?: StringFilter<"HouseRent"> | string
+    memberId?: StringFilter<"HouseRent"> | string
+    amount?: FloatFilter<"HouseRent"> | number
+    monthKey?: StringFilter<"HouseRent"> | string
+    mess?: XOR<MessScalarRelationFilter, MessWhereInput>
+    member?: XOR<MemberScalarRelationFilter, MemberWhereInput>
+  }
+
+  export type HouseRentOrderByWithRelationInput = {
+    id?: SortOrder
+    messId?: SortOrder
+    memberId?: SortOrder
+    amount?: SortOrder
+    monthKey?: SortOrder
+    mess?: MessOrderByWithRelationInput
+    member?: MemberOrderByWithRelationInput
+  }
+
+  export type HouseRentWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    name: string
-    monthKey: string
+    messId_memberId_monthKey?: HouseRentMessIdMemberIdMonthKeyCompoundUniqueInput
+    AND?: HouseRentWhereInput | HouseRentWhereInput[]
+    OR?: HouseRentWhereInput[]
+    NOT?: HouseRentWhereInput | HouseRentWhereInput[]
+    messId?: StringFilter<"HouseRent"> | string
+    memberId?: StringFilter<"HouseRent"> | string
+    amount?: FloatFilter<"HouseRent"> | number
+    monthKey?: StringFilter<"HouseRent"> | string
+    mess?: XOR<MessScalarRelationFilter, MessWhereInput>
+    member?: XOR<MemberScalarRelationFilter, MemberWhereInput>
+  }, "id" | "messId_memberId_monthKey">
+
+  export type HouseRentOrderByWithAggregationInput = {
+    id?: SortOrder
+    messId?: SortOrder
+    memberId?: SortOrder
+    amount?: SortOrder
+    monthKey?: SortOrder
+    _count?: HouseRentCountOrderByAggregateInput
+    _avg?: HouseRentAvgOrderByAggregateInput
+    _max?: HouseRentMaxOrderByAggregateInput
+    _min?: HouseRentMinOrderByAggregateInput
+    _sum?: HouseRentSumOrderByAggregateInput
+  }
+
+  export type HouseRentScalarWhereWithAggregatesInput = {
+    AND?: HouseRentScalarWhereWithAggregatesInput | HouseRentScalarWhereWithAggregatesInput[]
+    OR?: HouseRentScalarWhereWithAggregatesInput[]
+    NOT?: HouseRentScalarWhereWithAggregatesInput | HouseRentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"HouseRent"> | string
+    messId?: StringWithAggregatesFilter<"HouseRent"> | string
+    memberId?: StringWithAggregatesFilter<"HouseRent"> | string
+    amount?: FloatWithAggregatesFilter<"HouseRent"> | number
+    monthKey?: StringWithAggregatesFilter<"HouseRent"> | string
+  }
+
+  export type MessCreateInput = {
+    id?: string
+    messName: string
+    managerName: string
+    email: string
+    password: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    members?: MemberCreateNestedManyWithoutHouseholdInput
-    days?: MealDayCreateNestedManyWithoutHouseholdInput
-    expenses?: ExpenseCreateNestedManyWithoutHouseholdInput
-    utilities?: UtilityCreateNestedManyWithoutHouseholdInput
-    overrides?: OverrideCreateNestedManyWithoutHouseholdInput
+    members?: MemberCreateNestedManyWithoutMessInput
+    days?: MealDayCreateNestedManyWithoutMessInput
+    expenses?: ExpenseCreateNestedManyWithoutMessInput
+    utilities?: UtilityCreateNestedManyWithoutMessInput
+    overrides?: OverrideCreateNestedManyWithoutMessInput
+    houseRents?: HouseRentCreateNestedManyWithoutMessInput
   }
 
-  export type HouseholdUncheckedCreateInput = {
+  export type MessUncheckedCreateInput = {
     id?: string
-    name: string
-    monthKey: string
+    messName: string
+    managerName: string
+    email: string
+    password: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    members?: MemberUncheckedCreateNestedManyWithoutHouseholdInput
-    days?: MealDayUncheckedCreateNestedManyWithoutHouseholdInput
-    expenses?: ExpenseUncheckedCreateNestedManyWithoutHouseholdInput
-    utilities?: UtilityUncheckedCreateNestedManyWithoutHouseholdInput
-    overrides?: OverrideUncheckedCreateNestedManyWithoutHouseholdInput
+    members?: MemberUncheckedCreateNestedManyWithoutMessInput
+    days?: MealDayUncheckedCreateNestedManyWithoutMessInput
+    expenses?: ExpenseUncheckedCreateNestedManyWithoutMessInput
+    utilities?: UtilityUncheckedCreateNestedManyWithoutMessInput
+    overrides?: OverrideUncheckedCreateNestedManyWithoutMessInput
+    houseRents?: HouseRentUncheckedCreateNestedManyWithoutMessInput
   }
 
-  export type HouseholdUpdateInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    monthKey?: StringFieldUpdateOperationsInput | string
+  export type MessUpdateInput = {
+    messName?: StringFieldUpdateOperationsInput | string
+    managerName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    members?: MemberUpdateManyWithoutHouseholdNestedInput
-    days?: MealDayUpdateManyWithoutHouseholdNestedInput
-    expenses?: ExpenseUpdateManyWithoutHouseholdNestedInput
-    utilities?: UtilityUpdateManyWithoutHouseholdNestedInput
-    overrides?: OverrideUpdateManyWithoutHouseholdNestedInput
+    members?: MemberUpdateManyWithoutMessNestedInput
+    days?: MealDayUpdateManyWithoutMessNestedInput
+    expenses?: ExpenseUpdateManyWithoutMessNestedInput
+    utilities?: UtilityUpdateManyWithoutMessNestedInput
+    overrides?: OverrideUpdateManyWithoutMessNestedInput
+    houseRents?: HouseRentUpdateManyWithoutMessNestedInput
   }
 
-  export type HouseholdUncheckedUpdateInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    monthKey?: StringFieldUpdateOperationsInput | string
+  export type MessUncheckedUpdateInput = {
+    messName?: StringFieldUpdateOperationsInput | string
+    managerName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    members?: MemberUncheckedUpdateManyWithoutHouseholdNestedInput
-    days?: MealDayUncheckedUpdateManyWithoutHouseholdNestedInput
-    expenses?: ExpenseUncheckedUpdateManyWithoutHouseholdNestedInput
-    utilities?: UtilityUncheckedUpdateManyWithoutHouseholdNestedInput
-    overrides?: OverrideUncheckedUpdateManyWithoutHouseholdNestedInput
+    members?: MemberUncheckedUpdateManyWithoutMessNestedInput
+    days?: MealDayUncheckedUpdateManyWithoutMessNestedInput
+    expenses?: ExpenseUncheckedUpdateManyWithoutMessNestedInput
+    utilities?: UtilityUncheckedUpdateManyWithoutMessNestedInput
+    overrides?: OverrideUncheckedUpdateManyWithoutMessNestedInput
+    houseRents?: HouseRentUncheckedUpdateManyWithoutMessNestedInput
   }
 
-  export type HouseholdCreateManyInput = {
+  export type MessCreateManyInput = {
     id?: string
-    name: string
-    monthKey: string
+    messName: string
+    managerName: string
+    email: string
+    password: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
-  export type HouseholdUpdateManyMutationInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    monthKey?: StringFieldUpdateOperationsInput | string
+  export type MessUpdateManyMutationInput = {
+    messName?: StringFieldUpdateOperationsInput | string
+    managerName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type HouseholdUncheckedUpdateManyInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    monthKey?: StringFieldUpdateOperationsInput | string
+  export type MessUncheckedUpdateManyInput = {
+    messName?: StringFieldUpdateOperationsInput | string
+    managerName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9456,15 +10767,16 @@ export namespace Prisma {
     initials: string
     color: string
     houseRent?: number
-    household: HouseholdCreateNestedOneWithoutMembersInput
+    mess: MessCreateNestedOneWithoutMembersInput
     meals?: MealEntryCreateNestedManyWithoutMemberInput
     expenses?: ExpenseCreateNestedManyWithoutMemberInput
-    override?: OverrideCreateNestedOneWithoutMemberInput
+    overrides?: OverrideCreateNestedOneWithoutMemberInput
+    houseRents?: HouseRentCreateNestedManyWithoutMemberInput
   }
 
   export type MemberUncheckedCreateInput = {
     id?: string
-    householdId: string
+    messId: string
     externalId: string
     name: string
     initials: string
@@ -9472,7 +10784,8 @@ export namespace Prisma {
     houseRent?: number
     meals?: MealEntryUncheckedCreateNestedManyWithoutMemberInput
     expenses?: ExpenseUncheckedCreateNestedManyWithoutMemberInput
-    override?: OverrideUncheckedCreateNestedOneWithoutMemberInput
+    overrides?: OverrideUncheckedCreateNestedOneWithoutMemberInput
+    houseRents?: HouseRentUncheckedCreateNestedManyWithoutMemberInput
   }
 
   export type MemberUpdateInput = {
@@ -9481,14 +10794,15 @@ export namespace Prisma {
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     houseRent?: FloatFieldUpdateOperationsInput | number
-    household?: HouseholdUpdateOneRequiredWithoutMembersNestedInput
+    mess?: MessUpdateOneRequiredWithoutMembersNestedInput
     meals?: MealEntryUpdateManyWithoutMemberNestedInput
     expenses?: ExpenseUpdateManyWithoutMemberNestedInput
-    override?: OverrideUpdateOneWithoutMemberNestedInput
+    overrides?: OverrideUpdateOneWithoutMemberNestedInput
+    houseRents?: HouseRentUpdateManyWithoutMemberNestedInput
   }
 
   export type MemberUncheckedUpdateInput = {
-    householdId?: StringFieldUpdateOperationsInput | string
+    messId?: StringFieldUpdateOperationsInput | string
     externalId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
@@ -9496,12 +10810,13 @@ export namespace Prisma {
     houseRent?: FloatFieldUpdateOperationsInput | number
     meals?: MealEntryUncheckedUpdateManyWithoutMemberNestedInput
     expenses?: ExpenseUncheckedUpdateManyWithoutMemberNestedInput
-    override?: OverrideUncheckedUpdateOneWithoutMemberNestedInput
+    overrides?: OverrideUncheckedUpdateOneWithoutMemberNestedInput
+    houseRents?: HouseRentUncheckedUpdateManyWithoutMemberNestedInput
   }
 
   export type MemberCreateManyInput = {
     id?: string
-    householdId: string
+    messId: string
     externalId: string
     name: string
     initials: string
@@ -9518,7 +10833,7 @@ export namespace Prisma {
   }
 
   export type MemberUncheckedUpdateManyInput = {
-    householdId?: StringFieldUpdateOperationsInput | string
+    messId?: StringFieldUpdateOperationsInput | string
     externalId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
@@ -9530,13 +10845,13 @@ export namespace Prisma {
     id?: string
     date: string
     label: string
-    household: HouseholdCreateNestedOneWithoutDaysInput
+    mess: MessCreateNestedOneWithoutDaysInput
     entries?: MealEntryCreateNestedManyWithoutDayInput
   }
 
   export type MealDayUncheckedCreateInput = {
     id?: string
-    householdId: string
+    messId: string
     date: string
     label: string
     entries?: MealEntryUncheckedCreateNestedManyWithoutDayInput
@@ -9545,12 +10860,12 @@ export namespace Prisma {
   export type MealDayUpdateInput = {
     date?: StringFieldUpdateOperationsInput | string
     label?: StringFieldUpdateOperationsInput | string
-    household?: HouseholdUpdateOneRequiredWithoutDaysNestedInput
+    mess?: MessUpdateOneRequiredWithoutDaysNestedInput
     entries?: MealEntryUpdateManyWithoutDayNestedInput
   }
 
   export type MealDayUncheckedUpdateInput = {
-    householdId?: StringFieldUpdateOperationsInput | string
+    messId?: StringFieldUpdateOperationsInput | string
     date?: StringFieldUpdateOperationsInput | string
     label?: StringFieldUpdateOperationsInput | string
     entries?: MealEntryUncheckedUpdateManyWithoutDayNestedInput
@@ -9558,7 +10873,7 @@ export namespace Prisma {
 
   export type MealDayCreateManyInput = {
     id?: string
-    householdId: string
+    messId: string
     date: string
     label: string
   }
@@ -9569,7 +10884,7 @@ export namespace Prisma {
   }
 
   export type MealDayUncheckedUpdateManyInput = {
-    householdId?: StringFieldUpdateOperationsInput | string
+    messId?: StringFieldUpdateOperationsInput | string
     date?: StringFieldUpdateOperationsInput | string
     label?: StringFieldUpdateOperationsInput | string
   }
@@ -9621,13 +10936,13 @@ export namespace Prisma {
     id?: string
     category: string
     amount: number
-    household: HouseholdCreateNestedOneWithoutExpensesInput
+    mess: MessCreateNestedOneWithoutExpensesInput
     member: MemberCreateNestedOneWithoutExpensesInput
   }
 
   export type ExpenseUncheckedCreateInput = {
     id?: string
-    householdId: string
+    messId: string
     memberId: string
     category: string
     amount: number
@@ -9636,12 +10951,12 @@ export namespace Prisma {
   export type ExpenseUpdateInput = {
     category?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
-    household?: HouseholdUpdateOneRequiredWithoutExpensesNestedInput
+    mess?: MessUpdateOneRequiredWithoutExpensesNestedInput
     member?: MemberUpdateOneRequiredWithoutExpensesNestedInput
   }
 
   export type ExpenseUncheckedUpdateInput = {
-    householdId?: StringFieldUpdateOperationsInput | string
+    messId?: StringFieldUpdateOperationsInput | string
     memberId?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
@@ -9649,7 +10964,7 @@ export namespace Prisma {
 
   export type ExpenseCreateManyInput = {
     id?: string
-    householdId: string
+    messId: string
     memberId: string
     category: string
     amount: number
@@ -9661,7 +10976,7 @@ export namespace Prisma {
   }
 
   export type ExpenseUncheckedUpdateManyInput = {
-    householdId?: StringFieldUpdateOperationsInput | string
+    messId?: StringFieldUpdateOperationsInput | string
     memberId?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
@@ -9672,12 +10987,12 @@ export namespace Prisma {
     externalId: string
     name: string
     amount: number
-    household: HouseholdCreateNestedOneWithoutUtilitiesInput
+    mess: MessCreateNestedOneWithoutUtilitiesInput
   }
 
   export type UtilityUncheckedCreateInput = {
     id?: string
-    householdId: string
+    messId: string
     externalId: string
     name: string
     amount: number
@@ -9687,11 +11002,11 @@ export namespace Prisma {
     externalId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
-    household?: HouseholdUpdateOneRequiredWithoutUtilitiesNestedInput
+    mess?: MessUpdateOneRequiredWithoutUtilitiesNestedInput
   }
 
   export type UtilityUncheckedUpdateInput = {
-    householdId?: StringFieldUpdateOperationsInput | string
+    messId?: StringFieldUpdateOperationsInput | string
     externalId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
@@ -9699,7 +11014,7 @@ export namespace Prisma {
 
   export type UtilityCreateManyInput = {
     id?: string
-    householdId: string
+    messId: string
     externalId: string
     name: string
     amount: number
@@ -9712,7 +11027,7 @@ export namespace Prisma {
   }
 
   export type UtilityUncheckedUpdateManyInput = {
-    householdId?: StringFieldUpdateOperationsInput | string
+    messId?: StringFieldUpdateOperationsInput | string
     externalId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
@@ -9722,13 +11037,13 @@ export namespace Prisma {
     id?: string
     utilities?: number | null
     mealRate?: number | null
-    household: HouseholdCreateNestedOneWithoutOverridesInput
-    member: MemberCreateNestedOneWithoutOverrideInput
+    mess: MessCreateNestedOneWithoutOverridesInput
+    member: MemberCreateNestedOneWithoutOverridesInput
   }
 
   export type OverrideUncheckedCreateInput = {
     id?: string
-    householdId: string
+    messId: string
     memberId: string
     utilities?: number | null
     mealRate?: number | null
@@ -9737,12 +11052,12 @@ export namespace Prisma {
   export type OverrideUpdateInput = {
     utilities?: NullableFloatFieldUpdateOperationsInput | number | null
     mealRate?: NullableFloatFieldUpdateOperationsInput | number | null
-    household?: HouseholdUpdateOneRequiredWithoutOverridesNestedInput
-    member?: MemberUpdateOneRequiredWithoutOverrideNestedInput
+    mess?: MessUpdateOneRequiredWithoutOverridesNestedInput
+    member?: MemberUpdateOneRequiredWithoutOverridesNestedInput
   }
 
   export type OverrideUncheckedUpdateInput = {
-    householdId?: StringFieldUpdateOperationsInput | string
+    messId?: StringFieldUpdateOperationsInput | string
     memberId?: StringFieldUpdateOperationsInput | string
     utilities?: NullableFloatFieldUpdateOperationsInput | number | null
     mealRate?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -9750,7 +11065,7 @@ export namespace Prisma {
 
   export type OverrideCreateManyInput = {
     id?: string
-    householdId: string
+    messId: string
     memberId: string
     utilities?: number | null
     mealRate?: number | null
@@ -9762,10 +11077,60 @@ export namespace Prisma {
   }
 
   export type OverrideUncheckedUpdateManyInput = {
-    householdId?: StringFieldUpdateOperationsInput | string
+    messId?: StringFieldUpdateOperationsInput | string
     memberId?: StringFieldUpdateOperationsInput | string
     utilities?: NullableFloatFieldUpdateOperationsInput | number | null
     mealRate?: NullableFloatFieldUpdateOperationsInput | number | null
+  }
+
+  export type HouseRentCreateInput = {
+    id?: string
+    amount: number
+    monthKey: string
+    mess: MessCreateNestedOneWithoutHouseRentsInput
+    member: MemberCreateNestedOneWithoutHouseRentsInput
+  }
+
+  export type HouseRentUncheckedCreateInput = {
+    id?: string
+    messId: string
+    memberId: string
+    amount: number
+    monthKey: string
+  }
+
+  export type HouseRentUpdateInput = {
+    amount?: FloatFieldUpdateOperationsInput | number
+    monthKey?: StringFieldUpdateOperationsInput | string
+    mess?: MessUpdateOneRequiredWithoutHouseRentsNestedInput
+    member?: MemberUpdateOneRequiredWithoutHouseRentsNestedInput
+  }
+
+  export type HouseRentUncheckedUpdateInput = {
+    messId?: StringFieldUpdateOperationsInput | string
+    memberId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    monthKey?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type HouseRentCreateManyInput = {
+    id?: string
+    messId: string
+    memberId: string
+    amount: number
+    monthKey: string
+  }
+
+  export type HouseRentUpdateManyMutationInput = {
+    amount?: FloatFieldUpdateOperationsInput | number
+    monthKey?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type HouseRentUncheckedUpdateManyInput = {
+    messId?: StringFieldUpdateOperationsInput | string
+    memberId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    monthKey?: StringFieldUpdateOperationsInput | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -9824,6 +11189,12 @@ export namespace Prisma {
     none?: OverrideWhereInput
   }
 
+  export type HouseRentListRelationFilter = {
+    every?: HouseRentWhereInput
+    some?: HouseRentWhereInput
+    none?: HouseRentWhereInput
+  }
+
   export type MemberOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -9844,31 +11215,36 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type HouseholdNameMonthKeyCompoundUniqueInput = {
-    name: string
-    monthKey: string
+  export type HouseRentOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
-  export type HouseholdCountOrderByAggregateInput = {
+  export type MessCountOrderByAggregateInput = {
     id?: SortOrder
-    name?: SortOrder
-    monthKey?: SortOrder
+    messName?: SortOrder
+    managerName?: SortOrder
+    email?: SortOrder
+    password?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
-  export type HouseholdMaxOrderByAggregateInput = {
+  export type MessMaxOrderByAggregateInput = {
     id?: SortOrder
-    name?: SortOrder
-    monthKey?: SortOrder
+    messName?: SortOrder
+    managerName?: SortOrder
+    email?: SortOrder
+    password?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
-  export type HouseholdMinOrderByAggregateInput = {
+  export type MessMinOrderByAggregateInput = {
     id?: SortOrder
-    name?: SortOrder
-    monthKey?: SortOrder
+    messName?: SortOrder
+    managerName?: SortOrder
+    email?: SortOrder
+    password?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -9916,9 +11292,9 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type HouseholdScalarRelationFilter = {
-    is?: HouseholdWhereInput
-    isNot?: HouseholdWhereInput
+  export type MessScalarRelationFilter = {
+    is?: MessWhereInput
+    isNot?: MessWhereInput
   }
 
   export type MealEntryListRelationFilter = {
@@ -9936,14 +11312,14 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type MemberHouseholdIdExternalIdCompoundUniqueInput = {
-    householdId: string
+  export type MemberMessIdExternalIdCompoundUniqueInput = {
+    messId: string
     externalId: string
   }
 
   export type MemberCountOrderByAggregateInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     externalId?: SortOrder
     name?: SortOrder
     initials?: SortOrder
@@ -9957,7 +11333,7 @@ export namespace Prisma {
 
   export type MemberMaxOrderByAggregateInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     externalId?: SortOrder
     name?: SortOrder
     initials?: SortOrder
@@ -9967,7 +11343,7 @@ export namespace Prisma {
 
   export type MemberMinOrderByAggregateInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     externalId?: SortOrder
     name?: SortOrder
     initials?: SortOrder
@@ -9995,28 +11371,28 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
-  export type MealDayHouseholdIdDateCompoundUniqueInput = {
-    householdId: string
+  export type MealDayMessIdDateCompoundUniqueInput = {
+    messId: string
     date: string
   }
 
   export type MealDayCountOrderByAggregateInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     date?: SortOrder
     label?: SortOrder
   }
 
   export type MealDayMaxOrderByAggregateInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     date?: SortOrder
     label?: SortOrder
   }
 
   export type MealDayMinOrderByAggregateInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     date?: SortOrder
     label?: SortOrder
   }
@@ -10092,15 +11468,15 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
-  export type ExpenseHouseholdIdMemberIdCategoryCompoundUniqueInput = {
-    householdId: string
+  export type ExpenseMessIdMemberIdCategoryCompoundUniqueInput = {
+    messId: string
     memberId: string
     category: string
   }
 
   export type ExpenseCountOrderByAggregateInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     memberId?: SortOrder
     category?: SortOrder
     amount?: SortOrder
@@ -10112,7 +11488,7 @@ export namespace Prisma {
 
   export type ExpenseMaxOrderByAggregateInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     memberId?: SortOrder
     category?: SortOrder
     amount?: SortOrder
@@ -10120,7 +11496,7 @@ export namespace Prisma {
 
   export type ExpenseMinOrderByAggregateInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     memberId?: SortOrder
     category?: SortOrder
     amount?: SortOrder
@@ -10130,14 +11506,14 @@ export namespace Prisma {
     amount?: SortOrder
   }
 
-  export type UtilityHouseholdIdExternalIdCompoundUniqueInput = {
-    householdId: string
+  export type UtilityMessIdExternalIdCompoundUniqueInput = {
+    messId: string
     externalId: string
   }
 
   export type UtilityCountOrderByAggregateInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     externalId?: SortOrder
     name?: SortOrder
     amount?: SortOrder
@@ -10149,7 +11525,7 @@ export namespace Prisma {
 
   export type UtilityMaxOrderByAggregateInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     externalId?: SortOrder
     name?: SortOrder
     amount?: SortOrder
@@ -10157,7 +11533,7 @@ export namespace Prisma {
 
   export type UtilityMinOrderByAggregateInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     externalId?: SortOrder
     name?: SortOrder
     amount?: SortOrder
@@ -10181,7 +11557,7 @@ export namespace Prisma {
 
   export type OverrideCountOrderByAggregateInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     memberId?: SortOrder
     utilities?: SortOrder
     mealRate?: SortOrder
@@ -10194,7 +11570,7 @@ export namespace Prisma {
 
   export type OverrideMaxOrderByAggregateInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     memberId?: SortOrder
     utilities?: SortOrder
     mealRate?: SortOrder
@@ -10202,7 +11578,7 @@ export namespace Prisma {
 
   export type OverrideMinOrderByAggregateInput = {
     id?: SortOrder
-    householdId?: SortOrder
+    messId?: SortOrder
     memberId?: SortOrder
     utilities?: SortOrder
     mealRate?: SortOrder
@@ -10230,74 +11606,126 @@ export namespace Prisma {
     isSet?: boolean
   }
 
-  export type MemberCreateNestedManyWithoutHouseholdInput = {
-    create?: XOR<MemberCreateWithoutHouseholdInput, MemberUncheckedCreateWithoutHouseholdInput> | MemberCreateWithoutHouseholdInput[] | MemberUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: MemberCreateOrConnectWithoutHouseholdInput | MemberCreateOrConnectWithoutHouseholdInput[]
-    createMany?: MemberCreateManyHouseholdInputEnvelope
+  export type HouseRentMessIdMemberIdMonthKeyCompoundUniqueInput = {
+    messId: string
+    memberId: string
+    monthKey: string
+  }
+
+  export type HouseRentCountOrderByAggregateInput = {
+    id?: SortOrder
+    messId?: SortOrder
+    memberId?: SortOrder
+    amount?: SortOrder
+    monthKey?: SortOrder
+  }
+
+  export type HouseRentAvgOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type HouseRentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    messId?: SortOrder
+    memberId?: SortOrder
+    amount?: SortOrder
+    monthKey?: SortOrder
+  }
+
+  export type HouseRentMinOrderByAggregateInput = {
+    id?: SortOrder
+    messId?: SortOrder
+    memberId?: SortOrder
+    amount?: SortOrder
+    monthKey?: SortOrder
+  }
+
+  export type HouseRentSumOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type MemberCreateNestedManyWithoutMessInput = {
+    create?: XOR<MemberCreateWithoutMessInput, MemberUncheckedCreateWithoutMessInput> | MemberCreateWithoutMessInput[] | MemberUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: MemberCreateOrConnectWithoutMessInput | MemberCreateOrConnectWithoutMessInput[]
+    createMany?: MemberCreateManyMessInputEnvelope
     connect?: MemberWhereUniqueInput | MemberWhereUniqueInput[]
   }
 
-  export type MealDayCreateNestedManyWithoutHouseholdInput = {
-    create?: XOR<MealDayCreateWithoutHouseholdInput, MealDayUncheckedCreateWithoutHouseholdInput> | MealDayCreateWithoutHouseholdInput[] | MealDayUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: MealDayCreateOrConnectWithoutHouseholdInput | MealDayCreateOrConnectWithoutHouseholdInput[]
-    createMany?: MealDayCreateManyHouseholdInputEnvelope
+  export type MealDayCreateNestedManyWithoutMessInput = {
+    create?: XOR<MealDayCreateWithoutMessInput, MealDayUncheckedCreateWithoutMessInput> | MealDayCreateWithoutMessInput[] | MealDayUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: MealDayCreateOrConnectWithoutMessInput | MealDayCreateOrConnectWithoutMessInput[]
+    createMany?: MealDayCreateManyMessInputEnvelope
     connect?: MealDayWhereUniqueInput | MealDayWhereUniqueInput[]
   }
 
-  export type ExpenseCreateNestedManyWithoutHouseholdInput = {
-    create?: XOR<ExpenseCreateWithoutHouseholdInput, ExpenseUncheckedCreateWithoutHouseholdInput> | ExpenseCreateWithoutHouseholdInput[] | ExpenseUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: ExpenseCreateOrConnectWithoutHouseholdInput | ExpenseCreateOrConnectWithoutHouseholdInput[]
-    createMany?: ExpenseCreateManyHouseholdInputEnvelope
+  export type ExpenseCreateNestedManyWithoutMessInput = {
+    create?: XOR<ExpenseCreateWithoutMessInput, ExpenseUncheckedCreateWithoutMessInput> | ExpenseCreateWithoutMessInput[] | ExpenseUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: ExpenseCreateOrConnectWithoutMessInput | ExpenseCreateOrConnectWithoutMessInput[]
+    createMany?: ExpenseCreateManyMessInputEnvelope
     connect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
   }
 
-  export type UtilityCreateNestedManyWithoutHouseholdInput = {
-    create?: XOR<UtilityCreateWithoutHouseholdInput, UtilityUncheckedCreateWithoutHouseholdInput> | UtilityCreateWithoutHouseholdInput[] | UtilityUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: UtilityCreateOrConnectWithoutHouseholdInput | UtilityCreateOrConnectWithoutHouseholdInput[]
-    createMany?: UtilityCreateManyHouseholdInputEnvelope
+  export type UtilityCreateNestedManyWithoutMessInput = {
+    create?: XOR<UtilityCreateWithoutMessInput, UtilityUncheckedCreateWithoutMessInput> | UtilityCreateWithoutMessInput[] | UtilityUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: UtilityCreateOrConnectWithoutMessInput | UtilityCreateOrConnectWithoutMessInput[]
+    createMany?: UtilityCreateManyMessInputEnvelope
     connect?: UtilityWhereUniqueInput | UtilityWhereUniqueInput[]
   }
 
-  export type OverrideCreateNestedManyWithoutHouseholdInput = {
-    create?: XOR<OverrideCreateWithoutHouseholdInput, OverrideUncheckedCreateWithoutHouseholdInput> | OverrideCreateWithoutHouseholdInput[] | OverrideUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: OverrideCreateOrConnectWithoutHouseholdInput | OverrideCreateOrConnectWithoutHouseholdInput[]
-    createMany?: OverrideCreateManyHouseholdInputEnvelope
+  export type OverrideCreateNestedManyWithoutMessInput = {
+    create?: XOR<OverrideCreateWithoutMessInput, OverrideUncheckedCreateWithoutMessInput> | OverrideCreateWithoutMessInput[] | OverrideUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: OverrideCreateOrConnectWithoutMessInput | OverrideCreateOrConnectWithoutMessInput[]
+    createMany?: OverrideCreateManyMessInputEnvelope
     connect?: OverrideWhereUniqueInput | OverrideWhereUniqueInput[]
   }
 
-  export type MemberUncheckedCreateNestedManyWithoutHouseholdInput = {
-    create?: XOR<MemberCreateWithoutHouseholdInput, MemberUncheckedCreateWithoutHouseholdInput> | MemberCreateWithoutHouseholdInput[] | MemberUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: MemberCreateOrConnectWithoutHouseholdInput | MemberCreateOrConnectWithoutHouseholdInput[]
-    createMany?: MemberCreateManyHouseholdInputEnvelope
+  export type HouseRentCreateNestedManyWithoutMessInput = {
+    create?: XOR<HouseRentCreateWithoutMessInput, HouseRentUncheckedCreateWithoutMessInput> | HouseRentCreateWithoutMessInput[] | HouseRentUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: HouseRentCreateOrConnectWithoutMessInput | HouseRentCreateOrConnectWithoutMessInput[]
+    createMany?: HouseRentCreateManyMessInputEnvelope
+    connect?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+  }
+
+  export type MemberUncheckedCreateNestedManyWithoutMessInput = {
+    create?: XOR<MemberCreateWithoutMessInput, MemberUncheckedCreateWithoutMessInput> | MemberCreateWithoutMessInput[] | MemberUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: MemberCreateOrConnectWithoutMessInput | MemberCreateOrConnectWithoutMessInput[]
+    createMany?: MemberCreateManyMessInputEnvelope
     connect?: MemberWhereUniqueInput | MemberWhereUniqueInput[]
   }
 
-  export type MealDayUncheckedCreateNestedManyWithoutHouseholdInput = {
-    create?: XOR<MealDayCreateWithoutHouseholdInput, MealDayUncheckedCreateWithoutHouseholdInput> | MealDayCreateWithoutHouseholdInput[] | MealDayUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: MealDayCreateOrConnectWithoutHouseholdInput | MealDayCreateOrConnectWithoutHouseholdInput[]
-    createMany?: MealDayCreateManyHouseholdInputEnvelope
+  export type MealDayUncheckedCreateNestedManyWithoutMessInput = {
+    create?: XOR<MealDayCreateWithoutMessInput, MealDayUncheckedCreateWithoutMessInput> | MealDayCreateWithoutMessInput[] | MealDayUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: MealDayCreateOrConnectWithoutMessInput | MealDayCreateOrConnectWithoutMessInput[]
+    createMany?: MealDayCreateManyMessInputEnvelope
     connect?: MealDayWhereUniqueInput | MealDayWhereUniqueInput[]
   }
 
-  export type ExpenseUncheckedCreateNestedManyWithoutHouseholdInput = {
-    create?: XOR<ExpenseCreateWithoutHouseholdInput, ExpenseUncheckedCreateWithoutHouseholdInput> | ExpenseCreateWithoutHouseholdInput[] | ExpenseUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: ExpenseCreateOrConnectWithoutHouseholdInput | ExpenseCreateOrConnectWithoutHouseholdInput[]
-    createMany?: ExpenseCreateManyHouseholdInputEnvelope
+  export type ExpenseUncheckedCreateNestedManyWithoutMessInput = {
+    create?: XOR<ExpenseCreateWithoutMessInput, ExpenseUncheckedCreateWithoutMessInput> | ExpenseCreateWithoutMessInput[] | ExpenseUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: ExpenseCreateOrConnectWithoutMessInput | ExpenseCreateOrConnectWithoutMessInput[]
+    createMany?: ExpenseCreateManyMessInputEnvelope
     connect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
   }
 
-  export type UtilityUncheckedCreateNestedManyWithoutHouseholdInput = {
-    create?: XOR<UtilityCreateWithoutHouseholdInput, UtilityUncheckedCreateWithoutHouseholdInput> | UtilityCreateWithoutHouseholdInput[] | UtilityUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: UtilityCreateOrConnectWithoutHouseholdInput | UtilityCreateOrConnectWithoutHouseholdInput[]
-    createMany?: UtilityCreateManyHouseholdInputEnvelope
+  export type UtilityUncheckedCreateNestedManyWithoutMessInput = {
+    create?: XOR<UtilityCreateWithoutMessInput, UtilityUncheckedCreateWithoutMessInput> | UtilityCreateWithoutMessInput[] | UtilityUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: UtilityCreateOrConnectWithoutMessInput | UtilityCreateOrConnectWithoutMessInput[]
+    createMany?: UtilityCreateManyMessInputEnvelope
     connect?: UtilityWhereUniqueInput | UtilityWhereUniqueInput[]
   }
 
-  export type OverrideUncheckedCreateNestedManyWithoutHouseholdInput = {
-    create?: XOR<OverrideCreateWithoutHouseholdInput, OverrideUncheckedCreateWithoutHouseholdInput> | OverrideCreateWithoutHouseholdInput[] | OverrideUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: OverrideCreateOrConnectWithoutHouseholdInput | OverrideCreateOrConnectWithoutHouseholdInput[]
-    createMany?: OverrideCreateManyHouseholdInputEnvelope
+  export type OverrideUncheckedCreateNestedManyWithoutMessInput = {
+    create?: XOR<OverrideCreateWithoutMessInput, OverrideUncheckedCreateWithoutMessInput> | OverrideCreateWithoutMessInput[] | OverrideUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: OverrideCreateOrConnectWithoutMessInput | OverrideCreateOrConnectWithoutMessInput[]
+    createMany?: OverrideCreateManyMessInputEnvelope
     connect?: OverrideWhereUniqueInput | OverrideWhereUniqueInput[]
+  }
+
+  export type HouseRentUncheckedCreateNestedManyWithoutMessInput = {
+    create?: XOR<HouseRentCreateWithoutMessInput, HouseRentUncheckedCreateWithoutMessInput> | HouseRentCreateWithoutMessInput[] | HouseRentUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: HouseRentCreateOrConnectWithoutMessInput | HouseRentCreateOrConnectWithoutMessInput[]
+    createMany?: HouseRentCreateManyMessInputEnvelope
+    connect?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -10308,150 +11736,178 @@ export namespace Prisma {
     set?: Date | string
   }
 
-  export type MemberUpdateManyWithoutHouseholdNestedInput = {
-    create?: XOR<MemberCreateWithoutHouseholdInput, MemberUncheckedCreateWithoutHouseholdInput> | MemberCreateWithoutHouseholdInput[] | MemberUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: MemberCreateOrConnectWithoutHouseholdInput | MemberCreateOrConnectWithoutHouseholdInput[]
-    upsert?: MemberUpsertWithWhereUniqueWithoutHouseholdInput | MemberUpsertWithWhereUniqueWithoutHouseholdInput[]
-    createMany?: MemberCreateManyHouseholdInputEnvelope
+  export type MemberUpdateManyWithoutMessNestedInput = {
+    create?: XOR<MemberCreateWithoutMessInput, MemberUncheckedCreateWithoutMessInput> | MemberCreateWithoutMessInput[] | MemberUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: MemberCreateOrConnectWithoutMessInput | MemberCreateOrConnectWithoutMessInput[]
+    upsert?: MemberUpsertWithWhereUniqueWithoutMessInput | MemberUpsertWithWhereUniqueWithoutMessInput[]
+    createMany?: MemberCreateManyMessInputEnvelope
     set?: MemberWhereUniqueInput | MemberWhereUniqueInput[]
     disconnect?: MemberWhereUniqueInput | MemberWhereUniqueInput[]
     delete?: MemberWhereUniqueInput | MemberWhereUniqueInput[]
     connect?: MemberWhereUniqueInput | MemberWhereUniqueInput[]
-    update?: MemberUpdateWithWhereUniqueWithoutHouseholdInput | MemberUpdateWithWhereUniqueWithoutHouseholdInput[]
-    updateMany?: MemberUpdateManyWithWhereWithoutHouseholdInput | MemberUpdateManyWithWhereWithoutHouseholdInput[]
+    update?: MemberUpdateWithWhereUniqueWithoutMessInput | MemberUpdateWithWhereUniqueWithoutMessInput[]
+    updateMany?: MemberUpdateManyWithWhereWithoutMessInput | MemberUpdateManyWithWhereWithoutMessInput[]
     deleteMany?: MemberScalarWhereInput | MemberScalarWhereInput[]
   }
 
-  export type MealDayUpdateManyWithoutHouseholdNestedInput = {
-    create?: XOR<MealDayCreateWithoutHouseholdInput, MealDayUncheckedCreateWithoutHouseholdInput> | MealDayCreateWithoutHouseholdInput[] | MealDayUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: MealDayCreateOrConnectWithoutHouseholdInput | MealDayCreateOrConnectWithoutHouseholdInput[]
-    upsert?: MealDayUpsertWithWhereUniqueWithoutHouseholdInput | MealDayUpsertWithWhereUniqueWithoutHouseholdInput[]
-    createMany?: MealDayCreateManyHouseholdInputEnvelope
+  export type MealDayUpdateManyWithoutMessNestedInput = {
+    create?: XOR<MealDayCreateWithoutMessInput, MealDayUncheckedCreateWithoutMessInput> | MealDayCreateWithoutMessInput[] | MealDayUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: MealDayCreateOrConnectWithoutMessInput | MealDayCreateOrConnectWithoutMessInput[]
+    upsert?: MealDayUpsertWithWhereUniqueWithoutMessInput | MealDayUpsertWithWhereUniqueWithoutMessInput[]
+    createMany?: MealDayCreateManyMessInputEnvelope
     set?: MealDayWhereUniqueInput | MealDayWhereUniqueInput[]
     disconnect?: MealDayWhereUniqueInput | MealDayWhereUniqueInput[]
     delete?: MealDayWhereUniqueInput | MealDayWhereUniqueInput[]
     connect?: MealDayWhereUniqueInput | MealDayWhereUniqueInput[]
-    update?: MealDayUpdateWithWhereUniqueWithoutHouseholdInput | MealDayUpdateWithWhereUniqueWithoutHouseholdInput[]
-    updateMany?: MealDayUpdateManyWithWhereWithoutHouseholdInput | MealDayUpdateManyWithWhereWithoutHouseholdInput[]
+    update?: MealDayUpdateWithWhereUniqueWithoutMessInput | MealDayUpdateWithWhereUniqueWithoutMessInput[]
+    updateMany?: MealDayUpdateManyWithWhereWithoutMessInput | MealDayUpdateManyWithWhereWithoutMessInput[]
     deleteMany?: MealDayScalarWhereInput | MealDayScalarWhereInput[]
   }
 
-  export type ExpenseUpdateManyWithoutHouseholdNestedInput = {
-    create?: XOR<ExpenseCreateWithoutHouseholdInput, ExpenseUncheckedCreateWithoutHouseholdInput> | ExpenseCreateWithoutHouseholdInput[] | ExpenseUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: ExpenseCreateOrConnectWithoutHouseholdInput | ExpenseCreateOrConnectWithoutHouseholdInput[]
-    upsert?: ExpenseUpsertWithWhereUniqueWithoutHouseholdInput | ExpenseUpsertWithWhereUniqueWithoutHouseholdInput[]
-    createMany?: ExpenseCreateManyHouseholdInputEnvelope
+  export type ExpenseUpdateManyWithoutMessNestedInput = {
+    create?: XOR<ExpenseCreateWithoutMessInput, ExpenseUncheckedCreateWithoutMessInput> | ExpenseCreateWithoutMessInput[] | ExpenseUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: ExpenseCreateOrConnectWithoutMessInput | ExpenseCreateOrConnectWithoutMessInput[]
+    upsert?: ExpenseUpsertWithWhereUniqueWithoutMessInput | ExpenseUpsertWithWhereUniqueWithoutMessInput[]
+    createMany?: ExpenseCreateManyMessInputEnvelope
     set?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
     disconnect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
     delete?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
     connect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
-    update?: ExpenseUpdateWithWhereUniqueWithoutHouseholdInput | ExpenseUpdateWithWhereUniqueWithoutHouseholdInput[]
-    updateMany?: ExpenseUpdateManyWithWhereWithoutHouseholdInput | ExpenseUpdateManyWithWhereWithoutHouseholdInput[]
+    update?: ExpenseUpdateWithWhereUniqueWithoutMessInput | ExpenseUpdateWithWhereUniqueWithoutMessInput[]
+    updateMany?: ExpenseUpdateManyWithWhereWithoutMessInput | ExpenseUpdateManyWithWhereWithoutMessInput[]
     deleteMany?: ExpenseScalarWhereInput | ExpenseScalarWhereInput[]
   }
 
-  export type UtilityUpdateManyWithoutHouseholdNestedInput = {
-    create?: XOR<UtilityCreateWithoutHouseholdInput, UtilityUncheckedCreateWithoutHouseholdInput> | UtilityCreateWithoutHouseholdInput[] | UtilityUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: UtilityCreateOrConnectWithoutHouseholdInput | UtilityCreateOrConnectWithoutHouseholdInput[]
-    upsert?: UtilityUpsertWithWhereUniqueWithoutHouseholdInput | UtilityUpsertWithWhereUniqueWithoutHouseholdInput[]
-    createMany?: UtilityCreateManyHouseholdInputEnvelope
+  export type UtilityUpdateManyWithoutMessNestedInput = {
+    create?: XOR<UtilityCreateWithoutMessInput, UtilityUncheckedCreateWithoutMessInput> | UtilityCreateWithoutMessInput[] | UtilityUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: UtilityCreateOrConnectWithoutMessInput | UtilityCreateOrConnectWithoutMessInput[]
+    upsert?: UtilityUpsertWithWhereUniqueWithoutMessInput | UtilityUpsertWithWhereUniqueWithoutMessInput[]
+    createMany?: UtilityCreateManyMessInputEnvelope
     set?: UtilityWhereUniqueInput | UtilityWhereUniqueInput[]
     disconnect?: UtilityWhereUniqueInput | UtilityWhereUniqueInput[]
     delete?: UtilityWhereUniqueInput | UtilityWhereUniqueInput[]
     connect?: UtilityWhereUniqueInput | UtilityWhereUniqueInput[]
-    update?: UtilityUpdateWithWhereUniqueWithoutHouseholdInput | UtilityUpdateWithWhereUniqueWithoutHouseholdInput[]
-    updateMany?: UtilityUpdateManyWithWhereWithoutHouseholdInput | UtilityUpdateManyWithWhereWithoutHouseholdInput[]
+    update?: UtilityUpdateWithWhereUniqueWithoutMessInput | UtilityUpdateWithWhereUniqueWithoutMessInput[]
+    updateMany?: UtilityUpdateManyWithWhereWithoutMessInput | UtilityUpdateManyWithWhereWithoutMessInput[]
     deleteMany?: UtilityScalarWhereInput | UtilityScalarWhereInput[]
   }
 
-  export type OverrideUpdateManyWithoutHouseholdNestedInput = {
-    create?: XOR<OverrideCreateWithoutHouseholdInput, OverrideUncheckedCreateWithoutHouseholdInput> | OverrideCreateWithoutHouseholdInput[] | OverrideUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: OverrideCreateOrConnectWithoutHouseholdInput | OverrideCreateOrConnectWithoutHouseholdInput[]
-    upsert?: OverrideUpsertWithWhereUniqueWithoutHouseholdInput | OverrideUpsertWithWhereUniqueWithoutHouseholdInput[]
-    createMany?: OverrideCreateManyHouseholdInputEnvelope
+  export type OverrideUpdateManyWithoutMessNestedInput = {
+    create?: XOR<OverrideCreateWithoutMessInput, OverrideUncheckedCreateWithoutMessInput> | OverrideCreateWithoutMessInput[] | OverrideUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: OverrideCreateOrConnectWithoutMessInput | OverrideCreateOrConnectWithoutMessInput[]
+    upsert?: OverrideUpsertWithWhereUniqueWithoutMessInput | OverrideUpsertWithWhereUniqueWithoutMessInput[]
+    createMany?: OverrideCreateManyMessInputEnvelope
     set?: OverrideWhereUniqueInput | OverrideWhereUniqueInput[]
     disconnect?: OverrideWhereUniqueInput | OverrideWhereUniqueInput[]
     delete?: OverrideWhereUniqueInput | OverrideWhereUniqueInput[]
     connect?: OverrideWhereUniqueInput | OverrideWhereUniqueInput[]
-    update?: OverrideUpdateWithWhereUniqueWithoutHouseholdInput | OverrideUpdateWithWhereUniqueWithoutHouseholdInput[]
-    updateMany?: OverrideUpdateManyWithWhereWithoutHouseholdInput | OverrideUpdateManyWithWhereWithoutHouseholdInput[]
+    update?: OverrideUpdateWithWhereUniqueWithoutMessInput | OverrideUpdateWithWhereUniqueWithoutMessInput[]
+    updateMany?: OverrideUpdateManyWithWhereWithoutMessInput | OverrideUpdateManyWithWhereWithoutMessInput[]
     deleteMany?: OverrideScalarWhereInput | OverrideScalarWhereInput[]
   }
 
-  export type MemberUncheckedUpdateManyWithoutHouseholdNestedInput = {
-    create?: XOR<MemberCreateWithoutHouseholdInput, MemberUncheckedCreateWithoutHouseholdInput> | MemberCreateWithoutHouseholdInput[] | MemberUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: MemberCreateOrConnectWithoutHouseholdInput | MemberCreateOrConnectWithoutHouseholdInput[]
-    upsert?: MemberUpsertWithWhereUniqueWithoutHouseholdInput | MemberUpsertWithWhereUniqueWithoutHouseholdInput[]
-    createMany?: MemberCreateManyHouseholdInputEnvelope
+  export type HouseRentUpdateManyWithoutMessNestedInput = {
+    create?: XOR<HouseRentCreateWithoutMessInput, HouseRentUncheckedCreateWithoutMessInput> | HouseRentCreateWithoutMessInput[] | HouseRentUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: HouseRentCreateOrConnectWithoutMessInput | HouseRentCreateOrConnectWithoutMessInput[]
+    upsert?: HouseRentUpsertWithWhereUniqueWithoutMessInput | HouseRentUpsertWithWhereUniqueWithoutMessInput[]
+    createMany?: HouseRentCreateManyMessInputEnvelope
+    set?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+    disconnect?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+    delete?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+    connect?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+    update?: HouseRentUpdateWithWhereUniqueWithoutMessInput | HouseRentUpdateWithWhereUniqueWithoutMessInput[]
+    updateMany?: HouseRentUpdateManyWithWhereWithoutMessInput | HouseRentUpdateManyWithWhereWithoutMessInput[]
+    deleteMany?: HouseRentScalarWhereInput | HouseRentScalarWhereInput[]
+  }
+
+  export type MemberUncheckedUpdateManyWithoutMessNestedInput = {
+    create?: XOR<MemberCreateWithoutMessInput, MemberUncheckedCreateWithoutMessInput> | MemberCreateWithoutMessInput[] | MemberUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: MemberCreateOrConnectWithoutMessInput | MemberCreateOrConnectWithoutMessInput[]
+    upsert?: MemberUpsertWithWhereUniqueWithoutMessInput | MemberUpsertWithWhereUniqueWithoutMessInput[]
+    createMany?: MemberCreateManyMessInputEnvelope
     set?: MemberWhereUniqueInput | MemberWhereUniqueInput[]
     disconnect?: MemberWhereUniqueInput | MemberWhereUniqueInput[]
     delete?: MemberWhereUniqueInput | MemberWhereUniqueInput[]
     connect?: MemberWhereUniqueInput | MemberWhereUniqueInput[]
-    update?: MemberUpdateWithWhereUniqueWithoutHouseholdInput | MemberUpdateWithWhereUniqueWithoutHouseholdInput[]
-    updateMany?: MemberUpdateManyWithWhereWithoutHouseholdInput | MemberUpdateManyWithWhereWithoutHouseholdInput[]
+    update?: MemberUpdateWithWhereUniqueWithoutMessInput | MemberUpdateWithWhereUniqueWithoutMessInput[]
+    updateMany?: MemberUpdateManyWithWhereWithoutMessInput | MemberUpdateManyWithWhereWithoutMessInput[]
     deleteMany?: MemberScalarWhereInput | MemberScalarWhereInput[]
   }
 
-  export type MealDayUncheckedUpdateManyWithoutHouseholdNestedInput = {
-    create?: XOR<MealDayCreateWithoutHouseholdInput, MealDayUncheckedCreateWithoutHouseholdInput> | MealDayCreateWithoutHouseholdInput[] | MealDayUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: MealDayCreateOrConnectWithoutHouseholdInput | MealDayCreateOrConnectWithoutHouseholdInput[]
-    upsert?: MealDayUpsertWithWhereUniqueWithoutHouseholdInput | MealDayUpsertWithWhereUniqueWithoutHouseholdInput[]
-    createMany?: MealDayCreateManyHouseholdInputEnvelope
+  export type MealDayUncheckedUpdateManyWithoutMessNestedInput = {
+    create?: XOR<MealDayCreateWithoutMessInput, MealDayUncheckedCreateWithoutMessInput> | MealDayCreateWithoutMessInput[] | MealDayUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: MealDayCreateOrConnectWithoutMessInput | MealDayCreateOrConnectWithoutMessInput[]
+    upsert?: MealDayUpsertWithWhereUniqueWithoutMessInput | MealDayUpsertWithWhereUniqueWithoutMessInput[]
+    createMany?: MealDayCreateManyMessInputEnvelope
     set?: MealDayWhereUniqueInput | MealDayWhereUniqueInput[]
     disconnect?: MealDayWhereUniqueInput | MealDayWhereUniqueInput[]
     delete?: MealDayWhereUniqueInput | MealDayWhereUniqueInput[]
     connect?: MealDayWhereUniqueInput | MealDayWhereUniqueInput[]
-    update?: MealDayUpdateWithWhereUniqueWithoutHouseholdInput | MealDayUpdateWithWhereUniqueWithoutHouseholdInput[]
-    updateMany?: MealDayUpdateManyWithWhereWithoutHouseholdInput | MealDayUpdateManyWithWhereWithoutHouseholdInput[]
+    update?: MealDayUpdateWithWhereUniqueWithoutMessInput | MealDayUpdateWithWhereUniqueWithoutMessInput[]
+    updateMany?: MealDayUpdateManyWithWhereWithoutMessInput | MealDayUpdateManyWithWhereWithoutMessInput[]
     deleteMany?: MealDayScalarWhereInput | MealDayScalarWhereInput[]
   }
 
-  export type ExpenseUncheckedUpdateManyWithoutHouseholdNestedInput = {
-    create?: XOR<ExpenseCreateWithoutHouseholdInput, ExpenseUncheckedCreateWithoutHouseholdInput> | ExpenseCreateWithoutHouseholdInput[] | ExpenseUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: ExpenseCreateOrConnectWithoutHouseholdInput | ExpenseCreateOrConnectWithoutHouseholdInput[]
-    upsert?: ExpenseUpsertWithWhereUniqueWithoutHouseholdInput | ExpenseUpsertWithWhereUniqueWithoutHouseholdInput[]
-    createMany?: ExpenseCreateManyHouseholdInputEnvelope
+  export type ExpenseUncheckedUpdateManyWithoutMessNestedInput = {
+    create?: XOR<ExpenseCreateWithoutMessInput, ExpenseUncheckedCreateWithoutMessInput> | ExpenseCreateWithoutMessInput[] | ExpenseUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: ExpenseCreateOrConnectWithoutMessInput | ExpenseCreateOrConnectWithoutMessInput[]
+    upsert?: ExpenseUpsertWithWhereUniqueWithoutMessInput | ExpenseUpsertWithWhereUniqueWithoutMessInput[]
+    createMany?: ExpenseCreateManyMessInputEnvelope
     set?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
     disconnect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
     delete?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
     connect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
-    update?: ExpenseUpdateWithWhereUniqueWithoutHouseholdInput | ExpenseUpdateWithWhereUniqueWithoutHouseholdInput[]
-    updateMany?: ExpenseUpdateManyWithWhereWithoutHouseholdInput | ExpenseUpdateManyWithWhereWithoutHouseholdInput[]
+    update?: ExpenseUpdateWithWhereUniqueWithoutMessInput | ExpenseUpdateWithWhereUniqueWithoutMessInput[]
+    updateMany?: ExpenseUpdateManyWithWhereWithoutMessInput | ExpenseUpdateManyWithWhereWithoutMessInput[]
     deleteMany?: ExpenseScalarWhereInput | ExpenseScalarWhereInput[]
   }
 
-  export type UtilityUncheckedUpdateManyWithoutHouseholdNestedInput = {
-    create?: XOR<UtilityCreateWithoutHouseholdInput, UtilityUncheckedCreateWithoutHouseholdInput> | UtilityCreateWithoutHouseholdInput[] | UtilityUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: UtilityCreateOrConnectWithoutHouseholdInput | UtilityCreateOrConnectWithoutHouseholdInput[]
-    upsert?: UtilityUpsertWithWhereUniqueWithoutHouseholdInput | UtilityUpsertWithWhereUniqueWithoutHouseholdInput[]
-    createMany?: UtilityCreateManyHouseholdInputEnvelope
+  export type UtilityUncheckedUpdateManyWithoutMessNestedInput = {
+    create?: XOR<UtilityCreateWithoutMessInput, UtilityUncheckedCreateWithoutMessInput> | UtilityCreateWithoutMessInput[] | UtilityUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: UtilityCreateOrConnectWithoutMessInput | UtilityCreateOrConnectWithoutMessInput[]
+    upsert?: UtilityUpsertWithWhereUniqueWithoutMessInput | UtilityUpsertWithWhereUniqueWithoutMessInput[]
+    createMany?: UtilityCreateManyMessInputEnvelope
     set?: UtilityWhereUniqueInput | UtilityWhereUniqueInput[]
     disconnect?: UtilityWhereUniqueInput | UtilityWhereUniqueInput[]
     delete?: UtilityWhereUniqueInput | UtilityWhereUniqueInput[]
     connect?: UtilityWhereUniqueInput | UtilityWhereUniqueInput[]
-    update?: UtilityUpdateWithWhereUniqueWithoutHouseholdInput | UtilityUpdateWithWhereUniqueWithoutHouseholdInput[]
-    updateMany?: UtilityUpdateManyWithWhereWithoutHouseholdInput | UtilityUpdateManyWithWhereWithoutHouseholdInput[]
+    update?: UtilityUpdateWithWhereUniqueWithoutMessInput | UtilityUpdateWithWhereUniqueWithoutMessInput[]
+    updateMany?: UtilityUpdateManyWithWhereWithoutMessInput | UtilityUpdateManyWithWhereWithoutMessInput[]
     deleteMany?: UtilityScalarWhereInput | UtilityScalarWhereInput[]
   }
 
-  export type OverrideUncheckedUpdateManyWithoutHouseholdNestedInput = {
-    create?: XOR<OverrideCreateWithoutHouseholdInput, OverrideUncheckedCreateWithoutHouseholdInput> | OverrideCreateWithoutHouseholdInput[] | OverrideUncheckedCreateWithoutHouseholdInput[]
-    connectOrCreate?: OverrideCreateOrConnectWithoutHouseholdInput | OverrideCreateOrConnectWithoutHouseholdInput[]
-    upsert?: OverrideUpsertWithWhereUniqueWithoutHouseholdInput | OverrideUpsertWithWhereUniqueWithoutHouseholdInput[]
-    createMany?: OverrideCreateManyHouseholdInputEnvelope
+  export type OverrideUncheckedUpdateManyWithoutMessNestedInput = {
+    create?: XOR<OverrideCreateWithoutMessInput, OverrideUncheckedCreateWithoutMessInput> | OverrideCreateWithoutMessInput[] | OverrideUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: OverrideCreateOrConnectWithoutMessInput | OverrideCreateOrConnectWithoutMessInput[]
+    upsert?: OverrideUpsertWithWhereUniqueWithoutMessInput | OverrideUpsertWithWhereUniqueWithoutMessInput[]
+    createMany?: OverrideCreateManyMessInputEnvelope
     set?: OverrideWhereUniqueInput | OverrideWhereUniqueInput[]
     disconnect?: OverrideWhereUniqueInput | OverrideWhereUniqueInput[]
     delete?: OverrideWhereUniqueInput | OverrideWhereUniqueInput[]
     connect?: OverrideWhereUniqueInput | OverrideWhereUniqueInput[]
-    update?: OverrideUpdateWithWhereUniqueWithoutHouseholdInput | OverrideUpdateWithWhereUniqueWithoutHouseholdInput[]
-    updateMany?: OverrideUpdateManyWithWhereWithoutHouseholdInput | OverrideUpdateManyWithWhereWithoutHouseholdInput[]
+    update?: OverrideUpdateWithWhereUniqueWithoutMessInput | OverrideUpdateWithWhereUniqueWithoutMessInput[]
+    updateMany?: OverrideUpdateManyWithWhereWithoutMessInput | OverrideUpdateManyWithWhereWithoutMessInput[]
     deleteMany?: OverrideScalarWhereInput | OverrideScalarWhereInput[]
   }
 
-  export type HouseholdCreateNestedOneWithoutMembersInput = {
-    create?: XOR<HouseholdCreateWithoutMembersInput, HouseholdUncheckedCreateWithoutMembersInput>
-    connectOrCreate?: HouseholdCreateOrConnectWithoutMembersInput
-    connect?: HouseholdWhereUniqueInput
+  export type HouseRentUncheckedUpdateManyWithoutMessNestedInput = {
+    create?: XOR<HouseRentCreateWithoutMessInput, HouseRentUncheckedCreateWithoutMessInput> | HouseRentCreateWithoutMessInput[] | HouseRentUncheckedCreateWithoutMessInput[]
+    connectOrCreate?: HouseRentCreateOrConnectWithoutMessInput | HouseRentCreateOrConnectWithoutMessInput[]
+    upsert?: HouseRentUpsertWithWhereUniqueWithoutMessInput | HouseRentUpsertWithWhereUniqueWithoutMessInput[]
+    createMany?: HouseRentCreateManyMessInputEnvelope
+    set?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+    disconnect?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+    delete?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+    connect?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+    update?: HouseRentUpdateWithWhereUniqueWithoutMessInput | HouseRentUpdateWithWhereUniqueWithoutMessInput[]
+    updateMany?: HouseRentUpdateManyWithWhereWithoutMessInput | HouseRentUpdateManyWithWhereWithoutMessInput[]
+    deleteMany?: HouseRentScalarWhereInput | HouseRentScalarWhereInput[]
+  }
+
+  export type MessCreateNestedOneWithoutMembersInput = {
+    create?: XOR<MessCreateWithoutMembersInput, MessUncheckedCreateWithoutMembersInput>
+    connectOrCreate?: MessCreateOrConnectWithoutMembersInput
+    connect?: MessWhereUniqueInput
   }
 
   export type MealEntryCreateNestedManyWithoutMemberInput = {
@@ -10474,6 +11930,13 @@ export namespace Prisma {
     connect?: OverrideWhereUniqueInput
   }
 
+  export type HouseRentCreateNestedManyWithoutMemberInput = {
+    create?: XOR<HouseRentCreateWithoutMemberInput, HouseRentUncheckedCreateWithoutMemberInput> | HouseRentCreateWithoutMemberInput[] | HouseRentUncheckedCreateWithoutMemberInput[]
+    connectOrCreate?: HouseRentCreateOrConnectWithoutMemberInput | HouseRentCreateOrConnectWithoutMemberInput[]
+    createMany?: HouseRentCreateManyMemberInputEnvelope
+    connect?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+  }
+
   export type MealEntryUncheckedCreateNestedManyWithoutMemberInput = {
     create?: XOR<MealEntryCreateWithoutMemberInput, MealEntryUncheckedCreateWithoutMemberInput> | MealEntryCreateWithoutMemberInput[] | MealEntryUncheckedCreateWithoutMemberInput[]
     connectOrCreate?: MealEntryCreateOrConnectWithoutMemberInput | MealEntryCreateOrConnectWithoutMemberInput[]
@@ -10494,6 +11957,13 @@ export namespace Prisma {
     connect?: OverrideWhereUniqueInput
   }
 
+  export type HouseRentUncheckedCreateNestedManyWithoutMemberInput = {
+    create?: XOR<HouseRentCreateWithoutMemberInput, HouseRentUncheckedCreateWithoutMemberInput> | HouseRentCreateWithoutMemberInput[] | HouseRentUncheckedCreateWithoutMemberInput[]
+    connectOrCreate?: HouseRentCreateOrConnectWithoutMemberInput | HouseRentCreateOrConnectWithoutMemberInput[]
+    createMany?: HouseRentCreateManyMemberInputEnvelope
+    connect?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+  }
+
   export type FloatFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -10502,12 +11972,12 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type HouseholdUpdateOneRequiredWithoutMembersNestedInput = {
-    create?: XOR<HouseholdCreateWithoutMembersInput, HouseholdUncheckedCreateWithoutMembersInput>
-    connectOrCreate?: HouseholdCreateOrConnectWithoutMembersInput
-    upsert?: HouseholdUpsertWithoutMembersInput
-    connect?: HouseholdWhereUniqueInput
-    update?: XOR<XOR<HouseholdUpdateToOneWithWhereWithoutMembersInput, HouseholdUpdateWithoutMembersInput>, HouseholdUncheckedUpdateWithoutMembersInput>
+  export type MessUpdateOneRequiredWithoutMembersNestedInput = {
+    create?: XOR<MessCreateWithoutMembersInput, MessUncheckedCreateWithoutMembersInput>
+    connectOrCreate?: MessCreateOrConnectWithoutMembersInput
+    upsert?: MessUpsertWithoutMembersInput
+    connect?: MessWhereUniqueInput
+    update?: XOR<XOR<MessUpdateToOneWithWhereWithoutMembersInput, MessUpdateWithoutMembersInput>, MessUncheckedUpdateWithoutMembersInput>
   }
 
   export type MealEntryUpdateManyWithoutMemberNestedInput = {
@@ -10548,6 +12018,20 @@ export namespace Prisma {
     update?: XOR<XOR<OverrideUpdateToOneWithWhereWithoutMemberInput, OverrideUpdateWithoutMemberInput>, OverrideUncheckedUpdateWithoutMemberInput>
   }
 
+  export type HouseRentUpdateManyWithoutMemberNestedInput = {
+    create?: XOR<HouseRentCreateWithoutMemberInput, HouseRentUncheckedCreateWithoutMemberInput> | HouseRentCreateWithoutMemberInput[] | HouseRentUncheckedCreateWithoutMemberInput[]
+    connectOrCreate?: HouseRentCreateOrConnectWithoutMemberInput | HouseRentCreateOrConnectWithoutMemberInput[]
+    upsert?: HouseRentUpsertWithWhereUniqueWithoutMemberInput | HouseRentUpsertWithWhereUniqueWithoutMemberInput[]
+    createMany?: HouseRentCreateManyMemberInputEnvelope
+    set?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+    disconnect?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+    delete?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+    connect?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+    update?: HouseRentUpdateWithWhereUniqueWithoutMemberInput | HouseRentUpdateWithWhereUniqueWithoutMemberInput[]
+    updateMany?: HouseRentUpdateManyWithWhereWithoutMemberInput | HouseRentUpdateManyWithWhereWithoutMemberInput[]
+    deleteMany?: HouseRentScalarWhereInput | HouseRentScalarWhereInput[]
+  }
+
   export type MealEntryUncheckedUpdateManyWithoutMemberNestedInput = {
     create?: XOR<MealEntryCreateWithoutMemberInput, MealEntryUncheckedCreateWithoutMemberInput> | MealEntryCreateWithoutMemberInput[] | MealEntryUncheckedCreateWithoutMemberInput[]
     connectOrCreate?: MealEntryCreateOrConnectWithoutMemberInput | MealEntryCreateOrConnectWithoutMemberInput[]
@@ -10586,10 +12070,24 @@ export namespace Prisma {
     update?: XOR<XOR<OverrideUpdateToOneWithWhereWithoutMemberInput, OverrideUpdateWithoutMemberInput>, OverrideUncheckedUpdateWithoutMemberInput>
   }
 
-  export type HouseholdCreateNestedOneWithoutDaysInput = {
-    create?: XOR<HouseholdCreateWithoutDaysInput, HouseholdUncheckedCreateWithoutDaysInput>
-    connectOrCreate?: HouseholdCreateOrConnectWithoutDaysInput
-    connect?: HouseholdWhereUniqueInput
+  export type HouseRentUncheckedUpdateManyWithoutMemberNestedInput = {
+    create?: XOR<HouseRentCreateWithoutMemberInput, HouseRentUncheckedCreateWithoutMemberInput> | HouseRentCreateWithoutMemberInput[] | HouseRentUncheckedCreateWithoutMemberInput[]
+    connectOrCreate?: HouseRentCreateOrConnectWithoutMemberInput | HouseRentCreateOrConnectWithoutMemberInput[]
+    upsert?: HouseRentUpsertWithWhereUniqueWithoutMemberInput | HouseRentUpsertWithWhereUniqueWithoutMemberInput[]
+    createMany?: HouseRentCreateManyMemberInputEnvelope
+    set?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+    disconnect?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+    delete?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+    connect?: HouseRentWhereUniqueInput | HouseRentWhereUniqueInput[]
+    update?: HouseRentUpdateWithWhereUniqueWithoutMemberInput | HouseRentUpdateWithWhereUniqueWithoutMemberInput[]
+    updateMany?: HouseRentUpdateManyWithWhereWithoutMemberInput | HouseRentUpdateManyWithWhereWithoutMemberInput[]
+    deleteMany?: HouseRentScalarWhereInput | HouseRentScalarWhereInput[]
+  }
+
+  export type MessCreateNestedOneWithoutDaysInput = {
+    create?: XOR<MessCreateWithoutDaysInput, MessUncheckedCreateWithoutDaysInput>
+    connectOrCreate?: MessCreateOrConnectWithoutDaysInput
+    connect?: MessWhereUniqueInput
   }
 
   export type MealEntryCreateNestedManyWithoutDayInput = {
@@ -10606,12 +12104,12 @@ export namespace Prisma {
     connect?: MealEntryWhereUniqueInput | MealEntryWhereUniqueInput[]
   }
 
-  export type HouseholdUpdateOneRequiredWithoutDaysNestedInput = {
-    create?: XOR<HouseholdCreateWithoutDaysInput, HouseholdUncheckedCreateWithoutDaysInput>
-    connectOrCreate?: HouseholdCreateOrConnectWithoutDaysInput
-    upsert?: HouseholdUpsertWithoutDaysInput
-    connect?: HouseholdWhereUniqueInput
-    update?: XOR<XOR<HouseholdUpdateToOneWithWhereWithoutDaysInput, HouseholdUpdateWithoutDaysInput>, HouseholdUncheckedUpdateWithoutDaysInput>
+  export type MessUpdateOneRequiredWithoutDaysNestedInput = {
+    create?: XOR<MessCreateWithoutDaysInput, MessUncheckedCreateWithoutDaysInput>
+    connectOrCreate?: MessCreateOrConnectWithoutDaysInput
+    upsert?: MessUpsertWithoutDaysInput
+    connect?: MessWhereUniqueInput
+    update?: XOR<XOR<MessUpdateToOneWithWhereWithoutDaysInput, MessUpdateWithoutDaysInput>, MessUncheckedUpdateWithoutDaysInput>
   }
 
   export type MealEntryUpdateManyWithoutDayNestedInput = {
@@ -10678,10 +12176,10 @@ export namespace Prisma {
     update?: XOR<XOR<MemberUpdateToOneWithWhereWithoutMealsInput, MemberUpdateWithoutMealsInput>, MemberUncheckedUpdateWithoutMealsInput>
   }
 
-  export type HouseholdCreateNestedOneWithoutExpensesInput = {
-    create?: XOR<HouseholdCreateWithoutExpensesInput, HouseholdUncheckedCreateWithoutExpensesInput>
-    connectOrCreate?: HouseholdCreateOrConnectWithoutExpensesInput
-    connect?: HouseholdWhereUniqueInput
+  export type MessCreateNestedOneWithoutExpensesInput = {
+    create?: XOR<MessCreateWithoutExpensesInput, MessUncheckedCreateWithoutExpensesInput>
+    connectOrCreate?: MessCreateOrConnectWithoutExpensesInput
+    connect?: MessWhereUniqueInput
   }
 
   export type MemberCreateNestedOneWithoutExpensesInput = {
@@ -10690,12 +12188,12 @@ export namespace Prisma {
     connect?: MemberWhereUniqueInput
   }
 
-  export type HouseholdUpdateOneRequiredWithoutExpensesNestedInput = {
-    create?: XOR<HouseholdCreateWithoutExpensesInput, HouseholdUncheckedCreateWithoutExpensesInput>
-    connectOrCreate?: HouseholdCreateOrConnectWithoutExpensesInput
-    upsert?: HouseholdUpsertWithoutExpensesInput
-    connect?: HouseholdWhereUniqueInput
-    update?: XOR<XOR<HouseholdUpdateToOneWithWhereWithoutExpensesInput, HouseholdUpdateWithoutExpensesInput>, HouseholdUncheckedUpdateWithoutExpensesInput>
+  export type MessUpdateOneRequiredWithoutExpensesNestedInput = {
+    create?: XOR<MessCreateWithoutExpensesInput, MessUncheckedCreateWithoutExpensesInput>
+    connectOrCreate?: MessCreateOrConnectWithoutExpensesInput
+    upsert?: MessUpsertWithoutExpensesInput
+    connect?: MessWhereUniqueInput
+    update?: XOR<XOR<MessUpdateToOneWithWhereWithoutExpensesInput, MessUpdateWithoutExpensesInput>, MessUncheckedUpdateWithoutExpensesInput>
   }
 
   export type MemberUpdateOneRequiredWithoutExpensesNestedInput = {
@@ -10706,29 +12204,29 @@ export namespace Prisma {
     update?: XOR<XOR<MemberUpdateToOneWithWhereWithoutExpensesInput, MemberUpdateWithoutExpensesInput>, MemberUncheckedUpdateWithoutExpensesInput>
   }
 
-  export type HouseholdCreateNestedOneWithoutUtilitiesInput = {
-    create?: XOR<HouseholdCreateWithoutUtilitiesInput, HouseholdUncheckedCreateWithoutUtilitiesInput>
-    connectOrCreate?: HouseholdCreateOrConnectWithoutUtilitiesInput
-    connect?: HouseholdWhereUniqueInput
+  export type MessCreateNestedOneWithoutUtilitiesInput = {
+    create?: XOR<MessCreateWithoutUtilitiesInput, MessUncheckedCreateWithoutUtilitiesInput>
+    connectOrCreate?: MessCreateOrConnectWithoutUtilitiesInput
+    connect?: MessWhereUniqueInput
   }
 
-  export type HouseholdUpdateOneRequiredWithoutUtilitiesNestedInput = {
-    create?: XOR<HouseholdCreateWithoutUtilitiesInput, HouseholdUncheckedCreateWithoutUtilitiesInput>
-    connectOrCreate?: HouseholdCreateOrConnectWithoutUtilitiesInput
-    upsert?: HouseholdUpsertWithoutUtilitiesInput
-    connect?: HouseholdWhereUniqueInput
-    update?: XOR<XOR<HouseholdUpdateToOneWithWhereWithoutUtilitiesInput, HouseholdUpdateWithoutUtilitiesInput>, HouseholdUncheckedUpdateWithoutUtilitiesInput>
+  export type MessUpdateOneRequiredWithoutUtilitiesNestedInput = {
+    create?: XOR<MessCreateWithoutUtilitiesInput, MessUncheckedCreateWithoutUtilitiesInput>
+    connectOrCreate?: MessCreateOrConnectWithoutUtilitiesInput
+    upsert?: MessUpsertWithoutUtilitiesInput
+    connect?: MessWhereUniqueInput
+    update?: XOR<XOR<MessUpdateToOneWithWhereWithoutUtilitiesInput, MessUpdateWithoutUtilitiesInput>, MessUncheckedUpdateWithoutUtilitiesInput>
   }
 
-  export type HouseholdCreateNestedOneWithoutOverridesInput = {
-    create?: XOR<HouseholdCreateWithoutOverridesInput, HouseholdUncheckedCreateWithoutOverridesInput>
-    connectOrCreate?: HouseholdCreateOrConnectWithoutOverridesInput
-    connect?: HouseholdWhereUniqueInput
+  export type MessCreateNestedOneWithoutOverridesInput = {
+    create?: XOR<MessCreateWithoutOverridesInput, MessUncheckedCreateWithoutOverridesInput>
+    connectOrCreate?: MessCreateOrConnectWithoutOverridesInput
+    connect?: MessWhereUniqueInput
   }
 
-  export type MemberCreateNestedOneWithoutOverrideInput = {
-    create?: XOR<MemberCreateWithoutOverrideInput, MemberUncheckedCreateWithoutOverrideInput>
-    connectOrCreate?: MemberCreateOrConnectWithoutOverrideInput
+  export type MemberCreateNestedOneWithoutOverridesInput = {
+    create?: XOR<MemberCreateWithoutOverridesInput, MemberUncheckedCreateWithoutOverridesInput>
+    connectOrCreate?: MemberCreateOrConnectWithoutOverridesInput
     connect?: MemberWhereUniqueInput
   }
 
@@ -10741,20 +12239,48 @@ export namespace Prisma {
     unset?: boolean
   }
 
-  export type HouseholdUpdateOneRequiredWithoutOverridesNestedInput = {
-    create?: XOR<HouseholdCreateWithoutOverridesInput, HouseholdUncheckedCreateWithoutOverridesInput>
-    connectOrCreate?: HouseholdCreateOrConnectWithoutOverridesInput
-    upsert?: HouseholdUpsertWithoutOverridesInput
-    connect?: HouseholdWhereUniqueInput
-    update?: XOR<XOR<HouseholdUpdateToOneWithWhereWithoutOverridesInput, HouseholdUpdateWithoutOverridesInput>, HouseholdUncheckedUpdateWithoutOverridesInput>
+  export type MessUpdateOneRequiredWithoutOverridesNestedInput = {
+    create?: XOR<MessCreateWithoutOverridesInput, MessUncheckedCreateWithoutOverridesInput>
+    connectOrCreate?: MessCreateOrConnectWithoutOverridesInput
+    upsert?: MessUpsertWithoutOverridesInput
+    connect?: MessWhereUniqueInput
+    update?: XOR<XOR<MessUpdateToOneWithWhereWithoutOverridesInput, MessUpdateWithoutOverridesInput>, MessUncheckedUpdateWithoutOverridesInput>
   }
 
-  export type MemberUpdateOneRequiredWithoutOverrideNestedInput = {
-    create?: XOR<MemberCreateWithoutOverrideInput, MemberUncheckedCreateWithoutOverrideInput>
-    connectOrCreate?: MemberCreateOrConnectWithoutOverrideInput
-    upsert?: MemberUpsertWithoutOverrideInput
+  export type MemberUpdateOneRequiredWithoutOverridesNestedInput = {
+    create?: XOR<MemberCreateWithoutOverridesInput, MemberUncheckedCreateWithoutOverridesInput>
+    connectOrCreate?: MemberCreateOrConnectWithoutOverridesInput
+    upsert?: MemberUpsertWithoutOverridesInput
     connect?: MemberWhereUniqueInput
-    update?: XOR<XOR<MemberUpdateToOneWithWhereWithoutOverrideInput, MemberUpdateWithoutOverrideInput>, MemberUncheckedUpdateWithoutOverrideInput>
+    update?: XOR<XOR<MemberUpdateToOneWithWhereWithoutOverridesInput, MemberUpdateWithoutOverridesInput>, MemberUncheckedUpdateWithoutOverridesInput>
+  }
+
+  export type MessCreateNestedOneWithoutHouseRentsInput = {
+    create?: XOR<MessCreateWithoutHouseRentsInput, MessUncheckedCreateWithoutHouseRentsInput>
+    connectOrCreate?: MessCreateOrConnectWithoutHouseRentsInput
+    connect?: MessWhereUniqueInput
+  }
+
+  export type MemberCreateNestedOneWithoutHouseRentsInput = {
+    create?: XOR<MemberCreateWithoutHouseRentsInput, MemberUncheckedCreateWithoutHouseRentsInput>
+    connectOrCreate?: MemberCreateOrConnectWithoutHouseRentsInput
+    connect?: MemberWhereUniqueInput
+  }
+
+  export type MessUpdateOneRequiredWithoutHouseRentsNestedInput = {
+    create?: XOR<MessCreateWithoutHouseRentsInput, MessUncheckedCreateWithoutHouseRentsInput>
+    connectOrCreate?: MessCreateOrConnectWithoutHouseRentsInput
+    upsert?: MessUpsertWithoutHouseRentsInput
+    connect?: MessWhereUniqueInput
+    update?: XOR<XOR<MessUpdateToOneWithWhereWithoutHouseRentsInput, MessUpdateWithoutHouseRentsInput>, MessUncheckedUpdateWithoutHouseRentsInput>
+  }
+
+  export type MemberUpdateOneRequiredWithoutHouseRentsNestedInput = {
+    create?: XOR<MemberCreateWithoutHouseRentsInput, MemberUncheckedCreateWithoutHouseRentsInput>
+    connectOrCreate?: MemberCreateOrConnectWithoutHouseRentsInput
+    upsert?: MemberUpsertWithoutHouseRentsInput
+    connect?: MemberWhereUniqueInput
+    update?: XOR<XOR<MemberUpdateToOneWithWhereWithoutHouseRentsInput, MemberUpdateWithoutHouseRentsInput>, MemberUncheckedUpdateWithoutHouseRentsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -10908,7 +12434,7 @@ export namespace Prisma {
     isSet?: boolean
   }
 
-  export type MemberCreateWithoutHouseholdInput = {
+  export type MemberCreateWithoutMessInput = {
     id?: string
     externalId: string
     name: string
@@ -10917,10 +12443,11 @@ export namespace Prisma {
     houseRent?: number
     meals?: MealEntryCreateNestedManyWithoutMemberInput
     expenses?: ExpenseCreateNestedManyWithoutMemberInput
-    override?: OverrideCreateNestedOneWithoutMemberInput
+    overrides?: OverrideCreateNestedOneWithoutMemberInput
+    houseRents?: HouseRentCreateNestedManyWithoutMemberInput
   }
 
-  export type MemberUncheckedCreateWithoutHouseholdInput = {
+  export type MemberUncheckedCreateWithoutMessInput = {
     id?: string
     externalId: string
     name: string
@@ -10929,124 +12456,148 @@ export namespace Prisma {
     houseRent?: number
     meals?: MealEntryUncheckedCreateNestedManyWithoutMemberInput
     expenses?: ExpenseUncheckedCreateNestedManyWithoutMemberInput
-    override?: OverrideUncheckedCreateNestedOneWithoutMemberInput
+    overrides?: OverrideUncheckedCreateNestedOneWithoutMemberInput
+    houseRents?: HouseRentUncheckedCreateNestedManyWithoutMemberInput
   }
 
-  export type MemberCreateOrConnectWithoutHouseholdInput = {
+  export type MemberCreateOrConnectWithoutMessInput = {
     where: MemberWhereUniqueInput
-    create: XOR<MemberCreateWithoutHouseholdInput, MemberUncheckedCreateWithoutHouseholdInput>
+    create: XOR<MemberCreateWithoutMessInput, MemberUncheckedCreateWithoutMessInput>
   }
 
-  export type MemberCreateManyHouseholdInputEnvelope = {
-    data: MemberCreateManyHouseholdInput | MemberCreateManyHouseholdInput[]
+  export type MemberCreateManyMessInputEnvelope = {
+    data: MemberCreateManyMessInput | MemberCreateManyMessInput[]
   }
 
-  export type MealDayCreateWithoutHouseholdInput = {
+  export type MealDayCreateWithoutMessInput = {
     id?: string
     date: string
     label: string
     entries?: MealEntryCreateNestedManyWithoutDayInput
   }
 
-  export type MealDayUncheckedCreateWithoutHouseholdInput = {
+  export type MealDayUncheckedCreateWithoutMessInput = {
     id?: string
     date: string
     label: string
     entries?: MealEntryUncheckedCreateNestedManyWithoutDayInput
   }
 
-  export type MealDayCreateOrConnectWithoutHouseholdInput = {
+  export type MealDayCreateOrConnectWithoutMessInput = {
     where: MealDayWhereUniqueInput
-    create: XOR<MealDayCreateWithoutHouseholdInput, MealDayUncheckedCreateWithoutHouseholdInput>
+    create: XOR<MealDayCreateWithoutMessInput, MealDayUncheckedCreateWithoutMessInput>
   }
 
-  export type MealDayCreateManyHouseholdInputEnvelope = {
-    data: MealDayCreateManyHouseholdInput | MealDayCreateManyHouseholdInput[]
+  export type MealDayCreateManyMessInputEnvelope = {
+    data: MealDayCreateManyMessInput | MealDayCreateManyMessInput[]
   }
 
-  export type ExpenseCreateWithoutHouseholdInput = {
+  export type ExpenseCreateWithoutMessInput = {
     id?: string
     category: string
     amount: number
     member: MemberCreateNestedOneWithoutExpensesInput
   }
 
-  export type ExpenseUncheckedCreateWithoutHouseholdInput = {
+  export type ExpenseUncheckedCreateWithoutMessInput = {
     id?: string
     memberId: string
     category: string
     amount: number
   }
 
-  export type ExpenseCreateOrConnectWithoutHouseholdInput = {
+  export type ExpenseCreateOrConnectWithoutMessInput = {
     where: ExpenseWhereUniqueInput
-    create: XOR<ExpenseCreateWithoutHouseholdInput, ExpenseUncheckedCreateWithoutHouseholdInput>
+    create: XOR<ExpenseCreateWithoutMessInput, ExpenseUncheckedCreateWithoutMessInput>
   }
 
-  export type ExpenseCreateManyHouseholdInputEnvelope = {
-    data: ExpenseCreateManyHouseholdInput | ExpenseCreateManyHouseholdInput[]
+  export type ExpenseCreateManyMessInputEnvelope = {
+    data: ExpenseCreateManyMessInput | ExpenseCreateManyMessInput[]
   }
 
-  export type UtilityCreateWithoutHouseholdInput = {
+  export type UtilityCreateWithoutMessInput = {
     id?: string
     externalId: string
     name: string
     amount: number
   }
 
-  export type UtilityUncheckedCreateWithoutHouseholdInput = {
+  export type UtilityUncheckedCreateWithoutMessInput = {
     id?: string
     externalId: string
     name: string
     amount: number
   }
 
-  export type UtilityCreateOrConnectWithoutHouseholdInput = {
+  export type UtilityCreateOrConnectWithoutMessInput = {
     where: UtilityWhereUniqueInput
-    create: XOR<UtilityCreateWithoutHouseholdInput, UtilityUncheckedCreateWithoutHouseholdInput>
+    create: XOR<UtilityCreateWithoutMessInput, UtilityUncheckedCreateWithoutMessInput>
   }
 
-  export type UtilityCreateManyHouseholdInputEnvelope = {
-    data: UtilityCreateManyHouseholdInput | UtilityCreateManyHouseholdInput[]
+  export type UtilityCreateManyMessInputEnvelope = {
+    data: UtilityCreateManyMessInput | UtilityCreateManyMessInput[]
   }
 
-  export type OverrideCreateWithoutHouseholdInput = {
+  export type OverrideCreateWithoutMessInput = {
     id?: string
     utilities?: number | null
     mealRate?: number | null
-    member: MemberCreateNestedOneWithoutOverrideInput
+    member: MemberCreateNestedOneWithoutOverridesInput
   }
 
-  export type OverrideUncheckedCreateWithoutHouseholdInput = {
+  export type OverrideUncheckedCreateWithoutMessInput = {
     id?: string
     memberId: string
     utilities?: number | null
     mealRate?: number | null
   }
 
-  export type OverrideCreateOrConnectWithoutHouseholdInput = {
+  export type OverrideCreateOrConnectWithoutMessInput = {
     where: OverrideWhereUniqueInput
-    create: XOR<OverrideCreateWithoutHouseholdInput, OverrideUncheckedCreateWithoutHouseholdInput>
+    create: XOR<OverrideCreateWithoutMessInput, OverrideUncheckedCreateWithoutMessInput>
   }
 
-  export type OverrideCreateManyHouseholdInputEnvelope = {
-    data: OverrideCreateManyHouseholdInput | OverrideCreateManyHouseholdInput[]
+  export type OverrideCreateManyMessInputEnvelope = {
+    data: OverrideCreateManyMessInput | OverrideCreateManyMessInput[]
   }
 
-  export type MemberUpsertWithWhereUniqueWithoutHouseholdInput = {
+  export type HouseRentCreateWithoutMessInput = {
+    id?: string
+    amount: number
+    monthKey: string
+    member: MemberCreateNestedOneWithoutHouseRentsInput
+  }
+
+  export type HouseRentUncheckedCreateWithoutMessInput = {
+    id?: string
+    memberId: string
+    amount: number
+    monthKey: string
+  }
+
+  export type HouseRentCreateOrConnectWithoutMessInput = {
+    where: HouseRentWhereUniqueInput
+    create: XOR<HouseRentCreateWithoutMessInput, HouseRentUncheckedCreateWithoutMessInput>
+  }
+
+  export type HouseRentCreateManyMessInputEnvelope = {
+    data: HouseRentCreateManyMessInput | HouseRentCreateManyMessInput[]
+  }
+
+  export type MemberUpsertWithWhereUniqueWithoutMessInput = {
     where: MemberWhereUniqueInput
-    update: XOR<MemberUpdateWithoutHouseholdInput, MemberUncheckedUpdateWithoutHouseholdInput>
-    create: XOR<MemberCreateWithoutHouseholdInput, MemberUncheckedCreateWithoutHouseholdInput>
+    update: XOR<MemberUpdateWithoutMessInput, MemberUncheckedUpdateWithoutMessInput>
+    create: XOR<MemberCreateWithoutMessInput, MemberUncheckedCreateWithoutMessInput>
   }
 
-  export type MemberUpdateWithWhereUniqueWithoutHouseholdInput = {
+  export type MemberUpdateWithWhereUniqueWithoutMessInput = {
     where: MemberWhereUniqueInput
-    data: XOR<MemberUpdateWithoutHouseholdInput, MemberUncheckedUpdateWithoutHouseholdInput>
+    data: XOR<MemberUpdateWithoutMessInput, MemberUncheckedUpdateWithoutMessInput>
   }
 
-  export type MemberUpdateManyWithWhereWithoutHouseholdInput = {
+  export type MemberUpdateManyWithWhereWithoutMessInput = {
     where: MemberScalarWhereInput
-    data: XOR<MemberUpdateManyMutationInput, MemberUncheckedUpdateManyWithoutHouseholdInput>
+    data: XOR<MemberUpdateManyMutationInput, MemberUncheckedUpdateManyWithoutMessInput>
   }
 
   export type MemberScalarWhereInput = {
@@ -11054,7 +12605,7 @@ export namespace Prisma {
     OR?: MemberScalarWhereInput[]
     NOT?: MemberScalarWhereInput | MemberScalarWhereInput[]
     id?: StringFilter<"Member"> | string
-    householdId?: StringFilter<"Member"> | string
+    messId?: StringFilter<"Member"> | string
     externalId?: StringFilter<"Member"> | string
     name?: StringFilter<"Member"> | string
     initials?: StringFilter<"Member"> | string
@@ -11062,20 +12613,20 @@ export namespace Prisma {
     houseRent?: FloatFilter<"Member"> | number
   }
 
-  export type MealDayUpsertWithWhereUniqueWithoutHouseholdInput = {
+  export type MealDayUpsertWithWhereUniqueWithoutMessInput = {
     where: MealDayWhereUniqueInput
-    update: XOR<MealDayUpdateWithoutHouseholdInput, MealDayUncheckedUpdateWithoutHouseholdInput>
-    create: XOR<MealDayCreateWithoutHouseholdInput, MealDayUncheckedCreateWithoutHouseholdInput>
+    update: XOR<MealDayUpdateWithoutMessInput, MealDayUncheckedUpdateWithoutMessInput>
+    create: XOR<MealDayCreateWithoutMessInput, MealDayUncheckedCreateWithoutMessInput>
   }
 
-  export type MealDayUpdateWithWhereUniqueWithoutHouseholdInput = {
+  export type MealDayUpdateWithWhereUniqueWithoutMessInput = {
     where: MealDayWhereUniqueInput
-    data: XOR<MealDayUpdateWithoutHouseholdInput, MealDayUncheckedUpdateWithoutHouseholdInput>
+    data: XOR<MealDayUpdateWithoutMessInput, MealDayUncheckedUpdateWithoutMessInput>
   }
 
-  export type MealDayUpdateManyWithWhereWithoutHouseholdInput = {
+  export type MealDayUpdateManyWithWhereWithoutMessInput = {
     where: MealDayScalarWhereInput
-    data: XOR<MealDayUpdateManyMutationInput, MealDayUncheckedUpdateManyWithoutHouseholdInput>
+    data: XOR<MealDayUpdateManyMutationInput, MealDayUncheckedUpdateManyWithoutMessInput>
   }
 
   export type MealDayScalarWhereInput = {
@@ -11083,25 +12634,25 @@ export namespace Prisma {
     OR?: MealDayScalarWhereInput[]
     NOT?: MealDayScalarWhereInput | MealDayScalarWhereInput[]
     id?: StringFilter<"MealDay"> | string
-    householdId?: StringFilter<"MealDay"> | string
+    messId?: StringFilter<"MealDay"> | string
     date?: StringFilter<"MealDay"> | string
     label?: StringFilter<"MealDay"> | string
   }
 
-  export type ExpenseUpsertWithWhereUniqueWithoutHouseholdInput = {
+  export type ExpenseUpsertWithWhereUniqueWithoutMessInput = {
     where: ExpenseWhereUniqueInput
-    update: XOR<ExpenseUpdateWithoutHouseholdInput, ExpenseUncheckedUpdateWithoutHouseholdInput>
-    create: XOR<ExpenseCreateWithoutHouseholdInput, ExpenseUncheckedCreateWithoutHouseholdInput>
+    update: XOR<ExpenseUpdateWithoutMessInput, ExpenseUncheckedUpdateWithoutMessInput>
+    create: XOR<ExpenseCreateWithoutMessInput, ExpenseUncheckedCreateWithoutMessInput>
   }
 
-  export type ExpenseUpdateWithWhereUniqueWithoutHouseholdInput = {
+  export type ExpenseUpdateWithWhereUniqueWithoutMessInput = {
     where: ExpenseWhereUniqueInput
-    data: XOR<ExpenseUpdateWithoutHouseholdInput, ExpenseUncheckedUpdateWithoutHouseholdInput>
+    data: XOR<ExpenseUpdateWithoutMessInput, ExpenseUncheckedUpdateWithoutMessInput>
   }
 
-  export type ExpenseUpdateManyWithWhereWithoutHouseholdInput = {
+  export type ExpenseUpdateManyWithWhereWithoutMessInput = {
     where: ExpenseScalarWhereInput
-    data: XOR<ExpenseUpdateManyMutationInput, ExpenseUncheckedUpdateManyWithoutHouseholdInput>
+    data: XOR<ExpenseUpdateManyMutationInput, ExpenseUncheckedUpdateManyWithoutMessInput>
   }
 
   export type ExpenseScalarWhereInput = {
@@ -11109,26 +12660,26 @@ export namespace Prisma {
     OR?: ExpenseScalarWhereInput[]
     NOT?: ExpenseScalarWhereInput | ExpenseScalarWhereInput[]
     id?: StringFilter<"Expense"> | string
-    householdId?: StringFilter<"Expense"> | string
+    messId?: StringFilter<"Expense"> | string
     memberId?: StringFilter<"Expense"> | string
     category?: StringFilter<"Expense"> | string
     amount?: FloatFilter<"Expense"> | number
   }
 
-  export type UtilityUpsertWithWhereUniqueWithoutHouseholdInput = {
+  export type UtilityUpsertWithWhereUniqueWithoutMessInput = {
     where: UtilityWhereUniqueInput
-    update: XOR<UtilityUpdateWithoutHouseholdInput, UtilityUncheckedUpdateWithoutHouseholdInput>
-    create: XOR<UtilityCreateWithoutHouseholdInput, UtilityUncheckedCreateWithoutHouseholdInput>
+    update: XOR<UtilityUpdateWithoutMessInput, UtilityUncheckedUpdateWithoutMessInput>
+    create: XOR<UtilityCreateWithoutMessInput, UtilityUncheckedCreateWithoutMessInput>
   }
 
-  export type UtilityUpdateWithWhereUniqueWithoutHouseholdInput = {
+  export type UtilityUpdateWithWhereUniqueWithoutMessInput = {
     where: UtilityWhereUniqueInput
-    data: XOR<UtilityUpdateWithoutHouseholdInput, UtilityUncheckedUpdateWithoutHouseholdInput>
+    data: XOR<UtilityUpdateWithoutMessInput, UtilityUncheckedUpdateWithoutMessInput>
   }
 
-  export type UtilityUpdateManyWithWhereWithoutHouseholdInput = {
+  export type UtilityUpdateManyWithWhereWithoutMessInput = {
     where: UtilityScalarWhereInput
-    data: XOR<UtilityUpdateManyMutationInput, UtilityUncheckedUpdateManyWithoutHouseholdInput>
+    data: XOR<UtilityUpdateManyMutationInput, UtilityUncheckedUpdateManyWithoutMessInput>
   }
 
   export type UtilityScalarWhereInput = {
@@ -11136,26 +12687,26 @@ export namespace Prisma {
     OR?: UtilityScalarWhereInput[]
     NOT?: UtilityScalarWhereInput | UtilityScalarWhereInput[]
     id?: StringFilter<"Utility"> | string
-    householdId?: StringFilter<"Utility"> | string
+    messId?: StringFilter<"Utility"> | string
     externalId?: StringFilter<"Utility"> | string
     name?: StringFilter<"Utility"> | string
     amount?: FloatFilter<"Utility"> | number
   }
 
-  export type OverrideUpsertWithWhereUniqueWithoutHouseholdInput = {
+  export type OverrideUpsertWithWhereUniqueWithoutMessInput = {
     where: OverrideWhereUniqueInput
-    update: XOR<OverrideUpdateWithoutHouseholdInput, OverrideUncheckedUpdateWithoutHouseholdInput>
-    create: XOR<OverrideCreateWithoutHouseholdInput, OverrideUncheckedCreateWithoutHouseholdInput>
+    update: XOR<OverrideUpdateWithoutMessInput, OverrideUncheckedUpdateWithoutMessInput>
+    create: XOR<OverrideCreateWithoutMessInput, OverrideUncheckedCreateWithoutMessInput>
   }
 
-  export type OverrideUpdateWithWhereUniqueWithoutHouseholdInput = {
+  export type OverrideUpdateWithWhereUniqueWithoutMessInput = {
     where: OverrideWhereUniqueInput
-    data: XOR<OverrideUpdateWithoutHouseholdInput, OverrideUncheckedUpdateWithoutHouseholdInput>
+    data: XOR<OverrideUpdateWithoutMessInput, OverrideUncheckedUpdateWithoutMessInput>
   }
 
-  export type OverrideUpdateManyWithWhereWithoutHouseholdInput = {
+  export type OverrideUpdateManyWithWhereWithoutMessInput = {
     where: OverrideScalarWhereInput
-    data: XOR<OverrideUpdateManyMutationInput, OverrideUncheckedUpdateManyWithoutHouseholdInput>
+    data: XOR<OverrideUpdateManyMutationInput, OverrideUncheckedUpdateManyWithoutMessInput>
   }
 
   export type OverrideScalarWhereInput = {
@@ -11163,39 +12714,72 @@ export namespace Prisma {
     OR?: OverrideScalarWhereInput[]
     NOT?: OverrideScalarWhereInput | OverrideScalarWhereInput[]
     id?: StringFilter<"Override"> | string
-    householdId?: StringFilter<"Override"> | string
+    messId?: StringFilter<"Override"> | string
     memberId?: StringFilter<"Override"> | string
     utilities?: FloatNullableFilter<"Override"> | number | null
     mealRate?: FloatNullableFilter<"Override"> | number | null
   }
 
-  export type HouseholdCreateWithoutMembersInput = {
-    id?: string
-    name: string
-    monthKey: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    days?: MealDayCreateNestedManyWithoutHouseholdInput
-    expenses?: ExpenseCreateNestedManyWithoutHouseholdInput
-    utilities?: UtilityCreateNestedManyWithoutHouseholdInput
-    overrides?: OverrideCreateNestedManyWithoutHouseholdInput
+  export type HouseRentUpsertWithWhereUniqueWithoutMessInput = {
+    where: HouseRentWhereUniqueInput
+    update: XOR<HouseRentUpdateWithoutMessInput, HouseRentUncheckedUpdateWithoutMessInput>
+    create: XOR<HouseRentCreateWithoutMessInput, HouseRentUncheckedCreateWithoutMessInput>
   }
 
-  export type HouseholdUncheckedCreateWithoutMembersInput = {
-    id?: string
-    name: string
-    monthKey: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    days?: MealDayUncheckedCreateNestedManyWithoutHouseholdInput
-    expenses?: ExpenseUncheckedCreateNestedManyWithoutHouseholdInput
-    utilities?: UtilityUncheckedCreateNestedManyWithoutHouseholdInput
-    overrides?: OverrideUncheckedCreateNestedManyWithoutHouseholdInput
+  export type HouseRentUpdateWithWhereUniqueWithoutMessInput = {
+    where: HouseRentWhereUniqueInput
+    data: XOR<HouseRentUpdateWithoutMessInput, HouseRentUncheckedUpdateWithoutMessInput>
   }
 
-  export type HouseholdCreateOrConnectWithoutMembersInput = {
-    where: HouseholdWhereUniqueInput
-    create: XOR<HouseholdCreateWithoutMembersInput, HouseholdUncheckedCreateWithoutMembersInput>
+  export type HouseRentUpdateManyWithWhereWithoutMessInput = {
+    where: HouseRentScalarWhereInput
+    data: XOR<HouseRentUpdateManyMutationInput, HouseRentUncheckedUpdateManyWithoutMessInput>
+  }
+
+  export type HouseRentScalarWhereInput = {
+    AND?: HouseRentScalarWhereInput | HouseRentScalarWhereInput[]
+    OR?: HouseRentScalarWhereInput[]
+    NOT?: HouseRentScalarWhereInput | HouseRentScalarWhereInput[]
+    id?: StringFilter<"HouseRent"> | string
+    messId?: StringFilter<"HouseRent"> | string
+    memberId?: StringFilter<"HouseRent"> | string
+    amount?: FloatFilter<"HouseRent"> | number
+    monthKey?: StringFilter<"HouseRent"> | string
+  }
+
+  export type MessCreateWithoutMembersInput = {
+    id?: string
+    messName: string
+    managerName: string
+    email: string
+    password: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    days?: MealDayCreateNestedManyWithoutMessInput
+    expenses?: ExpenseCreateNestedManyWithoutMessInput
+    utilities?: UtilityCreateNestedManyWithoutMessInput
+    overrides?: OverrideCreateNestedManyWithoutMessInput
+    houseRents?: HouseRentCreateNestedManyWithoutMessInput
+  }
+
+  export type MessUncheckedCreateWithoutMembersInput = {
+    id?: string
+    messName: string
+    managerName: string
+    email: string
+    password: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    days?: MealDayUncheckedCreateNestedManyWithoutMessInput
+    expenses?: ExpenseUncheckedCreateNestedManyWithoutMessInput
+    utilities?: UtilityUncheckedCreateNestedManyWithoutMessInput
+    overrides?: OverrideUncheckedCreateNestedManyWithoutMessInput
+    houseRents?: HouseRentUncheckedCreateNestedManyWithoutMessInput
+  }
+
+  export type MessCreateOrConnectWithoutMembersInput = {
+    where: MessWhereUniqueInput
+    create: XOR<MessCreateWithoutMembersInput, MessUncheckedCreateWithoutMembersInput>
   }
 
   export type MealEntryCreateWithoutMemberInput = {
@@ -11223,12 +12807,12 @@ export namespace Prisma {
     id?: string
     category: string
     amount: number
-    household: HouseholdCreateNestedOneWithoutExpensesInput
+    mess: MessCreateNestedOneWithoutExpensesInput
   }
 
   export type ExpenseUncheckedCreateWithoutMemberInput = {
     id?: string
-    householdId: string
+    messId: string
     category: string
     amount: number
   }
@@ -11246,12 +12830,12 @@ export namespace Prisma {
     id?: string
     utilities?: number | null
     mealRate?: number | null
-    household: HouseholdCreateNestedOneWithoutOverridesInput
+    mess: MessCreateNestedOneWithoutOverridesInput
   }
 
   export type OverrideUncheckedCreateWithoutMemberInput = {
     id?: string
-    householdId: string
+    messId: string
     utilities?: number | null
     mealRate?: number | null
   }
@@ -11261,37 +12845,66 @@ export namespace Prisma {
     create: XOR<OverrideCreateWithoutMemberInput, OverrideUncheckedCreateWithoutMemberInput>
   }
 
-  export type HouseholdUpsertWithoutMembersInput = {
-    update: XOR<HouseholdUpdateWithoutMembersInput, HouseholdUncheckedUpdateWithoutMembersInput>
-    create: XOR<HouseholdCreateWithoutMembersInput, HouseholdUncheckedCreateWithoutMembersInput>
-    where?: HouseholdWhereInput
+  export type HouseRentCreateWithoutMemberInput = {
+    id?: string
+    amount: number
+    monthKey: string
+    mess: MessCreateNestedOneWithoutHouseRentsInput
   }
 
-  export type HouseholdUpdateToOneWithWhereWithoutMembersInput = {
-    where?: HouseholdWhereInput
-    data: XOR<HouseholdUpdateWithoutMembersInput, HouseholdUncheckedUpdateWithoutMembersInput>
+  export type HouseRentUncheckedCreateWithoutMemberInput = {
+    id?: string
+    messId: string
+    amount: number
+    monthKey: string
   }
 
-  export type HouseholdUpdateWithoutMembersInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    monthKey?: StringFieldUpdateOperationsInput | string
+  export type HouseRentCreateOrConnectWithoutMemberInput = {
+    where: HouseRentWhereUniqueInput
+    create: XOR<HouseRentCreateWithoutMemberInput, HouseRentUncheckedCreateWithoutMemberInput>
+  }
+
+  export type HouseRentCreateManyMemberInputEnvelope = {
+    data: HouseRentCreateManyMemberInput | HouseRentCreateManyMemberInput[]
+  }
+
+  export type MessUpsertWithoutMembersInput = {
+    update: XOR<MessUpdateWithoutMembersInput, MessUncheckedUpdateWithoutMembersInput>
+    create: XOR<MessCreateWithoutMembersInput, MessUncheckedCreateWithoutMembersInput>
+    where?: MessWhereInput
+  }
+
+  export type MessUpdateToOneWithWhereWithoutMembersInput = {
+    where?: MessWhereInput
+    data: XOR<MessUpdateWithoutMembersInput, MessUncheckedUpdateWithoutMembersInput>
+  }
+
+  export type MessUpdateWithoutMembersInput = {
+    messName?: StringFieldUpdateOperationsInput | string
+    managerName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    days?: MealDayUpdateManyWithoutHouseholdNestedInput
-    expenses?: ExpenseUpdateManyWithoutHouseholdNestedInput
-    utilities?: UtilityUpdateManyWithoutHouseholdNestedInput
-    overrides?: OverrideUpdateManyWithoutHouseholdNestedInput
+    days?: MealDayUpdateManyWithoutMessNestedInput
+    expenses?: ExpenseUpdateManyWithoutMessNestedInput
+    utilities?: UtilityUpdateManyWithoutMessNestedInput
+    overrides?: OverrideUpdateManyWithoutMessNestedInput
+    houseRents?: HouseRentUpdateManyWithoutMessNestedInput
   }
 
-  export type HouseholdUncheckedUpdateWithoutMembersInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    monthKey?: StringFieldUpdateOperationsInput | string
+  export type MessUncheckedUpdateWithoutMembersInput = {
+    messName?: StringFieldUpdateOperationsInput | string
+    managerName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    days?: MealDayUncheckedUpdateManyWithoutHouseholdNestedInput
-    expenses?: ExpenseUncheckedUpdateManyWithoutHouseholdNestedInput
-    utilities?: UtilityUncheckedUpdateManyWithoutHouseholdNestedInput
-    overrides?: OverrideUncheckedUpdateManyWithoutHouseholdNestedInput
+    days?: MealDayUncheckedUpdateManyWithoutMessNestedInput
+    expenses?: ExpenseUncheckedUpdateManyWithoutMessNestedInput
+    utilities?: UtilityUncheckedUpdateManyWithoutMessNestedInput
+    overrides?: OverrideUncheckedUpdateManyWithoutMessNestedInput
+    houseRents?: HouseRentUncheckedUpdateManyWithoutMessNestedInput
   }
 
   export type MealEntryUpsertWithWhereUniqueWithoutMemberInput = {
@@ -11350,42 +12963,64 @@ export namespace Prisma {
   export type OverrideUpdateWithoutMemberInput = {
     utilities?: NullableFloatFieldUpdateOperationsInput | number | null
     mealRate?: NullableFloatFieldUpdateOperationsInput | number | null
-    household?: HouseholdUpdateOneRequiredWithoutOverridesNestedInput
+    mess?: MessUpdateOneRequiredWithoutOverridesNestedInput
   }
 
   export type OverrideUncheckedUpdateWithoutMemberInput = {
-    householdId?: StringFieldUpdateOperationsInput | string
+    messId?: StringFieldUpdateOperationsInput | string
     utilities?: NullableFloatFieldUpdateOperationsInput | number | null
     mealRate?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
-  export type HouseholdCreateWithoutDaysInput = {
-    id?: string
-    name: string
-    monthKey: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    members?: MemberCreateNestedManyWithoutHouseholdInput
-    expenses?: ExpenseCreateNestedManyWithoutHouseholdInput
-    utilities?: UtilityCreateNestedManyWithoutHouseholdInput
-    overrides?: OverrideCreateNestedManyWithoutHouseholdInput
+  export type HouseRentUpsertWithWhereUniqueWithoutMemberInput = {
+    where: HouseRentWhereUniqueInput
+    update: XOR<HouseRentUpdateWithoutMemberInput, HouseRentUncheckedUpdateWithoutMemberInput>
+    create: XOR<HouseRentCreateWithoutMemberInput, HouseRentUncheckedCreateWithoutMemberInput>
   }
 
-  export type HouseholdUncheckedCreateWithoutDaysInput = {
-    id?: string
-    name: string
-    monthKey: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    members?: MemberUncheckedCreateNestedManyWithoutHouseholdInput
-    expenses?: ExpenseUncheckedCreateNestedManyWithoutHouseholdInput
-    utilities?: UtilityUncheckedCreateNestedManyWithoutHouseholdInput
-    overrides?: OverrideUncheckedCreateNestedManyWithoutHouseholdInput
+  export type HouseRentUpdateWithWhereUniqueWithoutMemberInput = {
+    where: HouseRentWhereUniqueInput
+    data: XOR<HouseRentUpdateWithoutMemberInput, HouseRentUncheckedUpdateWithoutMemberInput>
   }
 
-  export type HouseholdCreateOrConnectWithoutDaysInput = {
-    where: HouseholdWhereUniqueInput
-    create: XOR<HouseholdCreateWithoutDaysInput, HouseholdUncheckedCreateWithoutDaysInput>
+  export type HouseRentUpdateManyWithWhereWithoutMemberInput = {
+    where: HouseRentScalarWhereInput
+    data: XOR<HouseRentUpdateManyMutationInput, HouseRentUncheckedUpdateManyWithoutMemberInput>
+  }
+
+  export type MessCreateWithoutDaysInput = {
+    id?: string
+    messName: string
+    managerName: string
+    email: string
+    password: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    members?: MemberCreateNestedManyWithoutMessInput
+    expenses?: ExpenseCreateNestedManyWithoutMessInput
+    utilities?: UtilityCreateNestedManyWithoutMessInput
+    overrides?: OverrideCreateNestedManyWithoutMessInput
+    houseRents?: HouseRentCreateNestedManyWithoutMessInput
+  }
+
+  export type MessUncheckedCreateWithoutDaysInput = {
+    id?: string
+    messName: string
+    managerName: string
+    email: string
+    password: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    members?: MemberUncheckedCreateNestedManyWithoutMessInput
+    expenses?: ExpenseUncheckedCreateNestedManyWithoutMessInput
+    utilities?: UtilityUncheckedCreateNestedManyWithoutMessInput
+    overrides?: OverrideUncheckedCreateNestedManyWithoutMessInput
+    houseRents?: HouseRentUncheckedCreateNestedManyWithoutMessInput
+  }
+
+  export type MessCreateOrConnectWithoutDaysInput = {
+    where: MessWhereUniqueInput
+    create: XOR<MessCreateWithoutDaysInput, MessUncheckedCreateWithoutDaysInput>
   }
 
   export type MealEntryCreateWithoutDayInput = {
@@ -11409,37 +13044,43 @@ export namespace Prisma {
     data: MealEntryCreateManyDayInput | MealEntryCreateManyDayInput[]
   }
 
-  export type HouseholdUpsertWithoutDaysInput = {
-    update: XOR<HouseholdUpdateWithoutDaysInput, HouseholdUncheckedUpdateWithoutDaysInput>
-    create: XOR<HouseholdCreateWithoutDaysInput, HouseholdUncheckedCreateWithoutDaysInput>
-    where?: HouseholdWhereInput
+  export type MessUpsertWithoutDaysInput = {
+    update: XOR<MessUpdateWithoutDaysInput, MessUncheckedUpdateWithoutDaysInput>
+    create: XOR<MessCreateWithoutDaysInput, MessUncheckedCreateWithoutDaysInput>
+    where?: MessWhereInput
   }
 
-  export type HouseholdUpdateToOneWithWhereWithoutDaysInput = {
-    where?: HouseholdWhereInput
-    data: XOR<HouseholdUpdateWithoutDaysInput, HouseholdUncheckedUpdateWithoutDaysInput>
+  export type MessUpdateToOneWithWhereWithoutDaysInput = {
+    where?: MessWhereInput
+    data: XOR<MessUpdateWithoutDaysInput, MessUncheckedUpdateWithoutDaysInput>
   }
 
-  export type HouseholdUpdateWithoutDaysInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    monthKey?: StringFieldUpdateOperationsInput | string
+  export type MessUpdateWithoutDaysInput = {
+    messName?: StringFieldUpdateOperationsInput | string
+    managerName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    members?: MemberUpdateManyWithoutHouseholdNestedInput
-    expenses?: ExpenseUpdateManyWithoutHouseholdNestedInput
-    utilities?: UtilityUpdateManyWithoutHouseholdNestedInput
-    overrides?: OverrideUpdateManyWithoutHouseholdNestedInput
+    members?: MemberUpdateManyWithoutMessNestedInput
+    expenses?: ExpenseUpdateManyWithoutMessNestedInput
+    utilities?: UtilityUpdateManyWithoutMessNestedInput
+    overrides?: OverrideUpdateManyWithoutMessNestedInput
+    houseRents?: HouseRentUpdateManyWithoutMessNestedInput
   }
 
-  export type HouseholdUncheckedUpdateWithoutDaysInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    monthKey?: StringFieldUpdateOperationsInput | string
+  export type MessUncheckedUpdateWithoutDaysInput = {
+    messName?: StringFieldUpdateOperationsInput | string
+    managerName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    members?: MemberUncheckedUpdateManyWithoutHouseholdNestedInput
-    expenses?: ExpenseUncheckedUpdateManyWithoutHouseholdNestedInput
-    utilities?: UtilityUncheckedUpdateManyWithoutHouseholdNestedInput
-    overrides?: OverrideUncheckedUpdateManyWithoutHouseholdNestedInput
+    members?: MemberUncheckedUpdateManyWithoutMessNestedInput
+    expenses?: ExpenseUncheckedUpdateManyWithoutMessNestedInput
+    utilities?: UtilityUncheckedUpdateManyWithoutMessNestedInput
+    overrides?: OverrideUncheckedUpdateManyWithoutMessNestedInput
+    houseRents?: HouseRentUncheckedUpdateManyWithoutMessNestedInput
   }
 
   export type MealEntryUpsertWithWhereUniqueWithoutDayInput = {
@@ -11462,12 +13103,12 @@ export namespace Prisma {
     id?: string
     date: string
     label: string
-    household: HouseholdCreateNestedOneWithoutDaysInput
+    mess: MessCreateNestedOneWithoutDaysInput
   }
 
   export type MealDayUncheckedCreateWithoutEntriesInput = {
     id?: string
-    householdId: string
+    messId: string
     date: string
     label: string
   }
@@ -11484,21 +13125,23 @@ export namespace Prisma {
     initials: string
     color: string
     houseRent?: number
-    household: HouseholdCreateNestedOneWithoutMembersInput
+    mess: MessCreateNestedOneWithoutMembersInput
     expenses?: ExpenseCreateNestedManyWithoutMemberInput
-    override?: OverrideCreateNestedOneWithoutMemberInput
+    overrides?: OverrideCreateNestedOneWithoutMemberInput
+    houseRents?: HouseRentCreateNestedManyWithoutMemberInput
   }
 
   export type MemberUncheckedCreateWithoutMealsInput = {
     id?: string
-    householdId: string
+    messId: string
     externalId: string
     name: string
     initials: string
     color: string
     houseRent?: number
     expenses?: ExpenseUncheckedCreateNestedManyWithoutMemberInput
-    override?: OverrideUncheckedCreateNestedOneWithoutMemberInput
+    overrides?: OverrideUncheckedCreateNestedOneWithoutMemberInput
+    houseRents?: HouseRentUncheckedCreateNestedManyWithoutMemberInput
   }
 
   export type MemberCreateOrConnectWithoutMealsInput = {
@@ -11520,11 +13163,11 @@ export namespace Prisma {
   export type MealDayUpdateWithoutEntriesInput = {
     date?: StringFieldUpdateOperationsInput | string
     label?: StringFieldUpdateOperationsInput | string
-    household?: HouseholdUpdateOneRequiredWithoutDaysNestedInput
+    mess?: MessUpdateOneRequiredWithoutDaysNestedInput
   }
 
   export type MealDayUncheckedUpdateWithoutEntriesInput = {
-    householdId?: StringFieldUpdateOperationsInput | string
+    messId?: StringFieldUpdateOperationsInput | string
     date?: StringFieldUpdateOperationsInput | string
     label?: StringFieldUpdateOperationsInput | string
   }
@@ -11546,49 +13189,57 @@ export namespace Prisma {
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     houseRent?: FloatFieldUpdateOperationsInput | number
-    household?: HouseholdUpdateOneRequiredWithoutMembersNestedInput
+    mess?: MessUpdateOneRequiredWithoutMembersNestedInput
     expenses?: ExpenseUpdateManyWithoutMemberNestedInput
-    override?: OverrideUpdateOneWithoutMemberNestedInput
+    overrides?: OverrideUpdateOneWithoutMemberNestedInput
+    houseRents?: HouseRentUpdateManyWithoutMemberNestedInput
   }
 
   export type MemberUncheckedUpdateWithoutMealsInput = {
-    householdId?: StringFieldUpdateOperationsInput | string
+    messId?: StringFieldUpdateOperationsInput | string
     externalId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     houseRent?: FloatFieldUpdateOperationsInput | number
     expenses?: ExpenseUncheckedUpdateManyWithoutMemberNestedInput
-    override?: OverrideUncheckedUpdateOneWithoutMemberNestedInput
+    overrides?: OverrideUncheckedUpdateOneWithoutMemberNestedInput
+    houseRents?: HouseRentUncheckedUpdateManyWithoutMemberNestedInput
   }
 
-  export type HouseholdCreateWithoutExpensesInput = {
+  export type MessCreateWithoutExpensesInput = {
     id?: string
-    name: string
-    monthKey: string
+    messName: string
+    managerName: string
+    email: string
+    password: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    members?: MemberCreateNestedManyWithoutHouseholdInput
-    days?: MealDayCreateNestedManyWithoutHouseholdInput
-    utilities?: UtilityCreateNestedManyWithoutHouseholdInput
-    overrides?: OverrideCreateNestedManyWithoutHouseholdInput
+    members?: MemberCreateNestedManyWithoutMessInput
+    days?: MealDayCreateNestedManyWithoutMessInput
+    utilities?: UtilityCreateNestedManyWithoutMessInput
+    overrides?: OverrideCreateNestedManyWithoutMessInput
+    houseRents?: HouseRentCreateNestedManyWithoutMessInput
   }
 
-  export type HouseholdUncheckedCreateWithoutExpensesInput = {
+  export type MessUncheckedCreateWithoutExpensesInput = {
     id?: string
-    name: string
-    monthKey: string
+    messName: string
+    managerName: string
+    email: string
+    password: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    members?: MemberUncheckedCreateNestedManyWithoutHouseholdInput
-    days?: MealDayUncheckedCreateNestedManyWithoutHouseholdInput
-    utilities?: UtilityUncheckedCreateNestedManyWithoutHouseholdInput
-    overrides?: OverrideUncheckedCreateNestedManyWithoutHouseholdInput
+    members?: MemberUncheckedCreateNestedManyWithoutMessInput
+    days?: MealDayUncheckedCreateNestedManyWithoutMessInput
+    utilities?: UtilityUncheckedCreateNestedManyWithoutMessInput
+    overrides?: OverrideUncheckedCreateNestedManyWithoutMessInput
+    houseRents?: HouseRentUncheckedCreateNestedManyWithoutMessInput
   }
 
-  export type HouseholdCreateOrConnectWithoutExpensesInput = {
-    where: HouseholdWhereUniqueInput
-    create: XOR<HouseholdCreateWithoutExpensesInput, HouseholdUncheckedCreateWithoutExpensesInput>
+  export type MessCreateOrConnectWithoutExpensesInput = {
+    where: MessWhereUniqueInput
+    create: XOR<MessCreateWithoutExpensesInput, MessUncheckedCreateWithoutExpensesInput>
   }
 
   export type MemberCreateWithoutExpensesInput = {
@@ -11598,21 +13249,23 @@ export namespace Prisma {
     initials: string
     color: string
     houseRent?: number
-    household: HouseholdCreateNestedOneWithoutMembersInput
+    mess: MessCreateNestedOneWithoutMembersInput
     meals?: MealEntryCreateNestedManyWithoutMemberInput
-    override?: OverrideCreateNestedOneWithoutMemberInput
+    overrides?: OverrideCreateNestedOneWithoutMemberInput
+    houseRents?: HouseRentCreateNestedManyWithoutMemberInput
   }
 
   export type MemberUncheckedCreateWithoutExpensesInput = {
     id?: string
-    householdId: string
+    messId: string
     externalId: string
     name: string
     initials: string
     color: string
     houseRent?: number
     meals?: MealEntryUncheckedCreateNestedManyWithoutMemberInput
-    override?: OverrideUncheckedCreateNestedOneWithoutMemberInput
+    overrides?: OverrideUncheckedCreateNestedOneWithoutMemberInput
+    houseRents?: HouseRentUncheckedCreateNestedManyWithoutMemberInput
   }
 
   export type MemberCreateOrConnectWithoutExpensesInput = {
@@ -11620,37 +13273,43 @@ export namespace Prisma {
     create: XOR<MemberCreateWithoutExpensesInput, MemberUncheckedCreateWithoutExpensesInput>
   }
 
-  export type HouseholdUpsertWithoutExpensesInput = {
-    update: XOR<HouseholdUpdateWithoutExpensesInput, HouseholdUncheckedUpdateWithoutExpensesInput>
-    create: XOR<HouseholdCreateWithoutExpensesInput, HouseholdUncheckedCreateWithoutExpensesInput>
-    where?: HouseholdWhereInput
+  export type MessUpsertWithoutExpensesInput = {
+    update: XOR<MessUpdateWithoutExpensesInput, MessUncheckedUpdateWithoutExpensesInput>
+    create: XOR<MessCreateWithoutExpensesInput, MessUncheckedCreateWithoutExpensesInput>
+    where?: MessWhereInput
   }
 
-  export type HouseholdUpdateToOneWithWhereWithoutExpensesInput = {
-    where?: HouseholdWhereInput
-    data: XOR<HouseholdUpdateWithoutExpensesInput, HouseholdUncheckedUpdateWithoutExpensesInput>
+  export type MessUpdateToOneWithWhereWithoutExpensesInput = {
+    where?: MessWhereInput
+    data: XOR<MessUpdateWithoutExpensesInput, MessUncheckedUpdateWithoutExpensesInput>
   }
 
-  export type HouseholdUpdateWithoutExpensesInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    monthKey?: StringFieldUpdateOperationsInput | string
+  export type MessUpdateWithoutExpensesInput = {
+    messName?: StringFieldUpdateOperationsInput | string
+    managerName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    members?: MemberUpdateManyWithoutHouseholdNestedInput
-    days?: MealDayUpdateManyWithoutHouseholdNestedInput
-    utilities?: UtilityUpdateManyWithoutHouseholdNestedInput
-    overrides?: OverrideUpdateManyWithoutHouseholdNestedInput
+    members?: MemberUpdateManyWithoutMessNestedInput
+    days?: MealDayUpdateManyWithoutMessNestedInput
+    utilities?: UtilityUpdateManyWithoutMessNestedInput
+    overrides?: OverrideUpdateManyWithoutMessNestedInput
+    houseRents?: HouseRentUpdateManyWithoutMessNestedInput
   }
 
-  export type HouseholdUncheckedUpdateWithoutExpensesInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    monthKey?: StringFieldUpdateOperationsInput | string
+  export type MessUncheckedUpdateWithoutExpensesInput = {
+    messName?: StringFieldUpdateOperationsInput | string
+    managerName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    members?: MemberUncheckedUpdateManyWithoutHouseholdNestedInput
-    days?: MealDayUncheckedUpdateManyWithoutHouseholdNestedInput
-    utilities?: UtilityUncheckedUpdateManyWithoutHouseholdNestedInput
-    overrides?: OverrideUncheckedUpdateManyWithoutHouseholdNestedInput
+    members?: MemberUncheckedUpdateManyWithoutMessNestedInput
+    days?: MealDayUncheckedUpdateManyWithoutMessNestedInput
+    utilities?: UtilityUncheckedUpdateManyWithoutMessNestedInput
+    overrides?: OverrideUncheckedUpdateManyWithoutMessNestedInput
+    houseRents?: HouseRentUncheckedUpdateManyWithoutMessNestedInput
   }
 
   export type MemberUpsertWithoutExpensesInput = {
@@ -11670,128 +13329,149 @@ export namespace Prisma {
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     houseRent?: FloatFieldUpdateOperationsInput | number
-    household?: HouseholdUpdateOneRequiredWithoutMembersNestedInput
+    mess?: MessUpdateOneRequiredWithoutMembersNestedInput
     meals?: MealEntryUpdateManyWithoutMemberNestedInput
-    override?: OverrideUpdateOneWithoutMemberNestedInput
+    overrides?: OverrideUpdateOneWithoutMemberNestedInput
+    houseRents?: HouseRentUpdateManyWithoutMemberNestedInput
   }
 
   export type MemberUncheckedUpdateWithoutExpensesInput = {
-    householdId?: StringFieldUpdateOperationsInput | string
+    messId?: StringFieldUpdateOperationsInput | string
     externalId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     houseRent?: FloatFieldUpdateOperationsInput | number
     meals?: MealEntryUncheckedUpdateManyWithoutMemberNestedInput
-    override?: OverrideUncheckedUpdateOneWithoutMemberNestedInput
+    overrides?: OverrideUncheckedUpdateOneWithoutMemberNestedInput
+    houseRents?: HouseRentUncheckedUpdateManyWithoutMemberNestedInput
   }
 
-  export type HouseholdCreateWithoutUtilitiesInput = {
+  export type MessCreateWithoutUtilitiesInput = {
     id?: string
-    name: string
-    monthKey: string
+    messName: string
+    managerName: string
+    email: string
+    password: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    members?: MemberCreateNestedManyWithoutHouseholdInput
-    days?: MealDayCreateNestedManyWithoutHouseholdInput
-    expenses?: ExpenseCreateNestedManyWithoutHouseholdInput
-    overrides?: OverrideCreateNestedManyWithoutHouseholdInput
+    members?: MemberCreateNestedManyWithoutMessInput
+    days?: MealDayCreateNestedManyWithoutMessInput
+    expenses?: ExpenseCreateNestedManyWithoutMessInput
+    overrides?: OverrideCreateNestedManyWithoutMessInput
+    houseRents?: HouseRentCreateNestedManyWithoutMessInput
   }
 
-  export type HouseholdUncheckedCreateWithoutUtilitiesInput = {
+  export type MessUncheckedCreateWithoutUtilitiesInput = {
     id?: string
-    name: string
-    monthKey: string
+    messName: string
+    managerName: string
+    email: string
+    password: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    members?: MemberUncheckedCreateNestedManyWithoutHouseholdInput
-    days?: MealDayUncheckedCreateNestedManyWithoutHouseholdInput
-    expenses?: ExpenseUncheckedCreateNestedManyWithoutHouseholdInput
-    overrides?: OverrideUncheckedCreateNestedManyWithoutHouseholdInput
+    members?: MemberUncheckedCreateNestedManyWithoutMessInput
+    days?: MealDayUncheckedCreateNestedManyWithoutMessInput
+    expenses?: ExpenseUncheckedCreateNestedManyWithoutMessInput
+    overrides?: OverrideUncheckedCreateNestedManyWithoutMessInput
+    houseRents?: HouseRentUncheckedCreateNestedManyWithoutMessInput
   }
 
-  export type HouseholdCreateOrConnectWithoutUtilitiesInput = {
-    where: HouseholdWhereUniqueInput
-    create: XOR<HouseholdCreateWithoutUtilitiesInput, HouseholdUncheckedCreateWithoutUtilitiesInput>
+  export type MessCreateOrConnectWithoutUtilitiesInput = {
+    where: MessWhereUniqueInput
+    create: XOR<MessCreateWithoutUtilitiesInput, MessUncheckedCreateWithoutUtilitiesInput>
   }
 
-  export type HouseholdUpsertWithoutUtilitiesInput = {
-    update: XOR<HouseholdUpdateWithoutUtilitiesInput, HouseholdUncheckedUpdateWithoutUtilitiesInput>
-    create: XOR<HouseholdCreateWithoutUtilitiesInput, HouseholdUncheckedCreateWithoutUtilitiesInput>
-    where?: HouseholdWhereInput
+  export type MessUpsertWithoutUtilitiesInput = {
+    update: XOR<MessUpdateWithoutUtilitiesInput, MessUncheckedUpdateWithoutUtilitiesInput>
+    create: XOR<MessCreateWithoutUtilitiesInput, MessUncheckedCreateWithoutUtilitiesInput>
+    where?: MessWhereInput
   }
 
-  export type HouseholdUpdateToOneWithWhereWithoutUtilitiesInput = {
-    where?: HouseholdWhereInput
-    data: XOR<HouseholdUpdateWithoutUtilitiesInput, HouseholdUncheckedUpdateWithoutUtilitiesInput>
+  export type MessUpdateToOneWithWhereWithoutUtilitiesInput = {
+    where?: MessWhereInput
+    data: XOR<MessUpdateWithoutUtilitiesInput, MessUncheckedUpdateWithoutUtilitiesInput>
   }
 
-  export type HouseholdUpdateWithoutUtilitiesInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    monthKey?: StringFieldUpdateOperationsInput | string
+  export type MessUpdateWithoutUtilitiesInput = {
+    messName?: StringFieldUpdateOperationsInput | string
+    managerName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    members?: MemberUpdateManyWithoutHouseholdNestedInput
-    days?: MealDayUpdateManyWithoutHouseholdNestedInput
-    expenses?: ExpenseUpdateManyWithoutHouseholdNestedInput
-    overrides?: OverrideUpdateManyWithoutHouseholdNestedInput
+    members?: MemberUpdateManyWithoutMessNestedInput
+    days?: MealDayUpdateManyWithoutMessNestedInput
+    expenses?: ExpenseUpdateManyWithoutMessNestedInput
+    overrides?: OverrideUpdateManyWithoutMessNestedInput
+    houseRents?: HouseRentUpdateManyWithoutMessNestedInput
   }
 
-  export type HouseholdUncheckedUpdateWithoutUtilitiesInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    monthKey?: StringFieldUpdateOperationsInput | string
+  export type MessUncheckedUpdateWithoutUtilitiesInput = {
+    messName?: StringFieldUpdateOperationsInput | string
+    managerName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    members?: MemberUncheckedUpdateManyWithoutHouseholdNestedInput
-    days?: MealDayUncheckedUpdateManyWithoutHouseholdNestedInput
-    expenses?: ExpenseUncheckedUpdateManyWithoutHouseholdNestedInput
-    overrides?: OverrideUncheckedUpdateManyWithoutHouseholdNestedInput
+    members?: MemberUncheckedUpdateManyWithoutMessNestedInput
+    days?: MealDayUncheckedUpdateManyWithoutMessNestedInput
+    expenses?: ExpenseUncheckedUpdateManyWithoutMessNestedInput
+    overrides?: OverrideUncheckedUpdateManyWithoutMessNestedInput
+    houseRents?: HouseRentUncheckedUpdateManyWithoutMessNestedInput
   }
 
-  export type HouseholdCreateWithoutOverridesInput = {
+  export type MessCreateWithoutOverridesInput = {
     id?: string
-    name: string
-    monthKey: string
+    messName: string
+    managerName: string
+    email: string
+    password: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    members?: MemberCreateNestedManyWithoutHouseholdInput
-    days?: MealDayCreateNestedManyWithoutHouseholdInput
-    expenses?: ExpenseCreateNestedManyWithoutHouseholdInput
-    utilities?: UtilityCreateNestedManyWithoutHouseholdInput
+    members?: MemberCreateNestedManyWithoutMessInput
+    days?: MealDayCreateNestedManyWithoutMessInput
+    expenses?: ExpenseCreateNestedManyWithoutMessInput
+    utilities?: UtilityCreateNestedManyWithoutMessInput
+    houseRents?: HouseRentCreateNestedManyWithoutMessInput
   }
 
-  export type HouseholdUncheckedCreateWithoutOverridesInput = {
+  export type MessUncheckedCreateWithoutOverridesInput = {
     id?: string
-    name: string
-    monthKey: string
+    messName: string
+    managerName: string
+    email: string
+    password: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    members?: MemberUncheckedCreateNestedManyWithoutHouseholdInput
-    days?: MealDayUncheckedCreateNestedManyWithoutHouseholdInput
-    expenses?: ExpenseUncheckedCreateNestedManyWithoutHouseholdInput
-    utilities?: UtilityUncheckedCreateNestedManyWithoutHouseholdInput
+    members?: MemberUncheckedCreateNestedManyWithoutMessInput
+    days?: MealDayUncheckedCreateNestedManyWithoutMessInput
+    expenses?: ExpenseUncheckedCreateNestedManyWithoutMessInput
+    utilities?: UtilityUncheckedCreateNestedManyWithoutMessInput
+    houseRents?: HouseRentUncheckedCreateNestedManyWithoutMessInput
   }
 
-  export type HouseholdCreateOrConnectWithoutOverridesInput = {
-    where: HouseholdWhereUniqueInput
-    create: XOR<HouseholdCreateWithoutOverridesInput, HouseholdUncheckedCreateWithoutOverridesInput>
+  export type MessCreateOrConnectWithoutOverridesInput = {
+    where: MessWhereUniqueInput
+    create: XOR<MessCreateWithoutOverridesInput, MessUncheckedCreateWithoutOverridesInput>
   }
 
-  export type MemberCreateWithoutOverrideInput = {
+  export type MemberCreateWithoutOverridesInput = {
     id?: string
     externalId: string
     name: string
     initials: string
     color: string
     houseRent?: number
-    household: HouseholdCreateNestedOneWithoutMembersInput
+    mess: MessCreateNestedOneWithoutMembersInput
     meals?: MealEntryCreateNestedManyWithoutMemberInput
     expenses?: ExpenseCreateNestedManyWithoutMemberInput
+    houseRents?: HouseRentCreateNestedManyWithoutMemberInput
   }
 
-  export type MemberUncheckedCreateWithoutOverrideInput = {
+  export type MemberUncheckedCreateWithoutOverridesInput = {
     id?: string
-    householdId: string
+    messId: string
     externalId: string
     name: string
     initials: string
@@ -11799,70 +13479,78 @@ export namespace Prisma {
     houseRent?: number
     meals?: MealEntryUncheckedCreateNestedManyWithoutMemberInput
     expenses?: ExpenseUncheckedCreateNestedManyWithoutMemberInput
+    houseRents?: HouseRentUncheckedCreateNestedManyWithoutMemberInput
   }
 
-  export type MemberCreateOrConnectWithoutOverrideInput = {
+  export type MemberCreateOrConnectWithoutOverridesInput = {
     where: MemberWhereUniqueInput
-    create: XOR<MemberCreateWithoutOverrideInput, MemberUncheckedCreateWithoutOverrideInput>
+    create: XOR<MemberCreateWithoutOverridesInput, MemberUncheckedCreateWithoutOverridesInput>
   }
 
-  export type HouseholdUpsertWithoutOverridesInput = {
-    update: XOR<HouseholdUpdateWithoutOverridesInput, HouseholdUncheckedUpdateWithoutOverridesInput>
-    create: XOR<HouseholdCreateWithoutOverridesInput, HouseholdUncheckedCreateWithoutOverridesInput>
-    where?: HouseholdWhereInput
+  export type MessUpsertWithoutOverridesInput = {
+    update: XOR<MessUpdateWithoutOverridesInput, MessUncheckedUpdateWithoutOverridesInput>
+    create: XOR<MessCreateWithoutOverridesInput, MessUncheckedCreateWithoutOverridesInput>
+    where?: MessWhereInput
   }
 
-  export type HouseholdUpdateToOneWithWhereWithoutOverridesInput = {
-    where?: HouseholdWhereInput
-    data: XOR<HouseholdUpdateWithoutOverridesInput, HouseholdUncheckedUpdateWithoutOverridesInput>
+  export type MessUpdateToOneWithWhereWithoutOverridesInput = {
+    where?: MessWhereInput
+    data: XOR<MessUpdateWithoutOverridesInput, MessUncheckedUpdateWithoutOverridesInput>
   }
 
-  export type HouseholdUpdateWithoutOverridesInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    monthKey?: StringFieldUpdateOperationsInput | string
+  export type MessUpdateWithoutOverridesInput = {
+    messName?: StringFieldUpdateOperationsInput | string
+    managerName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    members?: MemberUpdateManyWithoutHouseholdNestedInput
-    days?: MealDayUpdateManyWithoutHouseholdNestedInput
-    expenses?: ExpenseUpdateManyWithoutHouseholdNestedInput
-    utilities?: UtilityUpdateManyWithoutHouseholdNestedInput
+    members?: MemberUpdateManyWithoutMessNestedInput
+    days?: MealDayUpdateManyWithoutMessNestedInput
+    expenses?: ExpenseUpdateManyWithoutMessNestedInput
+    utilities?: UtilityUpdateManyWithoutMessNestedInput
+    houseRents?: HouseRentUpdateManyWithoutMessNestedInput
   }
 
-  export type HouseholdUncheckedUpdateWithoutOverridesInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    monthKey?: StringFieldUpdateOperationsInput | string
+  export type MessUncheckedUpdateWithoutOverridesInput = {
+    messName?: StringFieldUpdateOperationsInput | string
+    managerName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    members?: MemberUncheckedUpdateManyWithoutHouseholdNestedInput
-    days?: MealDayUncheckedUpdateManyWithoutHouseholdNestedInput
-    expenses?: ExpenseUncheckedUpdateManyWithoutHouseholdNestedInput
-    utilities?: UtilityUncheckedUpdateManyWithoutHouseholdNestedInput
+    members?: MemberUncheckedUpdateManyWithoutMessNestedInput
+    days?: MealDayUncheckedUpdateManyWithoutMessNestedInput
+    expenses?: ExpenseUncheckedUpdateManyWithoutMessNestedInput
+    utilities?: UtilityUncheckedUpdateManyWithoutMessNestedInput
+    houseRents?: HouseRentUncheckedUpdateManyWithoutMessNestedInput
   }
 
-  export type MemberUpsertWithoutOverrideInput = {
-    update: XOR<MemberUpdateWithoutOverrideInput, MemberUncheckedUpdateWithoutOverrideInput>
-    create: XOR<MemberCreateWithoutOverrideInput, MemberUncheckedCreateWithoutOverrideInput>
+  export type MemberUpsertWithoutOverridesInput = {
+    update: XOR<MemberUpdateWithoutOverridesInput, MemberUncheckedUpdateWithoutOverridesInput>
+    create: XOR<MemberCreateWithoutOverridesInput, MemberUncheckedCreateWithoutOverridesInput>
     where?: MemberWhereInput
   }
 
-  export type MemberUpdateToOneWithWhereWithoutOverrideInput = {
+  export type MemberUpdateToOneWithWhereWithoutOverridesInput = {
     where?: MemberWhereInput
-    data: XOR<MemberUpdateWithoutOverrideInput, MemberUncheckedUpdateWithoutOverrideInput>
+    data: XOR<MemberUpdateWithoutOverridesInput, MemberUncheckedUpdateWithoutOverridesInput>
   }
 
-  export type MemberUpdateWithoutOverrideInput = {
+  export type MemberUpdateWithoutOverridesInput = {
     externalId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     houseRent?: FloatFieldUpdateOperationsInput | number
-    household?: HouseholdUpdateOneRequiredWithoutMembersNestedInput
+    mess?: MessUpdateOneRequiredWithoutMembersNestedInput
     meals?: MealEntryUpdateManyWithoutMemberNestedInput
     expenses?: ExpenseUpdateManyWithoutMemberNestedInput
+    houseRents?: HouseRentUpdateManyWithoutMemberNestedInput
   }
 
-  export type MemberUncheckedUpdateWithoutOverrideInput = {
-    householdId?: StringFieldUpdateOperationsInput | string
+  export type MemberUncheckedUpdateWithoutOverridesInput = {
+    messId?: StringFieldUpdateOperationsInput | string
     externalId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
@@ -11870,9 +13558,150 @@ export namespace Prisma {
     houseRent?: FloatFieldUpdateOperationsInput | number
     meals?: MealEntryUncheckedUpdateManyWithoutMemberNestedInput
     expenses?: ExpenseUncheckedUpdateManyWithoutMemberNestedInput
+    houseRents?: HouseRentUncheckedUpdateManyWithoutMemberNestedInput
   }
 
-  export type MemberCreateManyHouseholdInput = {
+  export type MessCreateWithoutHouseRentsInput = {
+    id?: string
+    messName: string
+    managerName: string
+    email: string
+    password: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    members?: MemberCreateNestedManyWithoutMessInput
+    days?: MealDayCreateNestedManyWithoutMessInput
+    expenses?: ExpenseCreateNestedManyWithoutMessInput
+    utilities?: UtilityCreateNestedManyWithoutMessInput
+    overrides?: OverrideCreateNestedManyWithoutMessInput
+  }
+
+  export type MessUncheckedCreateWithoutHouseRentsInput = {
+    id?: string
+    messName: string
+    managerName: string
+    email: string
+    password: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    members?: MemberUncheckedCreateNestedManyWithoutMessInput
+    days?: MealDayUncheckedCreateNestedManyWithoutMessInput
+    expenses?: ExpenseUncheckedCreateNestedManyWithoutMessInput
+    utilities?: UtilityUncheckedCreateNestedManyWithoutMessInput
+    overrides?: OverrideUncheckedCreateNestedManyWithoutMessInput
+  }
+
+  export type MessCreateOrConnectWithoutHouseRentsInput = {
+    where: MessWhereUniqueInput
+    create: XOR<MessCreateWithoutHouseRentsInput, MessUncheckedCreateWithoutHouseRentsInput>
+  }
+
+  export type MemberCreateWithoutHouseRentsInput = {
+    id?: string
+    externalId: string
+    name: string
+    initials: string
+    color: string
+    houseRent?: number
+    mess: MessCreateNestedOneWithoutMembersInput
+    meals?: MealEntryCreateNestedManyWithoutMemberInput
+    expenses?: ExpenseCreateNestedManyWithoutMemberInput
+    overrides?: OverrideCreateNestedOneWithoutMemberInput
+  }
+
+  export type MemberUncheckedCreateWithoutHouseRentsInput = {
+    id?: string
+    messId: string
+    externalId: string
+    name: string
+    initials: string
+    color: string
+    houseRent?: number
+    meals?: MealEntryUncheckedCreateNestedManyWithoutMemberInput
+    expenses?: ExpenseUncheckedCreateNestedManyWithoutMemberInput
+    overrides?: OverrideUncheckedCreateNestedOneWithoutMemberInput
+  }
+
+  export type MemberCreateOrConnectWithoutHouseRentsInput = {
+    where: MemberWhereUniqueInput
+    create: XOR<MemberCreateWithoutHouseRentsInput, MemberUncheckedCreateWithoutHouseRentsInput>
+  }
+
+  export type MessUpsertWithoutHouseRentsInput = {
+    update: XOR<MessUpdateWithoutHouseRentsInput, MessUncheckedUpdateWithoutHouseRentsInput>
+    create: XOR<MessCreateWithoutHouseRentsInput, MessUncheckedCreateWithoutHouseRentsInput>
+    where?: MessWhereInput
+  }
+
+  export type MessUpdateToOneWithWhereWithoutHouseRentsInput = {
+    where?: MessWhereInput
+    data: XOR<MessUpdateWithoutHouseRentsInput, MessUncheckedUpdateWithoutHouseRentsInput>
+  }
+
+  export type MessUpdateWithoutHouseRentsInput = {
+    messName?: StringFieldUpdateOperationsInput | string
+    managerName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    members?: MemberUpdateManyWithoutMessNestedInput
+    days?: MealDayUpdateManyWithoutMessNestedInput
+    expenses?: ExpenseUpdateManyWithoutMessNestedInput
+    utilities?: UtilityUpdateManyWithoutMessNestedInput
+    overrides?: OverrideUpdateManyWithoutMessNestedInput
+  }
+
+  export type MessUncheckedUpdateWithoutHouseRentsInput = {
+    messName?: StringFieldUpdateOperationsInput | string
+    managerName?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    members?: MemberUncheckedUpdateManyWithoutMessNestedInput
+    days?: MealDayUncheckedUpdateManyWithoutMessNestedInput
+    expenses?: ExpenseUncheckedUpdateManyWithoutMessNestedInput
+    utilities?: UtilityUncheckedUpdateManyWithoutMessNestedInput
+    overrides?: OverrideUncheckedUpdateManyWithoutMessNestedInput
+  }
+
+  export type MemberUpsertWithoutHouseRentsInput = {
+    update: XOR<MemberUpdateWithoutHouseRentsInput, MemberUncheckedUpdateWithoutHouseRentsInput>
+    create: XOR<MemberCreateWithoutHouseRentsInput, MemberUncheckedCreateWithoutHouseRentsInput>
+    where?: MemberWhereInput
+  }
+
+  export type MemberUpdateToOneWithWhereWithoutHouseRentsInput = {
+    where?: MemberWhereInput
+    data: XOR<MemberUpdateWithoutHouseRentsInput, MemberUncheckedUpdateWithoutHouseRentsInput>
+  }
+
+  export type MemberUpdateWithoutHouseRentsInput = {
+    externalId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    initials?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    houseRent?: FloatFieldUpdateOperationsInput | number
+    mess?: MessUpdateOneRequiredWithoutMembersNestedInput
+    meals?: MealEntryUpdateManyWithoutMemberNestedInput
+    expenses?: ExpenseUpdateManyWithoutMemberNestedInput
+    overrides?: OverrideUpdateOneWithoutMemberNestedInput
+  }
+
+  export type MemberUncheckedUpdateWithoutHouseRentsInput = {
+    messId?: StringFieldUpdateOperationsInput | string
+    externalId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    initials?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    houseRent?: FloatFieldUpdateOperationsInput | number
+    meals?: MealEntryUncheckedUpdateManyWithoutMemberNestedInput
+    expenses?: ExpenseUncheckedUpdateManyWithoutMemberNestedInput
+    overrides?: OverrideUncheckedUpdateOneWithoutMemberNestedInput
+  }
+
+  export type MemberCreateManyMessInput = {
     id?: string
     externalId: string
     name: string
@@ -11881,34 +13710,41 @@ export namespace Prisma {
     houseRent?: number
   }
 
-  export type MealDayCreateManyHouseholdInput = {
+  export type MealDayCreateManyMessInput = {
     id?: string
     date: string
     label: string
   }
 
-  export type ExpenseCreateManyHouseholdInput = {
+  export type ExpenseCreateManyMessInput = {
     id?: string
     memberId: string
     category: string
     amount: number
   }
 
-  export type UtilityCreateManyHouseholdInput = {
+  export type UtilityCreateManyMessInput = {
     id?: string
     externalId: string
     name: string
     amount: number
   }
 
-  export type OverrideCreateManyHouseholdInput = {
+  export type OverrideCreateManyMessInput = {
     id?: string
     memberId: string
     utilities?: number | null
     mealRate?: number | null
   }
 
-  export type MemberUpdateWithoutHouseholdInput = {
+  export type HouseRentCreateManyMessInput = {
+    id?: string
+    memberId: string
+    amount: number
+    monthKey: string
+  }
+
+  export type MemberUpdateWithoutMessInput = {
     externalId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
@@ -11916,10 +13752,11 @@ export namespace Prisma {
     houseRent?: FloatFieldUpdateOperationsInput | number
     meals?: MealEntryUpdateManyWithoutMemberNestedInput
     expenses?: ExpenseUpdateManyWithoutMemberNestedInput
-    override?: OverrideUpdateOneWithoutMemberNestedInput
+    overrides?: OverrideUpdateOneWithoutMemberNestedInput
+    houseRents?: HouseRentUpdateManyWithoutMemberNestedInput
   }
 
-  export type MemberUncheckedUpdateWithoutHouseholdInput = {
+  export type MemberUncheckedUpdateWithoutMessInput = {
     externalId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
@@ -11927,10 +13764,11 @@ export namespace Prisma {
     houseRent?: FloatFieldUpdateOperationsInput | number
     meals?: MealEntryUncheckedUpdateManyWithoutMemberNestedInput
     expenses?: ExpenseUncheckedUpdateManyWithoutMemberNestedInput
-    override?: OverrideUncheckedUpdateOneWithoutMemberNestedInput
+    overrides?: OverrideUncheckedUpdateOneWithoutMemberNestedInput
+    houseRents?: HouseRentUncheckedUpdateManyWithoutMemberNestedInput
   }
 
-  export type MemberUncheckedUpdateManyWithoutHouseholdInput = {
+  export type MemberUncheckedUpdateManyWithoutMessInput = {
     externalId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     initials?: StringFieldUpdateOperationsInput | string
@@ -11938,75 +13776,93 @@ export namespace Prisma {
     houseRent?: FloatFieldUpdateOperationsInput | number
   }
 
-  export type MealDayUpdateWithoutHouseholdInput = {
+  export type MealDayUpdateWithoutMessInput = {
     date?: StringFieldUpdateOperationsInput | string
     label?: StringFieldUpdateOperationsInput | string
     entries?: MealEntryUpdateManyWithoutDayNestedInput
   }
 
-  export type MealDayUncheckedUpdateWithoutHouseholdInput = {
+  export type MealDayUncheckedUpdateWithoutMessInput = {
     date?: StringFieldUpdateOperationsInput | string
     label?: StringFieldUpdateOperationsInput | string
     entries?: MealEntryUncheckedUpdateManyWithoutDayNestedInput
   }
 
-  export type MealDayUncheckedUpdateManyWithoutHouseholdInput = {
+  export type MealDayUncheckedUpdateManyWithoutMessInput = {
     date?: StringFieldUpdateOperationsInput | string
     label?: StringFieldUpdateOperationsInput | string
   }
 
-  export type ExpenseUpdateWithoutHouseholdInput = {
+  export type ExpenseUpdateWithoutMessInput = {
     category?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
     member?: MemberUpdateOneRequiredWithoutExpensesNestedInput
   }
 
-  export type ExpenseUncheckedUpdateWithoutHouseholdInput = {
+  export type ExpenseUncheckedUpdateWithoutMessInput = {
     memberId?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
   }
 
-  export type ExpenseUncheckedUpdateManyWithoutHouseholdInput = {
+  export type ExpenseUncheckedUpdateManyWithoutMessInput = {
     memberId?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
   }
 
-  export type UtilityUpdateWithoutHouseholdInput = {
+  export type UtilityUpdateWithoutMessInput = {
     externalId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
   }
 
-  export type UtilityUncheckedUpdateWithoutHouseholdInput = {
+  export type UtilityUncheckedUpdateWithoutMessInput = {
     externalId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
   }
 
-  export type UtilityUncheckedUpdateManyWithoutHouseholdInput = {
+  export type UtilityUncheckedUpdateManyWithoutMessInput = {
     externalId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
   }
 
-  export type OverrideUpdateWithoutHouseholdInput = {
+  export type OverrideUpdateWithoutMessInput = {
     utilities?: NullableFloatFieldUpdateOperationsInput | number | null
     mealRate?: NullableFloatFieldUpdateOperationsInput | number | null
-    member?: MemberUpdateOneRequiredWithoutOverrideNestedInput
+    member?: MemberUpdateOneRequiredWithoutOverridesNestedInput
   }
 
-  export type OverrideUncheckedUpdateWithoutHouseholdInput = {
+  export type OverrideUncheckedUpdateWithoutMessInput = {
     memberId?: StringFieldUpdateOperationsInput | string
     utilities?: NullableFloatFieldUpdateOperationsInput | number | null
     mealRate?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
-  export type OverrideUncheckedUpdateManyWithoutHouseholdInput = {
+  export type OverrideUncheckedUpdateManyWithoutMessInput = {
     memberId?: StringFieldUpdateOperationsInput | string
     utilities?: NullableFloatFieldUpdateOperationsInput | number | null
     mealRate?: NullableFloatFieldUpdateOperationsInput | number | null
+  }
+
+  export type HouseRentUpdateWithoutMessInput = {
+    amount?: FloatFieldUpdateOperationsInput | number
+    monthKey?: StringFieldUpdateOperationsInput | string
+    member?: MemberUpdateOneRequiredWithoutHouseRentsNestedInput
+  }
+
+  export type HouseRentUncheckedUpdateWithoutMessInput = {
+    memberId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    monthKey?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type HouseRentUncheckedUpdateManyWithoutMessInput = {
+    memberId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    monthKey?: StringFieldUpdateOperationsInput | string
   }
 
   export type MealEntryCreateManyMemberInput = {
@@ -12017,9 +13873,16 @@ export namespace Prisma {
 
   export type ExpenseCreateManyMemberInput = {
     id?: string
-    householdId: string
+    messId: string
     category: string
     amount: number
+  }
+
+  export type HouseRentCreateManyMemberInput = {
+    id?: string
+    messId: string
+    amount: number
+    monthKey: string
   }
 
   export type MealEntryUpdateWithoutMemberInput = {
@@ -12040,19 +13903,37 @@ export namespace Prisma {
   export type ExpenseUpdateWithoutMemberInput = {
     category?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
-    household?: HouseholdUpdateOneRequiredWithoutExpensesNestedInput
+    mess?: MessUpdateOneRequiredWithoutExpensesNestedInput
   }
 
   export type ExpenseUncheckedUpdateWithoutMemberInput = {
-    householdId?: StringFieldUpdateOperationsInput | string
+    messId?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
   }
 
   export type ExpenseUncheckedUpdateManyWithoutMemberInput = {
-    householdId?: StringFieldUpdateOperationsInput | string
+    messId?: StringFieldUpdateOperationsInput | string
     category?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
+  }
+
+  export type HouseRentUpdateWithoutMemberInput = {
+    amount?: FloatFieldUpdateOperationsInput | number
+    monthKey?: StringFieldUpdateOperationsInput | string
+    mess?: MessUpdateOneRequiredWithoutHouseRentsNestedInput
+  }
+
+  export type HouseRentUncheckedUpdateWithoutMemberInput = {
+    messId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    monthKey?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type HouseRentUncheckedUpdateManyWithoutMemberInput = {
+    messId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    monthKey?: StringFieldUpdateOperationsInput | string
   }
 
   export type MealEntryCreateManyDayInput = {

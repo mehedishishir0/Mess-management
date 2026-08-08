@@ -3,8 +3,8 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'MessFlow · Shared living, simplified',
-  description: 'Track shared meals, groceries, utilities, and settlements for your household.',
+  title: 'MessFlow · Multi-Tenant Mess Management',
+  description: 'Track shared meals, groceries, utilities, and settlements for your managed mess.',
   generator: 'v0.app',
   icons: {
     icon: [
