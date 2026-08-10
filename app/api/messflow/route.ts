@@ -36,37 +36,17 @@ function getMonthDays(monthKey: string) {
 }
 
 async function ensureMonthDays(messId: string, monthKey: string) {
-  const count = await prisma.mealDay.count({ where: { messId } })
+  const count = await prisma.mealDay.count({ where: { messId, monthKey } })
   if (count > 0) return
   const monthDays = getMonthDays(monthKey)
   await prisma.mealDay.createMany({
     data: monthDays.map((day) => ({
       messId,
+      monthKey,
       date: day.date,
       label: day.label,
     })),
   })
-}
-
-async function getMess(request: Request) {
-  const session = getSessionFromRequest(request)
-  if (!session) {
-    throw new Error('UNAUTHORIZED')
-  }
-
-  const url = new URL(request.url)
-  const monthKey = url.searchParams.get('month') ?? currentMonthKey()
-
-  const mess = await prisma.mess.findUnique({
-    where: { id: session.messId },
-  })
-
-  if (!mess) {
-    throw new Error('UNAUTHORIZED')
-  }
-
-  await ensureMonthDays(mess.id, monthKey)
-  return { mess, monthKey }
 }
 
 export async function GET(request: Request) {
@@ -78,25 +58,35 @@ export async function GET(request: Request) {
 
     const monthKey = new URL(request.url).searchParams.get('month') ?? currentMonthKey()
 
+    await ensureMonthDays(session.messId, monthKey)
+
     const data = await prisma.mess.findUnique({
       where: { id: session.messId },
       include: {
         members: true,
         days: {
+          where: { monthKey },
           include: { entries: true },
           orderBy: { date: 'asc' },
         },
-        expenses: true,
-        utilities: true,
-        overrides: true,
+        expenses: {
+          where: { monthKey },
+        },
+        utilities: {
+          where: { monthKey },
+        },
+        overrides: {
+          where: { monthKey },
+        },
+        houseRents: {
+          where: { monthKey },
+        },
       },
     })
 
     if (!data) {
       return NextResponse.json({ error: 'Mess not found' }, { status: 404 })
     }
-
-    await ensureMonthDays(session.messId, monthKey)
 
     return NextResponse.json(data)
   } catch (error) {
@@ -112,15 +102,18 @@ async function handleMutation(request: Request) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
     }
 
+    const monthKey = new URL(request.url).searchParams.get('month') ?? currentMonthKey()
     const input = bodySchema.parse(await request.json())
     const mess = await prisma.mess.findUnique({ where: { id: session.messId } })
     if (!mess) {
       return NextResponse.json({ error: 'Mess not found' }, { status: 404 })
     }
 
+    await ensureMonthDays(mess.id, monthKey)
+
     if (input.action === 'meal') {
       const [day, member] = await Promise.all([
-        prisma.mealDay.findUnique({ where: { messId_date: { messId: mess.id, date: input.dayId } } }),
+        prisma.mealDay.findUnique({ where: { messId_monthKey_date: { messId: mess.id, monthKey, date: input.dayId } } }),
         prisma.member.findUnique({ where: { messId_externalId: { messId: mess.id, externalId: input.memberId } } }),
       ])
       if (!day || !member) throw new Error('Meal record not found')
@@ -134,17 +127,17 @@ async function handleMutation(request: Request) {
     if (input.action === 'expense') {
       const member = await prisma.member.findUniqueOrThrow({ where: { messId_externalId: { messId: mess.id, externalId: input.memberId } } })
       await prisma.expense.upsert({
-        where: { messId_memberId_category: { messId: mess.id, memberId: member.id, category: input.category } },
+        where: { messId_monthKey_memberId_category: { messId: mess.id, monthKey, memberId: member.id, category: input.category } },
         update: { amount: input.amount },
-        create: { messId: mess.id, memberId: member.id, category: input.category, amount: input.amount },
+        create: { messId: mess.id, monthKey, memberId: member.id, category: input.category, amount: input.amount },
       })
     }
 
     if (input.action === 'utility') {
       await prisma.utility.upsert({
-        where: { messId_externalId: { messId: mess.id, externalId: input.id ?? input.name.toLowerCase().replaceAll(' ', '-') } },
+        where: { messId_monthKey_externalId: { messId: mess.id, monthKey, externalId: input.id ?? input.name.toLowerCase().replaceAll(' ', '-') } },
         update: { name: input.name, amount: input.amount },
-        create: { messId: mess.id, externalId: input.id ?? input.name.toLowerCase().replaceAll(' ', '-'), name: input.name, amount: input.amount },
+        create: { messId: mess.id, monthKey, externalId: input.id ?? input.name.toLowerCase().replaceAll(' ', '-'), name: input.name, amount: input.amount },
       })
     }
 
@@ -174,21 +167,25 @@ async function handleMutation(request: Request) {
     }
 
     if (input.action === 'utilityRemove') {
-      await prisma.utility.deleteMany({ where: { messId: mess.id, externalId: input.id } })
+      await prisma.utility.deleteMany({ where: { messId: mess.id, monthKey, externalId: input.id } })
     }
 
     if (input.action === 'override') {
       const member = await prisma.member.findUniqueOrThrow({ where: { messId_externalId: { messId: mess.id, externalId: input.memberId } } })
       await prisma.override.upsert({
-        where: { memberId: member.id },
+        where: { messId_monthKey_memberId: { messId: mess.id, monthKey, memberId: member.id } },
         update: { utilities: input.utilities ?? null, mealRate: input.mealRate ?? null },
-        create: { messId: mess.id, memberId: member.id, utilities: input.utilities ?? null, mealRate: input.mealRate ?? null },
+        create: { messId: mess.id, monthKey, memberId: member.id, utilities: input.utilities ?? null, mealRate: input.mealRate ?? null },
       })
     }
 
     if (input.action === 'rent') {
       const member = await prisma.member.findUniqueOrThrow({ where: { messId_externalId: { messId: mess.id, externalId: input.memberId } } })
-      await prisma.member.update({ where: { id: member.id }, data: { houseRent: input.houseRent } })
+      await prisma.houseRent.upsert({
+        where: { messId_memberId_monthKey: { messId: mess.id, memberId: member.id, monthKey } },
+        update: { amount: input.houseRent },
+        create: { messId: mess.id, memberId: member.id, amount: input.houseRent, monthKey },
+      })
     }
 
     return await GET(request)

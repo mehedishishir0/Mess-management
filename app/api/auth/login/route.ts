@@ -12,8 +12,18 @@ const loginSchema = z.object({
 export async function POST(request: Request) {
   try {
     const body = loginSchema.parse(await request.json())
+    const trimmedEmail = body.email.trim()
+    const lowerEmail = trimmedEmail.toLowerCase()
 
-    const mess = await prisma.mess.findUnique({ where: { email: body.email } })
+    const mess = await prisma.mess.findFirst({
+      where: {
+        OR: [
+          { email: lowerEmail },
+          { email: trimmedEmail }
+        ]
+      }
+    })
+
     if (!mess) {
       return NextResponse.json({ error: 'Incorrect email or password' }, { status: 401 })
     }
@@ -43,11 +53,14 @@ export async function POST(request: Request) {
     })
 
     return response
-  } catch (error) {
+  } catch (error: any) {
+    console.error('[POST /api/auth/login] Error:', error)
+
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.issues[0]?.message }, { status: 400 })
     }
 
-    return NextResponse.json({ error: 'Unable to sign in' }, { status: 500 })
+    const errorMessage = error?.message || String(error)
+    return NextResponse.json({ error: 'Unable to sign in', details: errorMessage }, { status: 500 })
   }
 }

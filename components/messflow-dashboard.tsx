@@ -652,31 +652,50 @@ export default function MessFlowDashboard() {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              onClick={() => setSelectedMonth(changeMonthKey(selectedMonth, -1))}
-              className="rounded-lg border border-border bg-card p-2 text-muted-foreground transition hover:bg-accent sm:flex"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            <div className="items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium hidden sm:flex">
-              <CalendarDays size={16} className="text-muted-foreground" />
-              {monthKeyToLabel(selectedMonth)}
+            <div className="flex items-center gap-1 rounded-xl border border-border bg-card p-1 shadow-sm">
+              <button
+                title="Previous month"
+                onClick={() => setSelectedMonth(changeMonthKey(selectedMonth, -1))}
+                className="flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold text-muted-foreground transition hover:bg-accent hover:text-foreground"
+              >
+                <ChevronLeft size={16} />
+                <span className="hidden sm:inline">Prev</span>
+              </button>
+              
+              <div className="flex items-center gap-2 px-2 py-1 text-sm font-semibold text-foreground">
+                <CalendarDays size={16} className="text-primary" />
+                <span>{monthKeyToLabel(selectedMonth)}</span>
+              </div>
+
+              <input
+                type="month"
+                value={selectedMonth}
+                onChange={(event) => setSelectedMonth(event.target.value)}
+                className="cursor-pointer rounded-lg bg-transparent px-2 py-1 text-xs text-muted-foreground hover:text-foreground focus:outline-none"
+              />
+
+              <button
+                title="Next month"
+                onClick={() => setSelectedMonth(changeMonthKey(selectedMonth, 1))}
+                className="flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold text-muted-foreground transition hover:bg-accent hover:text-foreground"
+              >
+                <span className="hidden sm:inline">Next</span>
+                <ChevronRight size={16} />
+              </button>
             </div>
-            <input
-              type="month"
-              value={selectedMonth}
-              onChange={(event) => setSelectedMonth(event.target.value)}
-              className="rounded-lg border border-border bg-card px-2 py-2 text-sm text-foreground outline-none transition focus:ring-2 focus:ring-ring sm:block"
-            />
-            <button
-              onClick={() => setSelectedMonth(changeMonthKey(selectedMonth, 1))}
-              className="rounded-lg border border-border bg-card p-2 text-muted-foreground transition hover:bg-accent sm:flex"
-            >
-              <ChevronRight size={16} />
-            </button>
+
+            {selectedMonth !== getCurrentMonthKey() && (
+              <button
+                onClick={() => setSelectedMonth(getCurrentMonthKey())}
+                className="rounded-xl border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary transition hover:bg-primary/20"
+              >
+                This Month
+              </button>
+            )}
+
             <button
               onClick={exportXlsx}
-              className="hidden items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm font-medium transition hover:bg-accent md:flex"
+              className="hidden items-center gap-2 rounded-xl border border-border px-3 py-2 text-sm font-medium transition hover:bg-accent md:flex"
             >
               <ArrowDownToLine size={16} />
               Export XLSX
@@ -837,13 +856,38 @@ export default function MessFlowDashboard() {
                       </tr>
                     ))}
                   </tbody>
+                  <tfoot className="border-t-2 border-border bg-muted/60 font-semibold">
+                    <tr>
+                      <td className="px-4 py-3 font-bold text-foreground">Total Monthly Meals</td>
+                      {members.map((member) => {
+                        const memberTotalMeals = days.reduce((sum, day) => sum + (day.counts[member.id] ?? 0), 0);
+                        return (
+                          <td key={member.id} className="px-3 py-3 text-center font-bold text-primary">
+                            {memberTotalMeals}
+                          </td>
+                        );
+                      })}
+                      <td className="px-4 py-3 text-right font-bold text-primary text-base">
+                        {calculated.totalMeals}
+                      </td>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-4 py-3 text-xs text-muted-foreground">
-                <span>
-                  Meal counts: breakfast + lunch + dinner, max 3 per day.
-                </span>
-                <span className="font-semibold text-foreground">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span>Meal counts: max 3 per day.</span>
+                  <span className="font-semibold text-foreground">Person Totals:</span>
+                  {members.map((member) => {
+                    const total = days.reduce((sum, day) => sum + (day.counts[member.id] ?? 0), 0);
+                    return (
+                      <span key={member.id} className="rounded-md bg-muted px-2 py-1 text-foreground font-medium">
+                        {member.name}: <strong className="text-primary">{total} meals</strong>
+                      </span>
+                    );
+                  })}
+                </div>
+                <span className="font-semibold text-foreground text-sm">
                   {calculated.totalMeals} total meals logged
                 </span>
               </div>
@@ -1223,7 +1267,39 @@ export default function MessFlowDashboard() {
                       </tr>
                     ))}
                   </tbody>
+                  <tfoot className="border-t-2 border-border bg-muted/60 font-semibold">
+                    <tr>
+                      <td className="px-4 py-3.5 font-bold text-foreground">Grand Total Sum</td>
+                      <td className="px-4 py-3.5 text-right font-bold text-foreground">
+                        {money(calculated.grandSettlements.reduce((sum, r) => sum + r.houseRent, 0))}
+                      </td>
+                      <td className="px-4 py-3.5 text-right font-bold text-muted-foreground">
+                        —
+                      </td>
+                      <td className="px-4 py-3.5 text-right font-bold text-primary text-base">
+                        {money(calculated.grandSettlements.reduce((sum, r) => sum + (r.grandTotalPayable > 0 ? r.grandTotalPayable : 0), 0))}
+                      </td>
+                    </tr>
+                  </tfoot>
                 </table>
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border bg-muted/40 px-5 py-4">
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Grand Total Payable Sum</p>
+                  <p className="text-xl font-bold text-primary">
+                    {money(calculated.grandSettlements.reduce((sum, r) => sum + (r.grandTotalPayable > 0 ? r.grandTotalPayable : 0), 0))}
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-6 text-xs text-muted-foreground">
+                  <div>
+                    <span>Total House Rent: </span>
+                    <strong className="text-foreground font-bold">{money(calculated.grandSettlements.reduce((sum, r) => sum + r.houseRent, 0))}</strong>
+                  </div>
+                  <div>
+                    <span>Total Net Amount to Collect: </span>
+                    <strong className="text-emerald-500 font-bold">{money(calculated.grandSettlements.reduce((sum, r) => sum + (r.grandTotalPayable > 0 ? r.grandTotalPayable : 0), 0))}</strong>
+                  </div>
+                </div>
               </div>
             </div>
           </section>

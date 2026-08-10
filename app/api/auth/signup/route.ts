@@ -20,7 +20,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Passwords do not match' }, { status: 400 })
     }
 
-    const existing = await prisma.mess.findFirst({ where: { email: body.email } })
+    const trimmedEmail = body.email.trim()
+    const lowerEmail = trimmedEmail.toLowerCase()
+
+    const existing = await prisma.mess.findFirst({
+      where: {
+        OR: [
+          { email: lowerEmail },
+          { email: trimmedEmail }
+        ]
+      }
+    })
     if (existing) {
       return NextResponse.json({ error: 'This email is already registered' }, { status: 409 })
     }
@@ -31,7 +41,7 @@ export async function POST(request: Request) {
       data: {
         messName: body.messName,
         managerName: body.managerName,
-        email: body.email,
+        email: lowerEmail,
         password: hashedPassword,
       },
     })
@@ -57,6 +67,8 @@ export async function POST(request: Request) {
 
     return response
   } catch (error) {
+    console.error('[POST /api/auth/signup] Error:', error)
+
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.issues[0]?.message }, { status: 400 })
     }
