@@ -11,24 +11,8 @@ const hindSiliguri = Hind_Siliguri({
 export const metadata: Metadata = {
   title: 'মেসফ্লো (MessFlow) · ডিজিটাল মেস ম্যানেজমেন্ট',
   description: 'মিল হিসাব, বাজার খরচ, বাসা ভাড়া, ইউটিলিটি বিল এবং মাসিক ফাইনাল হিসাব পরিচালনায় আপনার স্মার্ট ডিজিটাল মেস সহকারী।',
-  generator: 'v0.app',
-  icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
-  },
+  generator: 'shishir',
+ 
 }
 
 export const viewport: Viewport = {
