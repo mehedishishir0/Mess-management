@@ -79,10 +79,10 @@ export default function MessSettingsPage() {
       <div className="mx-auto max-w-5xl px-6 py-12">
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">MessFlow</p>
-            <h1 className="mt-2 text-4xl font-semibold tracking-tight">Account & Mess Settings</h1>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">মেসফ্লো (MessFlow)</p>
+            <h1 className="mt-2 text-4xl font-semibold tracking-tight">অ্যাকাউন্ট ও মেস সেটানিংস</h1>
           </div>
-          <a href="/dashboard" className="rounded-xl border border-border px-4 py-2 text-sm font-semibold hover:bg-accent">Back to dashboard</a>
+          <a href="/dashboard" className="rounded-xl border border-border px-4 py-2 text-sm font-semibold hover:bg-accent">ড্যাশবোর্ডে ফিরে যান</a>
         </div>
 
         {error && <div className="mb-6 rounded-2xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">{error}</div>}
@@ -91,41 +91,41 @@ export default function MessSettingsPage() {
         <div className="grid gap-6 lg:grid-cols-2">
           <section className="rounded-3xl border border-border bg-card p-6">
             <div className="mb-6">
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-muted-foreground">Mess profile</p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight">Profile details</h2>
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-muted-foreground">মেস প্রোফাইল</p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight">প্রোফাইল তথ্য</h2>
             </div>
             <form className="space-y-4" onSubmit={saveProfile}>
               <label className="block">
-                <span className="mb-2 block text-sm font-medium">Mess Name</span>
+                <span className="mb-2 block text-sm font-medium">মেসের নাম</span>
                 <input className="w-full rounded-xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-ring" value={messName} onChange={(event) => setMessName(event.target.value)} required />
               </label>
               <label className="block">
-                <span className="mb-2 block text-sm font-medium">Manager Name</span>
+                <span className="mb-2 block text-sm font-medium">ম্যানেজারের নাম</span>
                 <input className="w-full rounded-xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-ring" value={managerName} onChange={(event) => setManagerName(event.target.value)} required />
               </label>
-              <button className="rounded-xl bg-primary px-5 py-3 font-bold text-primary-foreground hover:bg-primary/90">Save profile</button>
+              <button className="rounded-xl bg-primary px-5 py-3 font-bold text-primary-foreground hover:bg-primary/90">প্রোফাইল সেইভ করুন</button>
             </form>
           </section>
 
           <section className="rounded-3xl border border-border bg-card p-6">
             <div className="mb-6">
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-muted-foreground">Security</p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight">Password change</h2>
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-muted-foreground">সিকিউরিটি</p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight">পাসওয়ার্ড পরিবর্তন</h2>
             </div>
             <form className="space-y-4" onSubmit={savePassword}>
               <label className="block">
-                <span className="mb-2 block text-sm font-medium">Current password</span>
+                <span className="mb-2 block text-sm font-medium">বর্তমান পাসওয়ার্ড</span>
                 <input className="w-full rounded-xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-ring" type="password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} required />
               </label>
               <label className="block">
-                <span className="mb-2 block text-sm font-medium">New password</span>
+                <span className="mb-2 block text-sm font-medium">নতুন পাসওয়ার্ড</span>
                 <input className="w-full rounded-xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-ring" type="password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} required />
               </label>
               <label className="block">
-                <span className="mb-2 block text-sm font-medium">Confirm new password</span>
+                <span className="mb-2 block text-sm font-medium">নতুন পাসওয়ার্ড নিশ্চিত করুন</span>
                 <input className="w-full rounded-xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-ring" type="password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} required />
               </label>
-              <button className="rounded-xl bg-primary px-5 py-3 font-bold text-primary-foreground hover:bg-primary/90">Update password</button>
+              <button className="rounded-xl bg-primary px-5 py-3 font-bold text-primary-foreground hover:bg-primary/90">পাসওয়ার্ড আপডেট করুন</button>
             </form>
           </section>
         </div>
