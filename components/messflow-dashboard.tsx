@@ -52,6 +52,7 @@ type Settlement = Member & {
   meals: number;
   groceries: number;
   mealCost: number;
+  mealRate: number;
   mealNet: number;
   utilityShare: number;
   finalCost: number;
@@ -781,7 +782,8 @@ export default function MessFlowDashboard() {
         (sum, amount) => sum + (Number(amount) || 0),
         0,
       );
-      const mealCost = meals * (overrides[member.id]?.mealRate ?? mealRate);
+      const effectiveMealRate = overrides[member.id]?.mealRate ?? mealRate;
+      const mealCost = meals * effectiveMealRate;
       const customShare = overrides[member.id]?.utilities;
       const utilityShare =
         customShare !== undefined ? customShare : defaultUtilityShare;
@@ -793,6 +795,7 @@ export default function MessFlowDashboard() {
         meals,
         groceries: totalGiven,
         mealCost,
+        mealRate: effectiveMealRate,
         mealNet,
         utilityShare,
         finalCost,
@@ -1019,6 +1022,7 @@ export default function MessFlowDashboard() {
         name,
         houseRent,
         meals,
+        mealRate,
         groceries,
         mealCost,
         mealNet,
@@ -1030,6 +1034,7 @@ export default function MessFlowDashboard() {
         মেম্বার: name,
         "বাসা ভাড়া": houseRent.toFixed(2),
         "মোট মিল": meals,
+        "মিল রেট": mealRate ? mealRate.toFixed(2) : "0.00",
         "মোট বাজার জমা (E)": groceries,
         "মিল খরচ (G)": mealCost.toFixed(2),
         "মিল নিট ব্যালেন্স (E - G)": mealNet.toFixed(2),
@@ -1420,12 +1425,17 @@ export default function MessFlowDashboard() {
                 />
                 <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm sm:min-w-[900px]">
+                    <table className="w-full text-sm sm:min-w-[1150px]">
                       <thead className="border-b border-border bg-muted/50 text-left text-xs uppercase tracking-wider text-muted-foreground">
                         <tr>
                           <th className="px-4 py-3 font-medium">মেম্বার</th>
+                          <th className="px-4 py-3 text-right font-medium">মোট মিল</th>
+                          <th className="px-4 py-3 text-right font-medium">মিল রেট</th>
+                          <th className="px-4 py-3 text-right font-medium">বাজার/মিল জমা</th>
+                          <th className="px-4 py-3 text-right font-medium">মোট মিল খরচ</th>
+                          <th className="px-4 py-3 text-right font-medium">মিল নিট স্থিতি</th>
+                          <th className="px-4 py-3 text-right font-medium">ইউটিলিটি শেয়ার</th>
                           <th className="px-4 py-3 text-right font-medium">বাসা ভাড়া</th>
-                          <th className="px-4 py-3 text-right font-medium">মেস/ইউটিলিটি নিট ব্যালেন্স</th>
                           <th className="px-4 py-3 text-right font-medium">সর্বমোট চূড়ান্ত পাওনা/দেওয়া</th>
                         </tr>
                       </thead>
@@ -1438,12 +1448,21 @@ export default function MessFlowDashboard() {
                                 <span className="font-semibold">{row.name}</span>
                               </div>
                             </td>
+                            <td className="px-4 py-3 text-right font-medium">{row.meals} টি</td>
+                            <td className="px-4 py-3 text-right font-medium">{money(row.mealRate)}</td>
+                            <td className="px-4 py-3 text-right font-medium text-emerald-600 dark:text-emerald-400">{money(row.groceries)}</td>
+                            <td className="px-4 py-3 text-right font-medium text-rose-600 dark:text-rose-400">{money(row.mealCost)}</td>
+                            <td className="px-4 py-3 text-right">
+                              <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${row.mealNet > 0 ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" : row.mealNet < 0 ? "bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300" : "bg-muted text-muted-foreground"}`}>
+                                {row.mealNet > 0 ? `পাবেন +${money(row.mealNet)}` : row.mealNet < 0 ? `দিবেন -${money(Math.abs(row.mealNet))}` : "হিসাব সমান"}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-right font-medium">{money(row.utilityShare)}</td>
                             <td className="px-4 py-3 text-right font-medium">{money(row.houseRent)}</td>
                             <td className="px-4 py-3 text-right">
-                              <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${row.balance > 0 ? "bg-emerald-100 text-emerald-800" : row.balance < 0 ? "bg-orange-100 text-orange-800" : "bg-muted text-muted-foreground"}`}>{row.balance > 0 ? "+" : row.balance < 0 ? "-" : ""}{money(Math.abs(row.balance))}</span>
-                            </td>
-                            <td className="px-4 py-3 text-right">
-                              <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${row.grandTotalPayable > 0 ? "bg-orange-100 text-orange-800" : row.grandTotalPayable < 0 ? "bg-emerald-100 text-emerald-800" : "bg-muted text-muted-foreground"}`}>{row.grandTotalPayable > 0 ? `মোট দিবেন ${money(row.grandTotalPayable)}` : row.grandTotalPayable < 0 ? `মোট পাবেন ${money(Math.abs(row.grandTotalPayable))}` : "হিসাব সমান"}</span>
+                              <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${row.grandTotalPayable > 0 ? "bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300" : row.grandTotalPayable < 0 ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" : "bg-muted text-muted-foreground"}`}>
+                                {row.grandTotalPayable > 0 ? `মোট দিবেন ${money(row.grandTotalPayable)}` : row.grandTotalPayable < 0 ? `মোট পাবেন ${money(Math.abs(row.grandTotalPayable))}` : "হিসাব সমান"}
+                              </span>
                             </td>
                           </tr>
                         ))}
@@ -1451,8 +1470,13 @@ export default function MessFlowDashboard() {
                       <tfoot className="border-t-2 border-border bg-muted/60 font-semibold">
                         <tr>
                           <td className="px-4 py-3.5 font-bold text-foreground">সর্বমোট সামারি</td>
-                          <td className="px-4 py-3.5 text-right font-bold text-foreground">{money(calculated.grandSettlements.reduce((sum, r) => sum + r.houseRent, 0))}</td>
+                          <td className="px-4 py-3.5 text-right font-bold text-foreground">{calculated.totalMeals} টি</td>
                           <td className="px-4 py-3.5 text-right font-bold text-muted-foreground">—</td>
+                          <td className="px-4 py-3.5 text-right font-bold text-emerald-600 dark:text-emerald-400">{money(calculated.grandSettlements.reduce((sum, r) => sum + r.groceries, 0))}</td>
+                          <td className="px-4 py-3.5 text-right font-bold text-rose-600 dark:text-rose-400">{money(calculated.grandSettlements.reduce((sum, r) => sum + r.mealCost, 0))}</td>
+                          <td className="px-4 py-3.5 text-right font-bold text-muted-foreground">—</td>
+                          <td className="px-4 py-3.5 text-right font-bold text-foreground">{money(calculated.grandSettlements.reduce((sum, r) => sum + r.utilityShare, 0))}</td>
+                          <td className="px-4 py-3.5 text-right font-bold text-foreground">{money(calculated.grandSettlements.reduce((sum, r) => sum + r.houseRent, 0))}</td>
                           <td className="px-4 py-3.5 text-right font-bold text-primary text-base">{money(calculated.grandSettlements.reduce((sum, r) => sum + (r.grandTotalPayable > 0 ? r.grandTotalPayable : 0), 0))}</td>
                         </tr>
                       </tfoot>
@@ -1466,6 +1490,14 @@ export default function MessFlowDashboard() {
                       </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-6 text-xs text-muted-foreground">
+                      <div>
+                        <span>মোট বাজার জমা: </span>
+                        <strong className="text-emerald-600 dark:text-emerald-400 font-bold">{money(calculated.grandSettlements.reduce((sum, r) => sum + r.groceries, 0))}</strong>
+                      </div>
+                      <div>
+                        <span>মোট মিল খরচ: </span>
+                        <strong className="text-rose-600 dark:text-rose-400 font-bold">{money(calculated.grandSettlements.reduce((sum, r) => sum + r.mealCost, 0))}</strong>
+                      </div>
                       <div>
                         <span>সর্বমোট বাসা ভাড়া: </span>
                         <strong className="text-foreground font-bold">{money(calculated.grandSettlements.reduce((sum, r) => sum + r.houseRent, 0))}</strong>
