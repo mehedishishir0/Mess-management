@@ -589,6 +589,7 @@ export default function MessFlowDashboard() {
   const [expenses, setExpenses] = useState<MemberExpenses>({});
   const [utilities, setUtilities] = useState<Utility[]>([]);
   const [overrides, setOverrides] = useState<Record<string, Override>>({});
+  const [customActualGrocery, setCustomActualGrocery] = useState<number | null>(null);
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonthKey());
   const [activeNav, setActiveNav] = useState("Overview");
   const [showMobileNav, setShowMobileNav] = useState(false);
@@ -727,6 +728,10 @@ export default function MessFlowDashboard() {
             ),
           ),
         );
+        const actualRec = data.actualGroceries?.[0];
+        setCustomActualGrocery(
+          typeof actualRec?.amount === "number" ? actualRec.amount : null,
+        );
         setSyncStatus("Synced with MongoDB");
       })
       .catch(() => setSyncStatus("Unable to sync with MongoDB"));
@@ -742,7 +747,7 @@ export default function MessFlowDashboard() {
         ),
       0,
     );
-    const grocerySpend = Object.values(expenses).reduce(
+    const totalDepositCollected = Object.values(expenses).reduce(
       (sum, categories) =>
         sum +
         Object.values(categories).reduce(
@@ -751,7 +756,23 @@ export default function MessFlowDashboard() {
         ),
       0,
     );
-    const mealRate = totalMeals ? grocerySpend / totalMeals : 0;
+    const totalBigMarketCollected = Object.values(expenses).reduce(
+      (sum, categories) => sum + (Number(categories["Big Market Share"]) || 0),
+      0,
+    );
+    const totalDailyAndAdvanceCollected = Object.values(expenses).reduce(
+      (sum, categories) =>
+        sum +
+        (Number(categories["Advance Deposit"]) || 0) +
+        (Number(categories["Daily Market"]) || 0),
+      0,
+    );
+
+    const isCustomActualSet = customActualGrocery !== null && customActualGrocery !== undefined;
+    const actualBigMarketSpent = isCustomActualSet ? Number(customActualGrocery) : totalBigMarketCollected;
+    const managerBigMarketCashInHand = totalBigMarketCollected - actualBigMarketSpent;
+    const totalMessGroceryCost = totalDailyAndAdvanceCollected + actualBigMarketSpent;
+    const mealRate = totalMeals ? totalMessGroceryCost / totalMeals : 0;
     const utilityTotal = utilities.reduce(
       (sum, utility) => sum + (Number(utility.amount) || 0),
       0,
@@ -820,7 +841,15 @@ export default function MessFlowDashboard() {
 
     return {
       totalMeals,
-      grocerySpend,
+      totalDepositCollected,
+      totalBigMarketCollected,
+      totalDailyAndAdvanceCollected,
+      actualBigMarketSpent,
+      managerBigMarketCashInHand,
+      managerCashInHand: managerBigMarketCashInHand,
+      isCustomActualSet,
+      grocerySpend: totalMessGroceryCost,
+      actualGrocerySpend: totalMessGroceryCost,
       mealRate,
       utilityTotal,
       customUtilityTotal,
@@ -831,9 +860,9 @@ export default function MessFlowDashboard() {
       settlements,
       grandSettlements,
       totalApartmentRent,
-      totalCost: grocerySpend + utilityTotal,
+      totalCost: totalMessGroceryCost + utilityTotal,
     };
-  }, [days, expenses, members, utilities, overrides]);
+  }, [days, expenses, members, utilities, overrides, customActualGrocery]);
 
   function updateMeal(dayIndex: number, memberId: string, value: string) {
     const count = Math.max(0, Math.min(3, Number(value) || 0));
@@ -984,6 +1013,12 @@ export default function MessFlowDashboard() {
       ),
     );
     void persist({ action: "rent", memberId, houseRent });
+  }
+
+  function updateActualGrocery(value: string | number | null) {
+    const amount = value === "" || value === null ? null : Math.max(0, Number(value) || 0);
+    setCustomActualGrocery(amount);
+    void persist({ action: "actualGrocery", amount });
   }
 
   function addUtility() {
@@ -1293,7 +1328,7 @@ export default function MessFlowDashboard() {
           {(activeNav === "Overview" || activeNav === "ওভারভিউ") && (
             <div className="space-y-8">
               {/* High level Metric Cards */}
-              <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
                 <MetricCard
                   label="মোট মিল"
                   value={calculated.totalMeals.toLocaleString("bn-BD")}
@@ -1301,24 +1336,108 @@ export default function MessFlowDashboard() {
                   icon={Utensils}
                 />
                 <MetricCard
-                  label="মোট বাজার খরচ"
-                  value={money(calculated.grocerySpend)}
-                  note="মেম্বারদের বাজার জমা"
+                  label="বড় বাজার মোট জমা"
+                  value={money(calculated.totalBigMarketCollected)}
+                  note="ম্যানেজারের নিকট মেম্বারদের জমা"
                   icon={WalletCards}
                 />
                 <MetricCard
-                  label="মিল রেট"
-                  value={money(calculated.mealRate)}
-                  note="প্রতি মিল · বাজার ÷ মিল"
-                  icon={BarChart3}
+                  label="প্রকৃত বড় বাজার খরচ"
+                  value={money(calculated.actualBigMarketSpent)}
+                  note={calculated.isCustomActualSet ? "ম্যানেজারের কেনাকাটা খরচ" : "বড় বাজার জমার সমান"}
+                  icon={Receipt}
                 />
                 <MetricCard
-                  label="ইউটিলিটি বিল"
-                  value={money(calculated.utilityTotal)}
-                  note={`${utilities.length} টি মোট বিল`}
-                  icon={CircleDollarSign}
+                  label="ম্যানেজার ক্যাশ ইন হ্যান্ড"
+                  value={money(calculated.managerBigMarketCashInHand)}
+                  note={calculated.managerBigMarketCashInHand >= 0 ? "বড় বাজারের অবশিষ্টাংশ ক্যাশ" : "ক্যাশ ঘাটতি"}
+                  icon={WalletCards}
+                />
+                <MetricCard
+                  label="কার্যকর মিল রেট"
+                  value={money(calculated.mealRate)}
+                  note="প্রকৃত বাজার ÷ মোট মিল"
+                  icon={BarChart3}
                 />
               </section>
+
+              {/* Manager Cash & Audit Transparency Card */}
+              <div className="rounded-3xl border border-primary/30 bg-gradient-to-r from-primary/10 via-card to-background p-6 shadow-sm">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <span className="flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md shrink-0">
+                      <WalletCards size={24} />
+                    </span>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                          ম্যানেজারের বড় বাজার ক্যাশ ও মিল সমন্বয় (Big Market Cash Audit)
+                        </span>
+                        <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
+                          calculated.managerBigMarketCashInHand >= 0
+                            ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                            : "bg-amber-500/15 text-amber-600 dark:text-amber-400"
+                        }`}>
+                          {calculated.managerBigMarketCashInHand >= 0 ? "বড় বাজার ক্যাশ উদ্বৃত্ত ✅" : "ক্যাশ ঘাটতি ⚠️"}
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-bold text-foreground mt-1">
+                        বড় বাজার সংগৃহীত জমা, প্রকৃত কেনাকাটা ও হাতে থাকা ক্যাশ
+                      </h3>
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground max-w-2xl">
+                        ম্যানেজার মেম্বারদের থেকে বড় বাজার বাবদ মোট {money(calculated.totalBigMarketCollected)} টাকা জমা পেয়েছেন। প্রকৃত কেনাকাটায় {money(calculated.actualBigMarketSpent)} টাকা খরচ হওয়ায় বাকি {money(calculated.managerBigMarketCashInHand)} টাকা ম্যানেজারের কাছে গচ্ছিত আছে। এই বেঁচে যাওয়া টাকা মিল রেট কমাবে এবং ফাইনাল সেটেলমেন্টে স্বয়ংক্রিয়ভাবে ফেরত মিলবে!
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setActiveNav("বাজার খরচ")}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 shrink-0"
+                  >
+                    <Receipt size={16} />
+                    <span>প্রকৃত কেনাকাটা এডিট করুন →</span>
+                  </button>
+                </div>
+
+                <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  <div className="rounded-2xl border border-border/80 bg-card p-4 shadow-2xs">
+                    <span className="text-xs font-semibold text-muted-foreground block">১. বড় বাজার মোট সংগৃহীত জমা</span>
+                    <strong className="text-xl font-black text-emerald-600 dark:text-emerald-400 block mt-1">
+                      {money(calculated.totalBigMarketCollected)}
+                    </strong>
+                    <span className="text-[11px] text-muted-foreground block mt-1">মেম্বারদের দেওয়া বড় বাজার শেয়ারের যোগফল</span>
+                  </div>
+
+                  <div className="rounded-2xl border border-border/80 bg-card p-4 shadow-2xs">
+                    <span className="text-xs font-semibold text-muted-foreground block">২. প্রকৃত বড় বাজার কেনাকাটা খরচ</span>
+                    <strong className="text-xl font-black text-rose-600 dark:text-rose-400 block mt-1">
+                      {money(calculated.actualBigMarketSpent)}
+                    </strong>
+                    <span className="text-[11px] text-muted-foreground block mt-1">
+                      {calculated.isCustomActualSet ? "ম্যানেজারের দেওয়া প্রকৃত কেনাকাটা" : "বড় বাজার জমার সমান ধরা হয়েছে"}
+                    </span>
+                  </div>
+
+                  <div className={`rounded-2xl border p-4 shadow-2xs ${
+                    calculated.managerBigMarketCashInHand >= 0
+                      ? "border-emerald-500/40 bg-emerald-500/10"
+                      : "border-amber-500/40 bg-amber-500/10"
+                  }`}>
+                    <span className="text-xs font-semibold text-muted-foreground block">৩. ম্যানেজারের কাছে ক্যাশ ইন হ্যান্ড</span>
+                    <strong className={`text-xl font-black block mt-1 ${
+                      calculated.managerBigMarketCashInHand >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"
+                    }`}>
+                      {calculated.managerBigMarketCashInHand >= 0
+                        ? `+ ${money(calculated.managerBigMarketCashInHand)}`
+                        : `- ${money(Math.abs(calculated.managerBigMarketCashInHand))}`}
+                    </strong>
+                    <span className="text-[11px] text-muted-foreground block mt-1">
+                      {calculated.managerBigMarketCashInHand >= 0
+                        ? "বড় বাজার করার পর ম্যানেজারের হাতে গচ্ছিত নগদ ক্যাশ"
+                        : "ম্যানেজার নিজের পকেট থেকে অতিরিক্ত খরচ করেছেন"}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
               {/* Smart Meal Rate & Budget Optimizer */}
               <MealRateBudgetOptimizer
@@ -1619,61 +1738,207 @@ export default function MessFlowDashboard() {
 
           {/* VIEW 3: EXPENSES PAGE */}
           {(activeNav === "Expenses" || activeNav === "বাজার খরচ") && (
-            <section className="space-y-6">
-              <SectionTitle
-                icon={Receipt}
-                eyebrow="বাজারের এন্ট্রি"
-                title="মেম্বারদের বাজার জমা ও খরচ"
-                action={
-                  <span className="text-xs text-muted-foreground">
-                    অ্যাডভান্স জমা, দৈনিক বাজার এবং বড় বাজার এন্ট্রি করুন
-                  </span>
-                }
-              />
-              <div className="overflow-hidden rounded-2xl border border-border bg-card">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm sm:min-w-[680px]">
-                    <thead className="border-b border-border bg-muted/50 text-left text-xs uppercase tracking-wider text-muted-foreground">
-                      <tr>
-                        <th className="px-4 py-3 font-medium">মেম্বার</th>
-                        {expenseCategories.map((category) => (
-                          <th key={category} className="px-4 py-3 text-right font-medium">{category}</th>
-                        ))}
-                        <th className="px-4 py-3 text-right font-medium">মোট জমা (E)</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border bg-card">
-                      {members.map((member) => {
-                        const memberExpenses = expenses[member.id] ?? {};
-                        const totalGiven = expenseCategories.reduce((sum, category) => sum + (Number(memberExpenses[category]) || 0), 0);
-                        return (
-                          <tr key={member.id} className="hover:bg-muted/30">
-                            <td className="px-4 py-3 font-semibold">
-                              <div className="flex items-center gap-3">
-                                <span className={`flex size-8 items-center justify-center rounded-full text-xs font-semibold text-primary-foreground ${member.color}`}>{member.initials}</span>
-                                <span>{member.name}</span>
-                              </div>
-                            </td>
-                            {expenseCategories.map((category) => (
-                              <td key={category} className="px-4 py-3 text-right">
-                                <input
-                                  type="number"
-                                  min={0}
-                                  value={memberExpenses[category] ?? 0}
-                                  onChange={(event) => updateExpense(member.id, category, Number(event.target.value) || 0)}
-                                  className="w-28 rounded-lg border border-input bg-background px-3 py-2 text-right text-sm outline-none focus:ring-2 focus:ring-ring"
-                                />
+            <div className="space-y-8">
+              {/* Section 1: Member Deposits & Advance */}
+              <section className="space-y-4">
+                <SectionTitle
+                  icon={Receipt}
+                  eyebrow="মেম্বারদের জমা"
+                  title="মেম্বারদের বাজার জমা ও ডিপোজিট রেজিস্টার"
+                  action={
+                    <span className="text-xs text-muted-foreground">
+                      মেম্বারদের দেওয়া জমা ও বাজার অবদান এন্ট্রি করুন
+                    </span>
+                  }
+                />
+                <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-xs">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm sm:min-w-[680px]">
+                      <thead className="border-b border-border bg-muted/50 text-left text-xs uppercase tracking-wider text-muted-foreground">
+                        <tr>
+                          <th className="px-4 py-3 font-medium">মেম্বার</th>
+                          {expenseCategories.map((category) => (
+                            <th key={category} className="px-4 py-3 text-right font-medium">{category}</th>
+                          ))}
+                          <th className="px-4 py-3 text-right font-medium">মোট জমা (E)</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border bg-card">
+                        {members.map((member) => {
+                          const memberExpenses = expenses[member.id] ?? {};
+                          const totalGiven = expenseCategories.reduce((sum, category) => sum + (Number(memberExpenses[category]) || 0), 0);
+                          return (
+                            <tr key={member.id} className="hover:bg-muted/30">
+                              <td className="px-4 py-3 font-semibold">
+                                <div className="flex items-center gap-3">
+                                  <span className={`flex size-8 items-center justify-center rounded-full text-xs font-semibold text-primary-foreground ${member.color}`}>{member.initials}</span>
+                                  <span>{member.name}</span>
+                                </div>
                               </td>
-                            ))}
-                            <td className="px-4 py-3 text-right font-semibold">{money(totalGiven)}</td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                              {expenseCategories.map((category) => (
+                                <td key={category} className="px-4 py-3 text-right">
+                                  <input
+                                    type="number"
+                                    min={0}
+                                    value={memberExpenses[category] ?? 0}
+                                    onChange={(event) => updateExpense(member.id, category, Number(event.target.value) || 0)}
+                                    className="w-28 rounded-lg border border-input bg-background px-3 py-2 text-right text-sm outline-none focus:ring-2 focus:ring-ring font-medium"
+                                  />
+                                </td>
+                              ))}
+                              <td className="px-4 py-3 text-right font-bold text-emerald-600 dark:text-emerald-400">{money(totalGiven)}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                      <tfoot className="border-t-2 border-border bg-muted/60 font-semibold">
+                        <tr>
+                          <td className="px-4 py-3 font-bold text-foreground">মেসের মোট সংগৃহীত জমা</td>
+                          <td colSpan={expenseCategories.length} className="px-4 py-3 text-right text-xs text-muted-foreground">
+                            (সকল মেম্বারের দেওয়া নগদ জমার যোগফল)
+                          </td>
+                          <td className="px-4 py-3 text-right font-bold text-emerald-600 dark:text-emerald-400 text-base">
+                            {money(calculated.totalDepositCollected)}
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
                 </div>
-              </div>
-            </section>
+              </section>
+
+              {/* Section 2: Actual Big Market Expense & Manager Cash in Hand */}
+              <section className="space-y-4">
+                <SectionTitle
+                  icon={WalletCards}
+                  eyebrow="প্রকৃত কেনাকাটা ও ক্যাশ"
+                  title="প্রকৃত বড় বাজার খরচ ও ম্যানেজারের ক্যাশ ইন হ্যান্ড"
+                />
+
+                <div className="rounded-3xl border border-primary/30 bg-card p-6 shadow-sm space-y-6">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-5">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                          ম্যানেজারের বড় বাজার ক্যাশ হিসেব
+                        </span>
+                        {calculated.isCustomActualSet && (
+                          <span className="rounded-full bg-primary/10 text-primary px-2.5 py-0.5 text-xs font-bold border border-primary/20">
+                            প্রকৃত কেনাকাটা সেট করা আছে
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-lg font-bold text-foreground mt-1">
+                        প্রকৃত বড় বাজার খরচ বনাম মেম্বারদের বড় বাজার জমা
+                      </h3>
+                      <p className="text-xs text-muted-foreground mt-1 max-w-xl">
+                        যেমন: মেম্বাররা বড় বাজার করার জন্য মোট <strong>{money(calculated.totalBigMarketCollected)}</strong> ম্যানেজারের কাছে দিল, কিন্তু পাইকারি বড় বাজার করতে <strong>{money(calculated.actualBigMarketSpent)}</strong> খরচ হলো — বাকি <strong>{money(calculated.managerBigMarketCashInHand)}</strong> টাকা ম্যানেজারের হাতে জমা ক্যাশ থাকবে।
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        onClick={() => updateActualGrocery(null)}
+                        className="rounded-xl border border-border bg-background px-3.5 py-2 text-xs font-semibold text-foreground transition hover:bg-accent flex items-center gap-1.5"
+                      >
+                        <RotateCcw size={14} />
+                        <span>বড় বাজার জমার সমান করুন (রিসেট)</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {/* Control Input */}
+                    <div className="space-y-4 rounded-2xl border border-border bg-muted/30 p-5">
+                      <label className="text-xs font-bold uppercase tracking-wider text-foreground block">
+                        প্রকৃত বড় বাজার কেনাকাটা খরচ এন্ট্রি (টাকা):
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-base">৳</span>
+                        <input
+                          type="number"
+                          min="0"
+                          placeholder={`ডিফল্ট: ${calculated.totalBigMarketCollected}`}
+                          value={customActualGrocery ?? ""}
+                          onChange={(e) => updateActualGrocery(e.target.value)}
+                          className="w-full rounded-xl border border-input bg-background pl-8 pr-4 py-3 text-lg font-black text-foreground outline-none focus:ring-2 focus:ring-ring"
+                        />
+                      </div>
+                      <p className="text-[11px] text-muted-foreground leading-relaxed">
+                        💡 বড় বাজার (চাল, ডাল, তেল ইত্যাদি) কেনার পর মেমো অনুযায়ী আসল কেনাকাটা খরচ এখানে লিখুন। এটি দিলে মিল রেট <strong>প্রকৃত বড় বাজার খরচের উপর</strong> হিসেব হবে এবং বাঁচা টাকা ম্যানেজারের ক্যাশে হিসাব থাকবে।
+                      </p>
+
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        <span className="text-xs text-muted-foreground font-medium self-center mr-1">দ্রুত প্রিসেট:</span>
+                        {[500, 1000, 2000, 4500, 5000].map((presetAmt) => (
+                          <button
+                            key={presetAmt}
+                            onClick={() => updateActualGrocery(presetAmt)}
+                            className="rounded-lg border border-border bg-card px-2.5 py-1 text-xs font-bold hover:bg-accent transition"
+                          >
+                            ৳ {presetAmt}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Live Financial & Cash Impact Card */}
+                    <div className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5">
+                      <div className="space-y-3">
+                        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
+                          লাইভ বড় বাজার ক্যাশ ও মিল রেট পূর্বরূপ
+                        </span>
+
+                        <div className="grid grid-cols-2 gap-3 text-xs">
+                          <div className="rounded-xl border border-border bg-muted/40 p-3">
+                            <span className="text-muted-foreground block text-[11px]">বড় বাজারে মেম্বারদের জমা:</span>
+                            <strong className="text-emerald-600 dark:text-emerald-400 text-sm font-bold block mt-0.5">
+                              {money(calculated.totalBigMarketCollected)}
+                            </strong>
+                          </div>
+                          <div className="rounded-xl border border-border bg-muted/40 p-3">
+                            <span className="text-muted-foreground block text-[11px]">প্রকৃত বড় বাজার খরচ:</span>
+                            <strong className="text-rose-600 dark:text-rose-400 text-sm font-bold block mt-0.5">
+                              {money(calculated.actualBigMarketSpent)}
+                            </strong>
+                          </div>
+                        </div>
+
+                        <div className={`rounded-xl border p-4 ${
+                          calculated.managerBigMarketCashInHand >= 0
+                            ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                            : "border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300"
+                        }`}>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold uppercase tracking-wider">
+                              {calculated.managerBigMarketCashInHand >= 0 ? "ম্যানেজারের হাতে বড় বাজারের ক্যাশ" : "ক্যাশ ঘাটতি"}
+                            </span>
+                            <WalletCards size={18} />
+                          </div>
+                          <div className="text-2xl font-black mt-1">
+                            {calculated.managerBigMarketCashInHand >= 0
+                              ? `+ ${money(calculated.managerBigMarketCashInHand)}`
+                              : `- ${money(Math.abs(calculated.managerBigMarketCashInHand))}`}
+                          </div>
+                          <div className="text-[11px] opacity-90 mt-1 leading-relaxed">
+                            {calculated.managerBigMarketCashInHand >= 0
+                              ? "মেম্বারদের থেকে বড় বাজার জমা নেওয়ার পর কেনাকাটার শেষে এই টাকাটি ম্যানেজারের হাতে নগদ আছে।"
+                              : "ম্যানেজার বড় বাজার করার সময় সংগৃহীত জমার চেয়ে বেশি খরচ করেছেন।"}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 flex items-center justify-between rounded-xl border border-border/80 bg-muted/40 px-3.5 py-2.5 text-xs">
+                        <span className="text-muted-foreground font-medium">নতুন কার্যকর মিল রেট:</span>
+                        <strong className="text-primary text-sm font-bold">
+                          {money(calculated.mealRate)} / মিল
+                        </strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
           )}
 
           {/* VIEW 4: UTILITIES PAGE */}

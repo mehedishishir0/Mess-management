@@ -12,7 +12,8 @@ const memberRemoveSchema = z.object({ action: z.literal('memberRemove'), memberI
 const utilityRemoveSchema = z.object({ action: z.literal('utilityRemove'), id: z.string() })
 const overrideSchema = z.object({ action: z.literal('override'), memberId: z.string(), utilities: z.number().finite().min(0).nullable().optional(), mealRate: z.number().finite().min(0).nullable().optional() })
 const rentSchema = z.object({ action: z.literal('rent'), memberId: z.string(), houseRent: z.number().finite().min(0) })
-const bodySchema = z.discriminatedUnion('action', [expenseSchema, mealSchema, utilitySchema, memberSchema, memberUpdateSchema, memberRemoveSchema, utilityRemoveSchema, overrideSchema, rentSchema])
+const actualGrocerySchema = z.object({ action: z.literal('actualGrocery'), amount: z.number().finite().min(0).nullable().optional(), note: z.string().optional() })
+const bodySchema = z.discriminatedUnion('action', [expenseSchema, mealSchema, utilitySchema, memberSchema, memberUpdateSchema, memberRemoveSchema, utilityRemoveSchema, overrideSchema, rentSchema, actualGrocerySchema])
 
 function currentMonthKey() {
   const now = new Date()
@@ -79,6 +80,9 @@ export async function GET(request: Request) {
           where: { monthKey },
         },
         houseRents: {
+          where: { monthKey },
+        },
+        actualGroceries: {
           where: { monthKey },
         },
       },
@@ -185,6 +189,14 @@ async function handleMutation(request: Request) {
         where: { messId_memberId_monthKey: { messId: mess.id, memberId: member.id, monthKey } },
         update: { amount: input.houseRent },
         create: { messId: mess.id, memberId: member.id, amount: input.houseRent, monthKey },
+      })
+    }
+
+    if (input.action === 'actualGrocery') {
+      await prisma.actualGrocery.upsert({
+        where: { messId_monthKey: { messId: mess.id, monthKey } },
+        update: { amount: input.amount ?? null, note: input.note ?? null },
+        create: { messId: mess.id, monthKey, amount: input.amount ?? null, note: input.note ?? null },
       })
     }
 
