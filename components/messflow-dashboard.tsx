@@ -1675,25 +1675,47 @@ export default function MessFlowDashboard() {
                     </thead>
                     <tbody className="divide-y divide-border">
                       {days.map((day, index) => (
-                        <tr key={`${day.date}-${day.label}`} className="transition hover:bg-muted/30">
+                        <tr
+                          key={`${day.date}-${day.label}`}
+                          className={`transition ${day.total > 0 ? "bg-primary/[0.02] hover:bg-muted/40" : "hover:bg-muted/30"}`}
+                        >
                           <td className="px-4 py-2.5">
-                            <span className="font-semibold">{day.date}</span>
-                            <span className="ml-2 text-xs text-muted-foreground">{day.label}</span>
+                            <span className={`font-semibold ${day.total > 0 ? "text-foreground" : "text-muted-foreground/60"}`}>
+                              {day.date}
+                            </span>
+                            <span className="ml-2 text-xs text-muted-foreground/60">{day.label}</span>
                           </td>
-                          {members.map((member) => (
-                            <td key={member.id} className="px-3 py-2.5">
-                              <input
-                                aria-label={`${member.name} meals on ${day.label} ${day.date}`}
-                                type="number"
-                                min="0"
-                                max="3"
-                                value={day.counts[member.id] ?? 0}
-                                onChange={(event) => updateMeal(index, member.id, event.target.value)}
-                                className="w-16 rounded-lg border border-input bg-background px-2 py-1.5 text-center font-medium outline-none ring-offset-background focus:ring-2 focus:ring-ring"
-                              />
-                            </td>
-                          ))}
-                          <td className="px-4 py-2.5 text-right font-semibold text-primary">{day.total}</td>
+                          {members.map((member) => {
+                            const count = day.counts[member.id] ?? 0;
+                            const hasMeal = count >= 1;
+                            return (
+                              <td
+                                key={member.id}
+                                className={`px-3 py-2.5 transition-colors ${
+                                  hasMeal ? "bg-emerald-500/[0.04]" : ""
+                                }`}
+                              >
+                                <input
+                                  aria-label={`${member.name} meals on ${day.label} ${day.date}`}
+                                  type="number"
+                                  min="0"
+                                  max="3"
+                                  value={count}
+                                  onChange={(event) => updateMeal(index, member.id, event.target.value)}
+                                  className={`w-16 rounded-lg border px-2 py-1.5 text-center font-medium outline-none transition-all ring-offset-background focus:ring-2 focus:ring-ring ${
+                                    count >= 2
+                                      ? "border-emerald-500/70 bg-emerald-500/20 font-bold text-emerald-700 dark:text-emerald-300 shadow-xs ring-1 ring-emerald-500/40"
+                                      : count === 1
+                                      ? "border-emerald-500/50 bg-emerald-500/15 font-semibold text-emerald-700 dark:text-emerald-400 shadow-xs ring-1 ring-emerald-500/20"
+                                      : "border-input/60 bg-background/50 text-muted-foreground/40 hover:border-input hover:text-foreground"
+                                  }`}
+                                />
+                              </td>
+                            );
+                          })}
+                          <td className={`px-4 py-2.5 text-right font-semibold ${day.total > 0 ? "text-primary font-bold" : "text-muted-foreground/30 font-normal"}`}>
+                            {day.total}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -1717,6 +1739,10 @@ export default function MessFlowDashboard() {
                 </div>
                 <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-4 py-3 text-xs text-muted-foreground">
                   <div className="flex flex-wrap items-center gap-3">
+                    <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-emerald-600 dark:text-emerald-400 font-medium">
+                      <span className="size-2 rounded-full bg-emerald-500" />
+                      মিল এন্ট্রি হাইলাইট (১ বা তার বেশি)
+                    </span>
                     <span>দৈনিক সর্বোচ্চ ৩ টি মিল গণনা।</span>
                     <span className="font-semibold text-foreground">মেম্বারওয়ারী মোট মিল:</span>
                     {members.map((member) => {
