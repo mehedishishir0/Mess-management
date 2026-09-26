@@ -13,9 +13,9 @@ const utilityRemoveSchema = z.object({ action: z.literal('utilityRemove'), id: z
 const overrideSchema = z.object({ action: z.literal('override'), memberId: z.string(), utilities: z.number().finite().min(0).nullable().optional(), mealRate: z.number().finite().min(0).nullable().optional() })
 const rentSchema = z.object({ action: z.literal('rent'), memberId: z.string(), houseRent: z.number().finite().min(0) })
 const actualGrocerySchema = z.object({ action: z.literal('actualGrocery'), amount: z.number().finite().min(0).nullable().optional(), note: z.string().optional() })
-const marketDutyAddSchema = z.object({ action: z.literal('marketDutyAdd'), memberId: z.string(), startDate: z.number().int().min(1).max(31), endDate: z.number().int().min(1).max(31), note: z.string().trim().max(100).optional() })
+const marketDutySchema = z.object({ action: z.literal('marketDuty'), id: z.string().optional(), memberId: z.string(), startDay: z.number().int().min(1).max(31), endDay: z.number().int().min(1).max(31), note: z.string().optional().nullable() })
 const marketDutyRemoveSchema = z.object({ action: z.literal('marketDutyRemove'), id: z.string() })
-const bodySchema = z.discriminatedUnion('action', [expenseSchema, mealSchema, utilitySchema, memberSchema, memberUpdateSchema, memberRemoveSchema, utilityRemoveSchema, overrideSchema, rentSchema, actualGrocerySchema, marketDutyAddSchema, marketDutyRemoveSchema])
+const bodySchema = z.discriminatedUnion('action', [expenseSchema, mealSchema, utilitySchema, memberSchema, memberUpdateSchema, memberRemoveSchema, utilityRemoveSchema, overrideSchema, rentSchema, actualGrocerySchema, marketDutySchema, marketDutyRemoveSchema])
 
 function currentMonthKey() {
   const now = new Date()
@@ -90,7 +90,7 @@ export async function GET(request: Request) {
         marketDuties: {
           where: { monthKey },
           include: { member: true },
-          orderBy: { startDate: 'asc' },
+          orderBy: { startDay: 'asc' },
         },
       },
     })
@@ -207,23 +207,84 @@ async function handleMutation(request: Request) {
       })
     }
 
-    if (input.action === 'marketDutyAdd') {
+    if (input.action === 'marketDuty') {
       const member = await prisma.member.findUniqueOrThrow({ where: { messId_externalId: { messId: mess.id, externalId: input.memberId } } })
-      await prisma.marketDuty.create({
-        data: {
-          messId: mess.id,
-          monthKey,
-          memberId: member.id,
-          startDate: Math.min(input.startDate, input.endDate),
-          endDate: Math.max(input.startDate, input.endDate),
-          note: input.note ?? null,
-        },
+      const sDay = Math.min(input.startDay, input.endDay)
+      const eDay = Math.max(input.startDay, input.endDay)
+
+      // Fetch existing duties to resolve overlaps for strict 1 person per date
+      const existingDuties = await prisma.marketDuty.findMany({
+        where: { messId: mess.id, monthKey },
       })
+
+      for (const ex of existingDuties) {
+        if (input.id && ex.id === input.id) continue;
+
+        const overlaps = Math.max(ex.startDay, sDay) <= Math.min(ex.endDay, eDay);
+        if (overlaps) {
+          if (sDay <= ex.startDay && ex.endDay <= eDay) {
+            // Completely covered -> Delete
+            await prisma.marketDuty.delete({ where: { id: ex.id } });
+          } else if (ex.startDay < sDay && ex.endDay <= eDay) {
+            // Truncate end
+            await prisma.marketDuty.update({
+              where: { id: ex.id },
+              data: { endDay: sDay - 1 },
+            });
+          } else if (sDay <= ex.startDay && eDay < ex.endDay) {
+            // Truncate start
+            await prisma.marketDuty.update({
+              where: { id: ex.id },
+              data: { startDay: eDay + 1 },
+            });
+          } else if (ex.startDay < sDay && eDay < ex.endDay) {
+            // Spans over -> Split into two
+            const originalEnd = ex.endDay;
+            await prisma.marketDuty.update({
+              where: { id: ex.id },
+              data: { endDay: sDay - 1 },
+            });
+            await prisma.marketDuty.create({
+              data: {
+                messId: mess.id,
+                monthKey,
+                memberId: ex.memberId,
+                startDay: eDay + 1,
+                endDay: originalEnd,
+                note: ex.note,
+              },
+            });
+          }
+        }
+      }
+
+      if (input.id) {
+        await prisma.marketDuty.updateMany({
+          where: { id: input.id, messId: mess.id },
+          data: {
+            memberId: member.id,
+            startDay: sDay,
+            endDay: eDay,
+            note: input.note ?? null,
+          },
+        })
+      } else {
+        await prisma.marketDuty.create({
+          data: {
+            messId: mess.id,
+            monthKey,
+            memberId: member.id,
+            startDay: sDay,
+            endDay: eDay,
+            note: input.note ?? null,
+          },
+        })
+      }
     }
 
     if (input.action === 'marketDutyRemove') {
       await prisma.marketDuty.deleteMany({
-        where: { id: input.id, messId: mess.id },
+        where: { messId: mess.id, id: input.id },
       })
     }
 
