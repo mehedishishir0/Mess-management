@@ -13,7 +13,9 @@ const utilityRemoveSchema = z.object({ action: z.literal('utilityRemove'), id: z
 const overrideSchema = z.object({ action: z.literal('override'), memberId: z.string(), utilities: z.number().finite().min(0).nullable().optional(), mealRate: z.number().finite().min(0).nullable().optional() })
 const rentSchema = z.object({ action: z.literal('rent'), memberId: z.string(), houseRent: z.number().finite().min(0) })
 const actualGrocerySchema = z.object({ action: z.literal('actualGrocery'), amount: z.number().finite().min(0).nullable().optional(), note: z.string().optional() })
-const bodySchema = z.discriminatedUnion('action', [expenseSchema, mealSchema, utilitySchema, memberSchema, memberUpdateSchema, memberRemoveSchema, utilityRemoveSchema, overrideSchema, rentSchema, actualGrocerySchema])
+const marketDutyAddSchema = z.object({ action: z.literal('marketDutyAdd'), memberId: z.string(), startDate: z.number().int().min(1).max(31), endDate: z.number().int().min(1).max(31), note: z.string().trim().max(100).optional() })
+const marketDutyRemoveSchema = z.object({ action: z.literal('marketDutyRemove'), id: z.string() })
+const bodySchema = z.discriminatedUnion('action', [expenseSchema, mealSchema, utilitySchema, memberSchema, memberUpdateSchema, memberRemoveSchema, utilityRemoveSchema, overrideSchema, rentSchema, actualGrocerySchema, marketDutyAddSchema, marketDutyRemoveSchema])
 
 function currentMonthKey() {
   const now = new Date()
@@ -84,6 +86,11 @@ export async function GET(request: Request) {
         },
         actualGroceries: {
           where: { monthKey },
+        },
+        marketDuties: {
+          where: { monthKey },
+          include: { member: true },
+          orderBy: { startDate: 'asc' },
         },
       },
     })
@@ -197,6 +204,26 @@ async function handleMutation(request: Request) {
         where: { messId_monthKey: { messId: mess.id, monthKey } },
         update: { amount: input.amount ?? null, note: input.note ?? null },
         create: { messId: mess.id, monthKey, amount: input.amount ?? null, note: input.note ?? null },
+      })
+    }
+
+    if (input.action === 'marketDutyAdd') {
+      const member = await prisma.member.findUniqueOrThrow({ where: { messId_externalId: { messId: mess.id, externalId: input.memberId } } })
+      await prisma.marketDuty.create({
+        data: {
+          messId: mess.id,
+          monthKey,
+          memberId: member.id,
+          startDate: Math.min(input.startDate, input.endDate),
+          endDate: Math.max(input.startDate, input.endDate),
+          note: input.note ?? null,
+        },
+      })
+    }
+
+    if (input.action === 'marketDutyRemove') {
+      await prisma.marketDuty.deleteMany({
+        where: { id: input.id, messId: mess.id },
       })
     }
 

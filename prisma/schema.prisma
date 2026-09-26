@@ -23,6 +23,7 @@ model Mess {
   overrides   Override[]
   houseRents  HouseRent[]
   actualGroceries ActualGrocery[]
+  marketDuties MarketDuty[]
 }
 
 model Member {
@@ -38,6 +39,7 @@ model Member {
   expenses    Expense[]
   overrides   Override[]
   houseRents  HouseRent[]
+  marketDuties MarketDuty[]
   @@unique([messId, externalId])
   @@index([messId])
 }
@@ -118,5 +120,20 @@ model ActualGrocery {
   note        String?
   mess        Mess      @relation(fields: [messId], references: [id], onDelete: Cascade)
   @@unique([messId, monthKey])
+}
+
+model MarketDuty {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  messId      String    @db.ObjectId
+  monthKey    String    @default("2026-08")
+  memberId    String    @db.ObjectId
+  startDate   Int
+  endDate     Int
+  note        String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  mess        Mess      @relation(fields: [messId], references: [id], onDelete: Cascade)
+  member      Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  @@index([messId, monthKey])
 }
 

@@ -47,6 +47,13 @@ type MealDay = {
 type Utility = { id: string; name: string; amount: number };
 type Override = { utilities?: number; mealRate?: number };
 type MemberExpenses = Record<string, Record<string, number>>;
+type MarketDuty = {
+  id: string;
+  memberId: string;
+  startDate: number;
+  endDate: number;
+  note?: string;
+};
 
 type Settlement = Member & {
   meals: number;
@@ -91,6 +98,11 @@ function money(value: number) {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
+}
+
+function toBengaliNumber(num: number | string): string {
+  const bengaliDigits = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
+  return String(num).replace(/[0-9]/g, (w) => bengaliDigits[+w]);
 }
 
 function IconButton({
@@ -582,7 +594,7 @@ function MealRateBudgetOptimizer({
   );
 }
 
-export default function MessFlowDashboard() {
+export default function MessFlowDashboard({ initialNav = "Overview" }: { initialNav?: string } = {}) {
   const router = useRouter()
   const [members, setMembers] = useState<Member[]>([]);
   const [days, setDays] = useState<MealDay[]>([]);
@@ -591,10 +603,18 @@ export default function MessFlowDashboard() {
   const [overrides, setOverrides] = useState<Record<string, Override>>({});
   const [customActualGrocery, setCustomActualGrocery] = useState<number | null>(null);
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonthKey());
-  const [activeNav, setActiveNav] = useState("Overview");
+  const [activeNav, setActiveNav] = useState(initialNav);
   const [showMobileNav, setShowMobileNav] = useState(false);
   const [syncStatus, setSyncStatus] = useState("Loading shared data…");
   const [messProfile, setMessProfile] = useState<{ messName?: string; managerName?: string } | null>(null);
+
+  // Market duties state
+  const [marketDuties, setMarketDuties] = useState<MarketDuty[]>([]);
+  const [isAddDutyOpen, setIsAddDutyOpen] = useState(false);
+  const [dutyMemberId, setDutyMemberId] = useState("");
+  const [dutyStartDate, setDutyStartDate] = useState("1");
+  const [dutyEndDate, setDutyEndDate] = useState("7");
+  const [dutyNote, setDutyNote] = useState("");
 
   // Modals state
   const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
@@ -732,10 +752,52 @@ export default function MessFlowDashboard() {
         setCustomActualGrocery(
           typeof actualRec?.amount === "number" ? actualRec.amount : null,
         );
+        if (Array.isArray(data.marketDuties)) {
+          const loadedDuties: MarketDuty[] = data.marketDuties.map(
+            (duty: {
+              id: string;
+              memberId: string;
+              startDate: number;
+              endDate: number;
+              note?: string | null;
+            }) => ({
+              id: duty.id,
+              memberId:
+                data.members.find(
+                  (m: { id: string; externalId: string }) => m.id === duty.memberId,
+                )?.externalId || duty.memberId,
+              startDate: duty.startDate,
+              endDate: duty.endDate,
+              note: duty.note ?? undefined,
+            }),
+          );
+          setMarketDuties(loadedDuties);
+          try {
+            localStorage.setItem(
+              `messflow_duties_${selectedMonth}`,
+              JSON.stringify(loadedDuties),
+            );
+          } catch {}
+        }
         setSyncStatus("Synced with MongoDB");
       })
       .catch(() => setSyncStatus("Unable to sync with MongoDB"));
   }, [selectedMonth]);
+
+  useEffect(() => {
+    try {
+      const cached = localStorage.getItem(`messflow_duties_${selectedMonth}`);
+      if (cached) {
+        setMarketDuties(JSON.parse(cached));
+      }
+    } catch {}
+  }, [selectedMonth]);
+
+  useEffect(() => {
+    if (!dutyMemberId && members.length > 0) {
+      setDutyMemberId(members[0].id);
+    }
+  }, [members, dutyMemberId]);
 
   const calculated = useMemo(() => {
     const totalMeals = days.reduce(
@@ -1051,6 +1113,95 @@ export default function MessFlowDashboard() {
     setDeleteTarget(null);
   }
 
+  function handleAddDuty(e?: React.FormEvent) {
+    if (e) e.preventDefault();
+    const effectiveMemberId = dutyMemberId || members[0]?.id;
+    if (!effectiveMemberId) return;
+
+    const startVal = Math.max(1, Math.min(31, parseInt(dutyStartDate, 10) || 1));
+    const endVal = Math.max(1, Math.min(31, parseInt(dutyEndDate, 10) || startVal));
+    const start = Math.min(startVal, endVal);
+    const end = Math.max(startVal, endVal);
+
+    const tempId = `duty-${Date.now()}`;
+    const newDuty: MarketDuty = {
+      id: tempId,
+      memberId: effectiveMemberId,
+      startDate: start,
+      endDate: end,
+      note: dutyNote.trim() || undefined,
+    };
+
+    const nextDuties = [...marketDuties, newDuty].sort((a, b) => a.startDate - b.startDate);
+    setMarketDuties(nextDuties);
+    try {
+      localStorage.setItem(`messflow_duties_${selectedMonth}`, JSON.stringify(nextDuties));
+    } catch {}
+
+    void persist({
+      action: "marketDutyAdd",
+      memberId: effectiveMemberId,
+      startDate: start,
+      endDate: end,
+      note: dutyNote.trim() || undefined,
+    });
+
+    setIsAddDutyOpen(false);
+    setDutyNote("");
+  }
+
+  function handleDeleteDuty(id: string) {
+    const nextDuties = marketDuties.filter((d) => d.id !== id);
+    setMarketDuties(nextDuties);
+    try {
+      localStorage.setItem(`messflow_duties_${selectedMonth}`, JSON.stringify(nextDuties));
+    } catch {}
+
+    void persist({
+      action: "marketDutyRemove",
+      id,
+    });
+  }
+
+  const calendarData = useMemo(() => {
+    const [year, month] = selectedMonth.split("-").map(Number);
+    const firstDayIndex = new Date(year, month - 1, 1).getDay();
+    const totalDays = new Date(year, month, 0).getDate();
+
+    const now = new Date();
+    const isCurrentMonth =
+      now.getFullYear() === year && now.getMonth() + 1 === month;
+    const currentDayNumber = isCurrentMonth ? now.getDate() : -1;
+
+    const todayDuty = isCurrentMonth
+      ? marketDuties.find(
+          (d) => currentDayNumber >= d.startDate && currentDayNumber <= d.endDate,
+        )
+      : null;
+    const todayMember = todayDuty
+      ? members.find((m) => m.id === todayDuty.memberId)
+      : null;
+
+    const assignedDaysSet = new Set<number>();
+    marketDuties.forEach((d) => {
+      for (let day = d.startDate; day <= d.endDate; day++) {
+        if (day <= totalDays) assignedDaysSet.add(day);
+      }
+    });
+
+    return {
+      year,
+      month,
+      firstDayIndex,
+      totalDays,
+      isCurrentMonth,
+      currentDayNumber,
+      todayDuty,
+      todayMember,
+      assignedDaysCount: assignedDaysSet.size,
+    };
+  }, [selectedMonth, marketDuties, members]);
+
   function exportXlsx() {
     const rows = calculated.grandSettlements.map(
       ({
@@ -1097,6 +1248,7 @@ export default function MessFlowDashboard() {
   const nav = [
     { label: "ওভারভিউ", icon: LayoutDashboard },
     { label: "মিল ক্যালেন্ডার", icon: Utensils },
+    { label: "বাজার সময়সূচি", icon: CalendarDays },
     { label: "বাজার খরচ", icon: Receipt },
     { label: "ইউটিলিটি ও বিল", icon: SlidersHorizontal },
     { label: "মেম্বারবৃন্দ", icon: Users },
@@ -1286,6 +1438,7 @@ export default function MessFlowDashboard() {
               <h2 className="mt-2 max-w-2xl text-3xl font-semibold tracking-tight text-balance md:text-4xl">
                 {(activeNav === "Overview" || activeNav === "ওভারভিউ") && "মেসের ওভারভিউ ও ফিন্যান্সিয়াল সামারি"}
                 {(activeNav === "Meals" || activeNav === "মিল ক্যালেন্ডার") && "দৈনিক মিল ক্যালেন্ডার রেজিস্টার"}
+                {(activeNav === "MarketSchedule" || activeNav === "বাজার সময়সূচি") && "মেসের বাজার সময়সূচি ও ডিউটি ক্যালেন্ডার"}
                 {(activeNav === "Expenses" || activeNav === "বাজার খরচ") && "মেম্বারদের বাজার জমা ও হিসাব"}
                 {(activeNav === "Utilities" || activeNav === "ইউটিলিটি ও বিল") && "ইউটিলিটি ও শেয়ার্ড বিল বিলি"}
                 {(activeNav === "Members" || activeNav === "মেম্বারবৃন্দ") && "মেম্বারশিপ, বাসা ভাড়া ও কাস্টম চার্জ"}
@@ -1294,6 +1447,7 @@ export default function MessFlowDashboard() {
               <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">
                 {(activeNav === "Overview" || activeNav === "ওভারভিউ") && "মেসের সামগ্রিক পরিস্থিতি, মিল রেট অপ্টিমাইজার এবং মাসিক ফাইনাল সেটেলমেন্টের সংক্ষিপ্ত রূপ।"}
                 {(activeNav === "Meals" || activeNav === "মিল ক্যালেন্ডার") && "প্রতিদিনের সকাল, দুপুর ও রাতের মিল ট্র্যাক করুন এবং মেম্বারওয়ারী মাসিক মোট মিল নিশ্চিত করুন।"}
+                {(activeNav === "MarketSchedule" || activeNav === "বাজার সময়সূচি") && "মাসের কোন তারিখে কার বাজার ডিউটি তা নির্ধারণ ও ক্যালেন্ডারে ট্র্যাক করুন।"}
                 {(activeNav === "Expenses" || activeNav === "বাজার খরচ") && "অ্যাডভান্স জমা, দৈনিক বাজার এবং বড় বাজার শেয়ারের পরিমাণ এন্ট্রি করুন।"}
                 {(activeNav === "Utilities" || activeNav === "ইউটিলিটি ও বিল") && "বিদ্যুৎ, গ্যাস, ইন্টারনেট, পানি ও খালা বিল যুক্ত করে সকল মেম্বারের মাঝে বণ্টন করুন।"}
                 {(activeNav === "Members" || activeNav === "মেম্বারবৃন্দ") && "মেসের মেম্বারদের নাম, ঘর/বাসা ভাড়া এবং বিশেষ ইউটিলিটি চার্জ কনফিগার করুন।"}
@@ -1455,7 +1609,7 @@ export default function MessFlowDashboard() {
                     মেস ডাটা এন্ট্রি শর্টকাট (Quick Section Access)
                   </h3>
                 </div>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                   <button
                     onClick={() => setActiveNav("মিল ক্যালেন্ডার")}
                     className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5 text-left transition hover:border-primary hover:shadow-md group"
@@ -1471,6 +1625,23 @@ export default function MessFlowDashboard() {
                       <p className="mt-1 text-xs text-muted-foreground">{calculated.totalMeals} টি মাসিক মিল এন্ট্রি করা হয়েছে</p>
                     </div>
                     <span className="mt-4 text-xs font-bold text-primary">ক্যালেন্ডার খুলুন →</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveNav("বাজার সময়সূচি")}
+                    className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5 text-left transition hover:border-primary hover:shadow-md group"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition">
+                          <CalendarDays size={20} />
+                        </span>
+                        <ArrowUpRight size={18} className="text-muted-foreground group-hover:text-primary transition" />
+                      </div>
+                      <h4 className="mt-4 font-semibold text-foreground">বাজার সময়সূচি</h4>
+                      <p className="mt-1 text-xs text-muted-foreground">{toBengaliNumber(marketDuties.length)} টি বাজার শিডিউল নির্ধারিত</p>
+                    </div>
+                    <span className="mt-4 text-xs font-bold text-primary">রোস্টার দেখুন →</span>
                   </button>
 
                   <button
@@ -1760,6 +1931,347 @@ export default function MessFlowDashboard() {
                 </div>
               </div>
             </section>
+          )}
+
+          {/* VIEW: MARKET SCHEDULE / বাজার সময়সূচি */}
+          {(activeNav === "MarketSchedule" || activeNav === "বাজার সময়সূচি") && (
+            <div className="space-y-8">
+              {/* Section Header with Actions */}
+              <SectionTitle
+                icon={CalendarDays}
+                eyebrow="বাজার রুটিন ও রোস্টার"
+                title="বাজারের সময়সূচি ক্যালেন্ডার"
+                action={
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      onClick={() => setSelectedMonth(changeMonthKey(selectedMonth, -1))}
+                      className="rounded-lg border border-border p-2 text-muted-foreground hover:bg-accent"
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+                    <span className="rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium">
+                      {monthKeyToLabel(selectedMonth)}
+                    </span>
+                    <button
+                      onClick={() => setSelectedMonth(changeMonthKey(selectedMonth, 1))}
+                      className="rounded-lg border border-border p-2 text-muted-foreground hover:bg-accent"
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setDutyStartDate("1");
+                        setDutyEndDate("7");
+                        setDutyNote("");
+                        setIsAddDutyOpen(true);
+                      }}
+                      className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground shadow-sm transition hover:opacity-90"
+                    >
+                      <Plus size={16} />
+                      <span>নতুন বাজার সময় যোগ করুন</span>
+                    </button>
+                  </div>
+                }
+              />
+
+              {/* Spotlight Hero Card: আজকের বাজার কার? */}
+              <div className="relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/10 via-card to-background p-6 shadow-sm">
+                <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="flex items-start gap-4">
+                    <div className="relative flex size-14 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg">
+                      <CalendarDays size={28} />
+                      {calendarData.todayDuty && (
+                        <span className="absolute -top-1 -right-1 flex size-4">
+                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                          <span className="relative inline-flex size-4 rounded-full bg-emerald-500" />
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-xs font-bold uppercase tracking-wider text-primary">
+                          আজকের বাজার কার? (Today's Market Spotlight)
+                        </span>
+                        {calendarData.todayDuty ? (
+                          <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                            আজকের বাজার রানিং
+                          </span>
+                        ) : (
+                          <span className="rounded-full bg-muted border border-border px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+                            আজকে কোনো শিডিউল নেই
+                          </span>
+                        )}
+                      </div>
+
+                      {calendarData.todayDuty && calendarData.todayMember ? (
+                        <div className="mt-2">
+                          <h3 className="text-2xl font-black text-foreground flex items-center gap-2.5">
+                            <span className={`inline-flex size-8 items-center justify-center rounded-full text-xs font-bold text-white shadow-xs ${calendarData.todayMember.color || "bg-primary"}`}>
+                              {calendarData.todayMember.initials}
+                            </span>
+                            <span>{calendarData.todayMember.name}</span>
+                          </h3>
+                          <p className="mt-1 text-sm text-muted-foreground">
+                            দায়িত্বের মেয়াদ: <strong className="text-foreground">{toBengaliNumber(calendarData.todayDuty.startDate)} থেকে {toBengaliNumber(calendarData.todayDuty.endDate)} {monthKeyToLabel(selectedMonth)}</strong> ({toBengaliNumber(calendarData.todayDuty.endDate - calendarData.todayDuty.startDate + 1)} দিন)
+                            {calendarData.todayDuty.note && (
+                              <span className="ml-2 inline-block rounded-md bg-primary/10 border border-primary/20 px-2 py-0.5 text-xs font-medium text-primary">
+                                {calendarData.todayDuty.note}
+                              </span>
+                            )}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="mt-2">
+                          <h3 className="text-lg font-bold text-foreground">
+                            আজকের তারিখে কোনো বাজার ডিউটি নির্ধারিত নেই
+                          </h3>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            নিচের ক্যালেন্ডারে নির্দিষ্ট তারিখের ওপর ক্লিক করে সরাসরি মেম্বার নির্ধারণ করুন অথবা বাটনে চাপ দিন।
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Summary Metric Pills */}
+                  <div className="grid grid-cols-3 gap-3 border-t border-border/60 pt-4 lg:border-t-0 lg:pt-0">
+                    <div className="rounded-2xl border border-border bg-card/80 p-3 text-center">
+                      <span className="text-[11px] text-muted-foreground block font-medium">নির্ধারিত রোস্টার</span>
+                      <strong className="text-lg font-bold text-foreground mt-0.5 block">{toBengaliNumber(marketDuties.length)} টি</strong>
+                    </div>
+                    <div className="rounded-2xl border border-border bg-card/80 p-3 text-center">
+                      <span className="text-[11px] text-muted-foreground block font-medium">কাভার করা দিন</span>
+                      <strong className="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-0.5 block">{toBengaliNumber(calendarData.assignedDaysCount)} দিন</strong>
+                    </div>
+                    <div className="rounded-2xl border border-border bg-card/80 p-3 text-center">
+                      <span className="text-[11px] text-muted-foreground block font-medium">ফাঁকা দিন</span>
+                      <strong className="text-lg font-bold text-amber-600 dark:text-amber-400 mt-0.5 block">{toBengaliNumber(Math.max(0, calendarData.totalDays - calendarData.assignedDaysCount))} দিন</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Main Calendar Grid Card */}
+              <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-xs">
+                <div className="border-b border-border bg-muted/40 p-4 sm:px-6 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-base font-bold text-foreground">
+                      {monthKeyToLabel(selectedMonth)} - মাসিক বাজার ক্যালেন্ডার
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      যেকোনো ফাঁকা দিনে ক্লিক করে দ্রুত মেম্বার এসাইন করুন।
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 text-xs">
+                    <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
+                      <span className="size-3 rounded-md border border-primary/50 bg-primary/20" /> বাজার নির্ধারিত
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 font-medium text-muted-foreground">
+                      <span className="size-3 rounded-md border border-border bg-card" /> খালি দিন
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-4 sm:p-6">
+                  {/* Weekday Names Header */}
+                  <div className="grid grid-cols-7 gap-2 sm:gap-3 text-center text-xs font-bold uppercase tracking-wider text-muted-foreground pb-3">
+                    {["রবি", "সোম", "মঙ্গল", "বুধ", "বৃহস্পতি", "শুক্র", "শনি"].map((weekday, i) => (
+                      <div key={weekday} className={`py-1.5 rounded-lg ${i === 5 || i === 6 ? "text-primary" : ""}`}>
+                        {weekday}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Calendar Days Grid */}
+                  <div className="grid grid-cols-7 gap-2 sm:gap-3">
+                    {/* Padding slots before the 1st of the month */}
+                    {Array.from({ length: calendarData.firstDayIndex }).map((_, idx) => (
+                      <div
+                        key={`pad-${idx}`}
+                        className="min-h-[96px] sm:min-h-[114px] rounded-2xl border border-dashed border-border/40 bg-muted/10 opacity-30"
+                      />
+                    ))}
+
+                    {/* Actual month days 1 to totalDays */}
+                    {Array.from({ length: calendarData.totalDays }).map((_, idx) => {
+                      const dayNum = idx + 1;
+                      const isToday = dayNum === calendarData.currentDayNumber;
+                      const dutiesForDay = marketDuties.filter(
+                        (d) => dayNum >= d.startDate && dayNum <= d.endDate
+                      );
+                      const hasDuty = dutiesForDay.length > 0;
+                      const duty = dutiesForDay[0];
+                      const member = hasDuty ? members.find((m) => m.id === duty.memberId) : null;
+                      const isStartOfDuty = hasDuty && dayNum === duty.startDate;
+                      const isEndOfDuty = hasDuty && dayNum === duty.endDate;
+
+                      return (
+                        <div
+                          key={`day-${dayNum}`}
+                          onClick={() => {
+                            if (!hasDuty) {
+                              setDutyStartDate(String(dayNum));
+                              setDutyEndDate(String(dayNum));
+                              setDutyNote("");
+                              setIsAddDutyOpen(true);
+                            }
+                          }}
+                          className={`relative flex flex-col justify-between rounded-2xl border p-2 sm:p-3 min-h-[96px] sm:min-h-[114px] transition-all group ${
+                            hasDuty
+                              ? "border-primary/40 bg-primary/10 shadow-xs hover:border-primary hover:shadow-md"
+                              : "border-border/60 bg-card/50 hover:border-primary/50 hover:bg-card cursor-pointer"
+                          } ${isToday ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""}`}
+                        >
+                          {/* Top row of date cell */}
+                          <div className="flex items-center justify-between">
+                            <span
+                              className={`text-sm sm:text-base font-bold ${
+                                hasDuty ? "text-primary" : "text-foreground group-hover:text-primary transition"
+                              }`}
+                            >
+                              {toBengaliNumber(dayNum)}
+                            </span>
+                            <div className="flex items-center gap-1">
+                              {isToday && (
+                                <span className="rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-extrabold text-primary-foreground">
+                                  আজ
+                                </span>
+                              )}
+                              {hasDuty && (
+                                <span className="text-[10px] font-semibold text-muted-foreground hidden sm:inline">
+                                  {isStartOfDuty && isEndOfDuty ? "১ দিন" : isStartOfDuty ? "শুরু" : isEndOfDuty ? "শেষ" : ""}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Member Badge inside cell */}
+                          {hasDuty && member ? (
+                            <div className="mt-1">
+                              <div className="flex items-center gap-1.5 rounded-xl bg-card/90 border border-border/80 px-2 py-1.5 shadow-xs">
+                                <span
+                                  className={`flex size-5 shrink-0 items-center justify-center rounded-full text-[9px] font-bold text-white ${
+                                    member.color || "bg-primary"
+                                  }`}
+                                >
+                                  {member.initials}
+                                </span>
+                                <span className="truncate text-xs font-bold text-foreground">
+                                  {member.name}
+                                </span>
+                              </div>
+                              {duty.note && (
+                                <p className="mt-1 truncate text-[10px] text-muted-foreground font-medium pl-0.5">
+                                  {duty.note}
+                                </p>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="mt-auto flex items-center justify-center pt-2">
+                              <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground/40 group-hover:text-primary transition">
+                                <Plus size={12} /> বরাদ্দ
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Roster Cards List & Actions */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                    <Users size={18} className="text-primary" />
+                    <span>নির্ধারিত বাজার ডিউটি তালিকা ({toBengaliNumber(marketDuties.length)})</span>
+                  </h3>
+                  {marketDuties.length > 0 && (
+                    <button
+                      onClick={() => setIsAddDutyOpen(true)}
+                      className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+                    >
+                      <Plus size={14} /> নতুন ডিউটি যোগ করুন
+                    </button>
+                  )}
+                </div>
+
+                {marketDuties.length === 0 ? (
+                  <div className="rounded-3xl border border-dashed border-border bg-card p-8 text-center">
+                    <CalendarDays size={36} className="mx-auto text-muted-foreground/60" />
+                    <h4 className="mt-3 font-semibold text-foreground">কোনো বাজার ডিউটি নির্ধারণ করা হয়নি</h4>
+                    <p className="mt-1 text-xs text-muted-foreground max-w-md mx-auto">
+                      "নতুন বাজার সময় যোগ করুন" বাটনে ক্লিক করে বা ক্যালেন্ডারের যেকোনো তারিখে ক্লিক করে মেম্বারদের বাজার শিডিউল নির্ধারণ করুন।
+                    </p>
+                    <button
+                      onClick={() => setIsAddDutyOpen(true)}
+                      className="mt-4 inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground"
+                    >
+                      <Plus size={14} /> প্রথম শিডিউল তৈরি করুন
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {marketDuties.map((duty) => {
+                      const member = members.find((m) => m.id === duty.memberId);
+                      const totalDays = duty.endDate - duty.startDate + 1;
+                      return (
+                        <div
+                          key={duty.id}
+                          className="flex flex-col justify-between rounded-2xl border border-border bg-card p-4 shadow-xs transition hover:border-primary/40 hover:shadow-md"
+                        >
+                          <div>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2.5">
+                                <span
+                                  className={`flex size-9 items-center justify-center rounded-full text-xs font-bold text-white shadow-xs ${
+                                    member?.color || "bg-primary"
+                                  }`}
+                                >
+                                  {member?.initials || "মে"}
+                                </span>
+                                <div>
+                                  <h4 className="font-bold text-foreground text-sm">
+                                    {member?.name || "মেম্বার"}
+                                  </h4>
+                                  <span className="text-[11px] text-muted-foreground">
+                                    বাজারের দায়িত্বপ্রাপ্ত
+                                  </span>
+                                </div>
+                              </div>
+                              <button
+                                onClick={() => handleDeleteDuty(duty.id)}
+                                title="ডিউটি মুছে ফেলুন"
+                                className="rounded-lg p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+
+                            <div className="mt-3 rounded-xl border border-border/80 bg-muted/40 p-2.5">
+                              <div className="flex items-center justify-between text-xs">
+                                <span className="font-semibold text-foreground">
+                                  {toBengaliNumber(duty.startDate)} থেকে {toBengaliNumber(duty.endDate)} {monthKeyToLabel(selectedMonth)}
+                                </span>
+                                <span className="rounded-md bg-primary/10 border border-primary/20 px-2 py-0.5 font-bold text-primary text-[11px]">
+                                  {toBengaliNumber(totalDays)} দিন
+                                </span>
+                              </div>
+                              {duty.note && (
+                                <p className="mt-1.5 text-[11px] text-muted-foreground font-medium">
+                                  নোট: {duty.note}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
           )}
 
           {/* VIEW 3: EXPENSES PAGE */}
@@ -2397,6 +2909,159 @@ export default function MessFlowDashboard() {
                 মুছে ফেলুন
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* 5. Add Market Duty Modal */}
+      {isAddDutyOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-in fade-in">
+          <div className="w-full max-w-lg rounded-3xl border border-border bg-card p-6 shadow-2xl space-y-5 animate-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <div className="flex items-center gap-2.5 text-primary">
+                <CalendarDays size={22} />
+                <h3 className="text-lg font-bold text-foreground">বাজারের সময়সূচি নির্ধারণ করুন</h3>
+              </div>
+              <button
+                onClick={() => setIsAddDutyOpen(false)}
+                className="rounded-full p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddDuty} className="space-y-4">
+              {/* Member Selector */}
+              <div>
+                <label className="text-xs font-semibold text-foreground block mb-1.5">
+                  মেম্বার নির্বাচন করুন <span className="text-destructive">*</span>
+                </label>
+                {members.length === 0 ? (
+                  <p className="text-xs text-amber-500">কোনো মেম্বার যুক্ত নেই। আগে মেম্বার যুক্ত করুন।</p>
+                ) : (
+                  <select
+                    value={dutyMemberId || members[0]?.id}
+                    onChange={(e) => setDutyMemberId(e.target.value)}
+                    className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring font-medium"
+                  >
+                    {members.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+
+              {/* Date Range Inputs */}
+              <div>
+                <label className="text-xs font-semibold text-foreground block mb-1.5">
+                  বাজারের তারিখের সীমা (মাস: {monthKeyToLabel(selectedMonth)})
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <span className="text-[11px] text-muted-foreground block mb-1">শুরুর তারিখ</span>
+                    <input
+                      type="number"
+                      min={1}
+                      max={31}
+                      required
+                      value={dutyStartDate}
+                      onChange={(e) => setDutyStartDate(e.target.value)}
+                      className="w-full rounded-xl border border-input bg-background px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring font-medium"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[11px] text-muted-foreground block mb-1">শেষ তারিখ</span>
+                    <input
+                      type="number"
+                      min={1}
+                      max={31}
+                      required
+                      value={dutyEndDate}
+                      onChange={(e) => setDutyEndDate(e.target.value)}
+                      className="w-full rounded-xl border border-input bg-background px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring font-medium"
+                    />
+                  </div>
+                </div>
+                <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+                  <span>
+                    মোট সময়কাল:{" "}
+                    <strong className="text-primary font-bold">
+                      {toBengaliNumber(
+                        Math.max(
+                          1,
+                          Math.abs((parseInt(dutyEndDate, 10) || 1) - (parseInt(dutyStartDate, 10) || 1)) + 1
+                        )
+                      )}{" "}
+                      দিন
+                    </strong>
+                  </span>
+                  <span>(১ থেকে ৩১ তারিখ)</span>
+                </div>
+              </div>
+
+              {/* Quick Presets */}
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground block mb-1.5">
+                  দ্রুত নির্বাচন প্রিসেট
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: "১-৭ তারিখ (১ম সপ্তাহ)", start: "1", end: "7" },
+                    { label: "৮-১৫ তারিখ (২য় সপ্তাহ)", start: "8", end: "15" },
+                    { label: "১৬-২২ তারিখ (৩য় সপ্তাহ)", start: "16", end: "22" },
+                    { label: "২৩-৩০ তারিখ (৪র্থ সপ্তাহ)", start: "23", end: "30" },
+                    { label: "১-৮ তারিখ", start: "1", end: "8" },
+                    { label: "৯-১৬ তারিখ", start: "9", end: "16" },
+                    { label: "পুরো মাস (১-৩১)", start: "1", end: "31" },
+                  ].map((preset) => (
+                    <button
+                      key={preset.label}
+                      type="button"
+                      onClick={() => {
+                        setDutyStartDate(preset.start);
+                        setDutyEndDate(preset.end);
+                      }}
+                      className="rounded-lg border border-border bg-muted/40 px-2.5 py-1 text-xs font-semibold hover:bg-accent hover:text-foreground transition"
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Note / Market Type */}
+              <div>
+                <label className="text-xs font-semibold text-foreground block mb-1.5">
+                  বাজারের ধরন বা বিশেষ নোট (ঐচ্ছিক)
+                </label>
+                <input
+                  type="text"
+                  placeholder="যেমন: বড় বাজার, সাপ্তাহিক বাজার, ইত্যাদি"
+                  value={dutyNote}
+                  onChange={(e) => setDutyNote(e.target.value)}
+                  className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring font-medium"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
+                <button
+                  type="button"
+                  onClick={() => setIsAddDutyOpen(false)}
+                  className="rounded-xl border border-border px-4 py-2 text-xs font-semibold hover:bg-accent text-foreground"
+                >
+                  বাতিল
+                </button>
+                <button
+                  type="submit"
+                  disabled={members.length === 0}
+                  className="rounded-xl bg-primary px-5 py-2 text-xs font-bold text-primary-foreground shadow-sm hover:opacity-90 disabled:opacity-50"
+                >
+                  শিডিউল সংরক্ষণ করুন
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
