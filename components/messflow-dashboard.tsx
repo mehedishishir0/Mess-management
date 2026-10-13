@@ -685,13 +685,18 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
         if (!response.ok) throw new Error("Database unavailable");
         const data = await response.json();
         const nextMembers = data.members.map(
-          (member: Member & { externalId: string; houseRent?: number }) => ({
-            id: member.externalId,
-            name: member.name,
-            initials: member.initials,
-            color: member.color,
-            houseRent: Number(member.houseRent) || 0,
-          }),
+          (member: Member & { id: string; externalId: string; houseRent?: number }) => {
+            const hr = data.houseRents?.find(
+              (h: { memberId: string; amount: number }) => h.memberId === member.id
+            );
+            return {
+              id: member.externalId,
+              name: member.name,
+              initials: member.initials,
+              color: member.color,
+              houseRent: hr !== undefined ? (Number(hr.amount) || 0) : (Number(member.houseRent) || 0),
+            };
+          },
         );
         setMembers(nextMembers);
         setDays(
@@ -979,7 +984,7 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
       },
     ]);
     setExpenses((current) => ({ ...current, [id]: {} }));
-    void persist({ action: "member", name });
+    void persist({ action: "member", externalId: id, name, houseRent });
 
     setNewMemberName("");
     setNewMemberRent("");

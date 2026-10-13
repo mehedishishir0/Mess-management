@@ -6,7 +6,7 @@ import { getSessionFromRequest } from '@/lib/auth'
 const expenseSchema = z.object({ action: z.literal('expense'), memberId: z.string(), category: z.string().trim().min(1).max(60), amount: z.number().finite().min(0) })
 const mealSchema = z.object({ action: z.literal('meal'), dayId: z.string(), memberId: z.string(), count: z.number().int().min(0).max(3) })
 const utilitySchema = z.object({ action: z.literal('utility'), id: z.string().optional(), name: z.string().trim().min(1).max(60), amount: z.number().finite().min(0) })
-const memberSchema = z.object({ action: z.literal('member'), name: z.string().trim().min(1).max(60) })
+const memberSchema = z.object({ action: z.literal('member'), name: z.string().trim().min(1).max(60), externalId: z.string().optional(), houseRent: z.number().finite().min(0).optional() })
 const memberUpdateSchema = z.object({ action: z.literal('memberUpdate'), memberId: z.string(), name: z.string().trim().min(1).max(60) })
 const memberRemoveSchema = z.object({ action: z.literal('memberRemove'), memberId: z.string() })
 const utilityRemoveSchema = z.object({ action: z.literal('utilityRemove'), id: z.string() })
@@ -137,10 +137,11 @@ async function handleMutation(request: Request) {
 
     if (input.action === 'expense') {
       const member = await prisma.member.findUniqueOrThrow({ where: { messId_externalId: { messId: mess.id, externalId: input.memberId } } })
-      await prisma.expense.upsert({
-        where: { messId_monthKey_memberId_category: { messId: mess.id, monthKey, memberId: member.id, category: input.category } },
-        update: { amount: input.amount },
-        create: { messId: mess.id, monthKey, memberId: member.id, category: input.category, amount: input.amount },
+      await prisma.expense.deleteMany({
+        where: { messId: mess.id, monthKey, memberId: member.id, category: input.category },
+      })
+      await prisma.expense.create({
+        data: { messId: mess.id, monthKey, memberId: member.id, category: input.category, amount: input.amount },
       })
     }
 
@@ -153,15 +154,30 @@ async function handleMutation(request: Request) {
     }
 
     if (input.action === 'member') {
-      await prisma.member.create({
+      const extId = input.externalId || `${input.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now()}`
+      const newMember = await prisma.member.create({
         data: {
           messId: mess.id,
-          externalId: `${input.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now()}`,
+          externalId: extId,
           name: input.name,
           initials: input.name.slice(0, 2).toUpperCase(),
           color: 'bg-primary',
+          houseRent: input.houseRent ?? 0,
         },
       })
+      if (typeof input.houseRent === 'number' && input.houseRent >= 0) {
+        await prisma.houseRent.deleteMany({
+          where: { messId: mess.id, memberId: newMember.id, monthKey },
+        })
+        await prisma.houseRent.create({
+          data: {
+            messId: mess.id,
+            memberId: newMember.id,
+            amount: input.houseRent,
+            monthKey,
+          },
+        })
+      }
     }
 
     if (input.action === 'memberUpdate') {
@@ -183,19 +199,38 @@ async function handleMutation(request: Request) {
 
     if (input.action === 'override') {
       const member = await prisma.member.findUniqueOrThrow({ where: { messId_externalId: { messId: mess.id, externalId: input.memberId } } })
-      await prisma.override.upsert({
-        where: { messId_monthKey_memberId: { messId: mess.id, monthKey, memberId: member.id } },
-        update: { utilities: input.utilities ?? null, mealRate: input.mealRate ?? null },
-        create: { messId: mess.id, monthKey, memberId: member.id, utilities: input.utilities ?? null, mealRate: input.mealRate ?? null },
+      await prisma.override.deleteMany({
+        where: { messId: mess.id, monthKey, memberId: member.id },
       })
+      if ((input.utilities !== null && input.utilities !== undefined) || (input.mealRate !== null && input.mealRate !== undefined)) {
+        await prisma.override.create({
+          data: {
+            messId: mess.id,
+            monthKey,
+            memberId: member.id,
+            utilities: input.utilities ?? null,
+            mealRate: input.mealRate ?? null,
+          },
+        })
+      }
     }
 
     if (input.action === 'rent') {
       const member = await prisma.member.findUniqueOrThrow({ where: { messId_externalId: { messId: mess.id, externalId: input.memberId } } })
-      await prisma.houseRent.upsert({
-        where: { messId_memberId_monthKey: { messId: mess.id, memberId: member.id, monthKey } },
-        update: { amount: input.houseRent },
-        create: { messId: mess.id, memberId: member.id, amount: input.houseRent, monthKey },
+      await prisma.houseRent.deleteMany({
+        where: { messId: mess.id, memberId: member.id, monthKey },
+      })
+      await prisma.houseRent.create({
+        data: {
+          messId: mess.id,
+          memberId: member.id,
+          amount: input.houseRent,
+          monthKey,
+        },
+      })
+      await prisma.member.update({
+        where: { id: member.id },
+        data: { houseRent: input.houseRent },
       })
     }
 
