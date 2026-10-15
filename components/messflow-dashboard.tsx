@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from 'next/navigation'
 import * as XLSX from "xlsx";
 import {
@@ -42,10 +42,16 @@ type MealDay = {
   date: string;
   label: string;
   counts: Record<string, number>;
+  lunchCounts: Record<string, number>;
+  dinnerCounts: Record<string, number>;
+  unassignedCounts: Record<string, number>;
   sources: Record<string, 'manual' | 'planned' | 'automatic'>;
   total: number;
 };
-type MealSchedule = { id: string; memberId: string; startDate: string; endDate: string; count: number };
+type MealSchedule = { id: string; memberId: string; startDate: string; endDate: string; count: number; lunchCount?: number | null; dinnerCount?: number | null };
+type TodayOverview =
+  | { date: string; dutyNames: string[]; lunch: number; dinner: number; total: number; unassigned: number }
+  | { date: string; error: true };
 type Utility = { id: string; name: string; amount: number };
 type Override = { utilities?: number; mealRate?: number };
 type MemberExpenses = Record<string, Record<string, number>>;
@@ -621,7 +627,8 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
   const [scheduleMemberId, setScheduleMemberId] = useState('');
   const [scheduleStartDate, setScheduleStartDate] = useState('');
   const [scheduleEndDate, setScheduleEndDate] = useState('');
-  const [scheduleCount, setScheduleCount] = useState(0);
+  const [scheduleLunchCount, setScheduleLunchCount] = useState('1');
+  const [scheduleDinnerCount, setScheduleDinnerCount] = useState('1');
   const [scheduleError, setScheduleError] = useState('');
   const [scheduleSaving, setScheduleSaving] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
@@ -644,6 +651,11 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
   const [activeNav, setActiveNav] = useState(defaultTab || "Overview");
   const [showMobileNav, setShowMobileNav] = useState(false);
   const [syncStatus, setSyncStatus] = useState("Loading shared data…");
+  const [loadedMonth, setLoadedMonth] = useState('');
+  const [todayOverview, setTodayOverview] = useState<TodayOverview | null>(null);
+  const todayDate = getDhakaToday();
+  const dirtyMealKeys = useRef(new Set<string>());
+  const mealSaveQueues = useRef(new Map<string, Promise<unknown>>());
   const [messProfile, setMessProfile] = useState<{ messName?: string; managerName?: string } | null>(null);
 
   // Market Duty Schedule State
@@ -736,7 +748,7 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
             (day: {
               date: string;
               label: string;
-              entries: { memberId: string; count: number; source: 'manual' | 'planned' | 'automatic' }[];
+              entries: { memberId: string; count: number; lunchCount: number; dinnerCount: number; unassignedCount: number; source: 'manual' | 'planned' | 'automatic' }[];
             }) => ({
               date: day.date,
               label: day.label,
@@ -749,6 +761,9 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
                   entry.count,
                 ]),
               ),
+              lunchCounts: Object.fromEntries(day.entries.map((entry) => [data.members.find((member: { id: string; externalId: string }) => member.id === entry.memberId)?.externalId, entry.lunchCount])),
+              dinnerCounts: Object.fromEntries(day.entries.map((entry) => [data.members.find((member: { id: string; externalId: string }) => member.id === entry.memberId)?.externalId, entry.dinnerCount])),
+              unassignedCounts: Object.fromEntries(day.entries.map((entry) => [data.members.find((member: { id: string; externalId: string }) => member.id === entry.memberId)?.externalId, entry.unassignedCount])),
               sources: Object.fromEntries(
                 day.entries.map((entry) => [
                   data.members.find((member: { id: string; externalId: string }) => member.id === entry.memberId)?.externalId,
@@ -831,6 +846,7 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
           };
         });
         setMarketDuties(nextMarketDuties);
+        setLoadedMonth(selectedMonth);
         if (typeof window !== 'undefined') {
           localStorage.setItem(`messflow_market_duties_${selectedMonth}`, JSON.stringify(nextMarketDuties));
         }
@@ -847,6 +863,58 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
         setSyncStatus("Unable to sync with MongoDB");
       });
   }, [selectedMonth, reloadKey]);
+
+  useEffect(() => {
+    if (activeNav !== 'Overview' && activeNav !== 'ওভারভিউ') return;
+    if (selectedMonth === todayDate.slice(0, 7)) return;
+    const controller = new AbortController();
+    const todayDay = Number(todayDate.slice(8, 10));
+
+    fetch(`/api/messflow?month=${todayDate.slice(0, 7)}`, { cache: 'no-store', signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw new Error('Today data unavailable');
+        const data = await response.json();
+        const day = data.days.find((item: { date: string }) => item.date === todayDate.slice(8, 10));
+        const entries = (day?.entries ?? []) as { count: number; lunchCount: number; dinnerCount: number; unassignedCount: number }[];
+        const dutyNames = (data.marketDuties ?? [])
+          .filter((duty: { startDay: number; endDay: number }) => duty.startDay <= todayDay && todayDay <= duty.endDay)
+          .map((duty: { memberId: string; member?: { name: string } }) => duty.member?.name ?? data.members.find((member: { id: string; name: string }) => member.id === duty.memberId)?.name ?? 'মেম্বার');
+        if (!controller.signal.aborted) {
+          setTodayOverview({
+            date: todayDate,
+            dutyNames,
+            lunch: entries.reduce((sum, entry) => sum + entry.lunchCount, 0),
+            dinner: entries.reduce((sum, entry) => sum + entry.dinnerCount, 0),
+            total: entries.reduce((sum, entry) => sum + entry.count, 0),
+            unassigned: entries.reduce((sum, entry) => sum + entry.unassignedCount, 0),
+          });
+        }
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setTodayOverview({ date: todayDate, error: true });
+      });
+
+    return () => controller.abort();
+  }, [activeNav, reloadKey, selectedMonth, todayDate]);
+
+  const isCurrentMonthLoaded = selectedMonth === todayDate.slice(0, 7) && loadedMonth === selectedMonth;
+  const liveTodayDay = isCurrentMonthLoaded ? days.find((day) => day.date === todayDate.slice(8, 10)) : null;
+  const liveTodayOverview = liveTodayDay ? {
+    date: todayDate,
+    dutyNames: marketDuties
+      .filter((duty) => duty.startDay <= Number(todayDate.slice(8, 10)) && Number(todayDate.slice(8, 10)) <= duty.endDay)
+      .map((duty) => duty.memberName),
+    lunch: members.reduce((sum, member) => sum + (liveTodayDay.lunchCounts[member.id] ?? 0), 0),
+    dinner: members.reduce((sum, member) => sum + (liveTodayDay.dinnerCounts[member.id] ?? 0), 0),
+    total: liveTodayDay.total,
+    unassigned: members.reduce((sum, member) => sum + (liveTodayDay.unassignedCounts[member.id] ?? 0), 0),
+  } : null;
+  const currentTodayOverview = selectedMonth === todayDate.slice(0, 7)
+    ? liveTodayOverview
+    : todayOverview?.date === todayDate && !('error' in todayOverview) ? todayOverview : null;
+  const todayOverviewFailed = selectedMonth === todayDate.slice(0, 7)
+    ? syncStatus === 'Unable to sync with MongoDB'
+    : todayOverview?.date === todayDate && 'error' in todayOverview;
 
   const calculated = useMemo(() => {
     const totalMeals = days.reduce(
@@ -975,28 +1043,42 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
     };
   }, [days, expenses, members, utilities, overrides, customActualGrocery]);
 
-  function updateMeal(dayIndex: number, memberId: string, value: string) {
-    const count = Math.max(0, Math.min(3, Number(value) || 0));
+  function updateMeal(dayIndex: number, memberId: string, sitting: 'lunch' | 'dinner', value: string) {
+    const count = value === '' ? 0 : Number(value);
+    if (!Number.isSafeInteger(count) || count < 0) return;
+    const day = days[dayIndex];
+    if (!day) return;
+    const otherCount = sitting === 'lunch' ? day.dinnerCounts[memberId] ?? 0 : day.lunchCounts[memberId] ?? 0;
+    if (!Number.isSafeInteger(count + otherCount)) return;
+    dirtyMealKeys.current.add(`${day.date}:${memberId}`);
     setDays((current) =>
       current.map((day, index) =>
         index === dayIndex
           ? {
               ...day,
-              counts: { ...day.counts, [memberId]: count },
+              counts: { ...day.counts, [memberId]: count + (sitting === 'lunch' ? day.dinnerCounts[memberId] ?? 0 : day.lunchCounts[memberId] ?? 0) },
+              lunchCounts: sitting === 'lunch' ? { ...day.lunchCounts, [memberId]: count } : day.lunchCounts,
+              dinnerCounts: sitting === 'dinner' ? { ...day.dinnerCounts, [memberId]: count } : day.dinnerCounts,
+              unassignedCounts: { ...day.unassignedCounts, [memberId]: 0 },
               sources: { ...day.sources, [memberId]: 'manual' },
-              total: Object.values({ ...day.counts, [memberId]: count }).reduce(
-                (sum, item) => sum + item,
-                0,
-              ),
+              total: day.total - (day.counts[memberId] ?? 0) + count + (sitting === 'lunch' ? day.dinnerCounts[memberId] ?? 0 : day.lunchCounts[memberId] ?? 0),
             }
           : day,
       ),
     );
-    void persist({
-      action: "meal",
-      dayId: days[dayIndex]?.date,
-      memberId,
-      count,
+  }
+
+  function saveMeal(dayIndex: number, memberId: string) {
+    const day = days[dayIndex];
+    if (!day) return;
+    const key = `${selectedMonth}:${day.date}:${memberId}`;
+    if (!dirtyMealKeys.current.delete(`${day.date}:${memberId}`)) return;
+    const payload = { action: 'meal', dayId: day.date, memberId, lunchCount: day.lunchCounts[memberId] ?? 0, dinnerCount: day.dinnerCounts[memberId] ?? 0 };
+    const previous = mealSaveQueues.current.get(key) ?? Promise.resolve();
+    const pending = previous.catch(() => undefined).then(() => persist(payload));
+    mealSaveQueues.current.set(key, pending);
+    void pending.finally(() => {
+      if (mealSaveQueues.current.get(key) === pending) mealSaveQueues.current.delete(key);
     });
   }
 
@@ -1007,15 +1089,22 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
     const defaultDate = selectedMonth === today.slice(0, 7) ? today : `${selectedMonth}-01`;
     setScheduleStartDate(schedule?.startDate ?? defaultDate);
     setScheduleEndDate(schedule?.endDate ?? defaultDate);
-    setScheduleCount(schedule?.count ?? 0);
+    setScheduleLunchCount(schedule ? String(schedule.lunchCount ?? (schedule.count === 2 ? 1 : schedule.count === 0 ? 0 : '')) : '1');
+    setScheduleDinnerCount(schedule ? String(schedule.dinnerCount ?? (schedule.count === 2 ? 1 : schedule.count === 0 ? 0 : '')) : '1');
     setScheduleError('');
     setIsMealScheduleOpen(true);
   }
 
   async function submitMealSchedule(event: React.FormEvent) {
     event.preventDefault();
+    const lunchCount = Number(scheduleLunchCount);
+    const dinnerCount = Number(scheduleDinnerCount);
     if (!scheduleMemberId || scheduleStartDate > scheduleEndDate) {
       setScheduleError('সঠিক সদস্য ও তারিখ নির্বাচন করুন।');
+      return;
+    }
+    if (scheduleLunchCount === '' || scheduleDinnerCount === '' || !Number.isSafeInteger(lunchCount) || !Number.isSafeInteger(dinnerCount) || lunchCount < 0 || dinnerCount < 0 || !Number.isSafeInteger(lunchCount + dinnerCount)) {
+      setScheduleError('দুপুর ও রাতের জন্য শূন্য বা তার বেশি পূর্ণসংখ্যা লিখুন।');
       return;
     }
     setScheduleSaving(true);
@@ -1024,7 +1113,7 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
       const response = await fetch(`/api/messflow?month=${selectedMonth}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'mealSchedule', id: editingMealScheduleId ?? undefined, memberId: scheduleMemberId, startDate: scheduleStartDate, endDate: scheduleEndDate, count: scheduleCount }),
+        body: JSON.stringify({ action: 'mealSchedule', id: editingMealScheduleId ?? undefined, memberId: scheduleMemberId, startDate: scheduleStartDate, endDate: scheduleEndDate, lunchCount, dinnerCount }),
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'পরিকল্পনা সংরক্ষণ করা যায়নি।');
@@ -1082,7 +1171,6 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
     void persist({ action: "member", externalId: id, name, houseRent }).then((saved) => {
       if (saved) setReloadKey((key) => key + 1);
     });
-
     setNewMemberName("");
     setNewMemberRent("");
     setIsAddMemberOpen(false);
@@ -1103,10 +1191,19 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
     setDays((current) =>
       current.map((day) => {
         const counts = { ...day.counts };
+        const lunchCounts = { ...day.lunchCounts };
+        const dinnerCounts = { ...day.dinnerCounts };
+        const unassignedCounts = { ...day.unassignedCounts };
         delete counts[id];
+        delete lunchCounts[id];
+        delete dinnerCounts[id];
+        delete unassignedCounts[id];
         return {
           ...day,
           counts,
+          lunchCounts,
+          dinnerCounts,
+          unassignedCounts,
           total: Object.values(counts).reduce((sum, item) => sum + item, 0),
         };
       }),
@@ -1537,7 +1634,7 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
           </div>
         </header>
 
-        <div className="mx-auto max-w-[1500px] px-4 py-8 sm:px-5 md:px-8">
+        <div className={`mx-auto w-full py-8 ${activeNav === 'Meals' || activeNav === 'মিল ক্যালেন্ডার' ? 'max-w-none px-2 sm:px-3 md:px-4' : 'max-w-[1500px] px-4 sm:px-5 md:px-8'}`}>
           {/* Top Page Navigation Tabs */}
           <div className="mb-6 flex flex-wrap items-center gap-2 border-b border-border pb-4 print:hidden">
             {nav.map(({ label, icon: Icon }) => (
@@ -1572,8 +1669,8 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
                 {(activeNav === "Settings" || activeNav === "সেটিংস") && "মেস ও প্রোফাইল সেটিংস"}
               </h2>
               <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">
-                {(activeNav === "Overview" || activeNav === "ওভারভিউ") && "মেসের সামগ্রিক পরিস্থিতি, মিল রেট অপ্টিমাইজার এবং মাসিক ফাইনাল সেটেলমেন্টের সংক্ষিপ্ত রূপ।"}
-                {(activeNav === "Meals" || activeNav === "মিল ক্যালেন্ডার") && "প্রতিদিনের সকাল, দুপুর ও রাতের মিল ট্র্যাক করুন এবং মেম্বারওয়ারী মাসিক মোট মিল নিশ্চিত করুন।"}
+                {(activeNav === "Overview" || activeNav === "ওভারভিউ") && "মেসের সামগ্রিক পরিস্থিতি, আজকের বাজার ও মিল এবং মাসিক ফাইনাল সেটেলমেন্টের সংক্ষিপ্ত রূপ।"}
+                {(activeNav === "Meals" || activeNav === "মিল ক্যালেন্ডার") && "প্রতিদিনের দুপুর ও রাতের মিল আলাদা করে দেখুন এবং সদস্যভিত্তিক মাসিক মোট মিল নিশ্চিত করুন।"}
                 {(activeNav === "Expenses" || activeNav === "বাজার খরচ") && "অ্যাডভান্স জমা, দৈনিক বাজার এবং বড় বাজার শেয়ারের পরিমাণ এন্ট্রি করুন।"}
                 {(activeNav === "MarketSchedule" || activeNav === "বাজার সময়সূচি") && "কার কোন তারিখে বাজার ডিউটি তা ক্যালেন্ডারে দেখুন, আজকের স্পটলাইট জানুন এবং সহজে ডেট-রেঞ্জ সেট করুন।"}
                 {(activeNav === "Utilities" || activeNav === "ইউটিলিটি ও বিল") && "বিদ্যুৎ, গ্যাস, ইন্টারনেট, পানি ও খালা বিল যুক্ত করে সকল মেম্বারের মাঝে বণ্টন করুন।"}
@@ -1608,6 +1705,22 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
           {/* VIEW 1: OVERVIEW PAGE */}
           {(activeNav === "Overview" || activeNav === "ওভারভিউ") && (
             <div className="space-y-8">
+              <section className="space-y-3" aria-label="আজকের বাজার ও মিল">
+                <div className="flex flex-wrap items-end justify-between gap-2">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-wider text-primary">আজকের অবস্থা · বাংলাদেশ সময়</p>
+                    <h3 className="mt-1 text-xl font-semibold">বাজার ডিউটি ও মিল</h3>
+                  </div>
+                  <span className="rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold text-muted-foreground">{todayDate}</span>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                  <MetricCard label="আজকের বাজার" value={todayOverviewFailed ? 'তথ্য পাওয়া যায়নি' : currentTodayOverview ? currentTodayOverview.dutyNames.join(', ') || 'ডিউটি নেই' : 'লোড হচ্ছে…'} note={currentTodayOverview?.dutyNames.length ? 'আজ বাজারের দায়িত্বে' : 'বাজার সময়সূচি থেকে ডিউটি নির্ধারণ করুন'} icon={CalendarDays} />
+                  <MetricCard label="আজ দুপুরের মিল" value={todayOverviewFailed ? '—' : currentTodayOverview ? currentTodayOverview.lunch.toLocaleString('bn-BD') : '…'} note="দুপুরের মিল সংখ্যা" icon={Utensils} />
+                  <MetricCard label="আজ রাতের মিল" value={todayOverviewFailed ? '—' : currentTodayOverview ? currentTodayOverview.dinner.toLocaleString('bn-BD') : '…'} note="রাতের মিল সংখ্যা" icon={Utensils} />
+                  <MetricCard label="আজ মোট মিল" value={todayOverviewFailed ? '—' : currentTodayOverview ? currentTodayOverview.total.toLocaleString('bn-BD') : '…'} note={currentTodayOverview?.unassigned ? `পুরোনো ${currentTodayOverview.unassigned} মিলের বেলা নির্ধারণ বাকি` : 'দুপুর ও রাতের যোগফল'} icon={BarChart3} />
+                </div>
+              </section>
+
               {/* High level Metric Cards */}
               <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
                 <MetricCard
@@ -1721,13 +1834,13 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
               </div>
 
               {/* Smart Meal Rate & Budget Optimizer */}
-              <MealRateBudgetOptimizer
+              {/* <MealRateBudgetOptimizer
                 totalMeals={calculated.totalMeals}
                 currentGrocery={calculated.grocerySpend}
                 currentMealRate={calculated.mealRate}
                 daysCount={days.length}
                 selectedMonth={selectedMonth}
-              />
+              /> */}
 
               {/* Quick Navigation Cards Grid */}
               <section className="mt-8">
@@ -1944,7 +2057,7 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <h3 className="font-semibold">আগাম মিল পরিকল্পনা</h3>
-                    <p className="text-xs text-muted-foreground">প্রতিদিন স্বয়ংক্রিয়ভাবে ২ মিল। বাড়ি গেলে তারিখ বেছে ০ মিল সেট করুন।</p>
+                    <p className="text-xs text-muted-foreground">স্বয়ংক্রিয়ভাবে প্রতিদিন দুপুরে ১টি এবং রাতে ১টি মিল। পরিকল্পনায় দুই বেলাই ০ রাখলে মিল বন্ধ।</p>
                   </div>
                   <button type="button" onClick={() => openMealSchedule()} disabled={members.length === 0} className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
                     <Plus size={16} /> পরিকল্পনা যোগ করুন
@@ -1957,7 +2070,9 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
                       <div key={schedule.id} className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 py-2 text-xs">
                         <span className="font-semibold">{members.find((member) => member.id === schedule.memberId)?.name ?? 'মেম্বার'}</span>
                         <span>{schedule.startDate} → {schedule.endDate}</span>
-                        <span className="font-bold text-primary">{schedule.count} মিল</span>
+                        <span className="font-bold text-primary">দুপুর {schedule.lunchCount ?? (schedule.count === 2 ? 1 : schedule.count === 0 ? 0 : '?')} · রাত {schedule.dinnerCount ?? (schedule.count === 2 ? 1 : schedule.count === 0 ? 0 : '?')}</span>
+                        {schedule.count === 0 && <span className="rounded-full bg-muted px-2 py-0.5 font-semibold text-muted-foreground">দুই বেলা বন্ধ</span>}
+                        {schedule.lunchCount == null && schedule.dinnerCount == null && schedule.count !== 0 && schedule.count !== 2 && <span className="text-amber-700 dark:text-amber-300">পুরোনো {schedule.count} মিলের বেলা নির্ধারণ বাকি</span>}
                         <button type="button" onClick={() => openMealSchedule(schedule)} className="font-semibold text-primary hover:underline">এডিট</button>
                         <button type="button" onClick={() => void removeMealSchedule(schedule)} aria-label="পরিকল্পনা বাতিল" className="text-destructive hover:opacity-70"><Trash2 size={14} /></button>
                       </div>
@@ -1965,107 +2080,108 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
                   </div>
                 )}
               </div>
-              <div className="overflow-hidden rounded-2xl border border-border bg-card">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm sm:min-w-[780px]">
-                    <thead className="border-b border-border bg-muted/50 text-left text-xs uppercase tracking-wider text-muted-foreground">
+              <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-muted/30 px-4 py-3 text-xs text-muted-foreground">
+                  <span>দুপুর ও রাতের সংখ্যা লিখুন। ঘর থেকে বের হলে পরিবর্তন সংরক্ষিত হবে।</span>
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2.5 py-1 font-semibold text-emerald-800 dark:text-emerald-200"><span className="size-2 rounded-full bg-emerald-500" /> সবুজ ঘরে মিল আছে</span>
+                </div>
+                <div className="divide-y divide-border xl:hidden">
+                  {days.map((day, index) => (
+                    <div key={`${day.date}-${day.label}`} className="space-y-2 p-3">
+                      <div className="flex items-center justify-between rounded-lg bg-muted/60 px-3 py-2">
+                        <span className="font-bold">{day.date} <span className="text-xs font-normal text-muted-foreground">{day.label}</span></span>
+                        <span className="text-sm font-bold text-primary">মোট {day.total} মিল</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+                        {members.map((member) => {
+                          const count = day.counts[member.id] ?? 0;
+                          const unassigned = day.unassignedCounts[member.id] ?? 0;
+                          return (
+                            <div key={member.id} className={`min-w-0 rounded-xl border p-2 ${count > 0 ? 'border-emerald-500/50 bg-emerald-500/15 ring-1 ring-inset ring-emerald-500/20' : 'border-border bg-muted/20'}`}>
+                              <div className="mb-1 flex items-center justify-between gap-1">
+                                <span className="min-w-0 truncate text-xs font-semibold" title={member.name}>{member.name}</span>
+                                {count > 0 && <span className="size-2 shrink-0 rounded-full bg-emerald-500" aria-label="মিল আছে" />}
+                              </div>
+                              <MealCountEditor memberName={member.name} date={`${selectedMonth}-${day.date}`} lunch={day.lunchCounts[member.id] ?? 0} dinner={day.dinnerCounts[member.id] ?? 0} source={day.sources[member.id]} onLunchChange={(value) => updateMeal(index, member.id, 'lunch', value)} onDinnerChange={(value) => updateMeal(index, member.id, 'dinner', value)} onBlur={() => saveMeal(index, member.id)} />
+                              <p className={`mt-1 text-center text-[11px] font-semibold ${count > 0 ? 'text-emerald-800 dark:text-emerald-200' : 'text-muted-foreground'}`}>{count > 0 ? `মোট ${count} মিল` : 'মিল নেই'}</p>
+                              {unassigned > 0 && <p className="mt-1 text-center text-[10px] text-orange-700 dark:text-orange-300">পুরোনো {unassigned} · বেলা নির্ধারণ বাকি</p>}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                  <div className="space-y-2 bg-muted/40 p-3">
+                    <div className="flex items-center justify-between font-bold"><span>মাসিক মোট মিল</span><span className="text-primary">{calculated.totalMeals}</span></div>
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+                      {members.map((member) => {
+                        const lunch = days.reduce((sum, day) => sum + (day.lunchCounts[member.id] ?? 0), 0);
+                        const dinner = days.reduce((sum, day) => sum + (day.dinnerCounts[member.id] ?? 0), 0);
+                        const unassigned = days.reduce((sum, day) => sum + (day.unassignedCounts[member.id] ?? 0), 0);
+                        return <div key={member.id} className="rounded-lg border border-border bg-card p-2 text-xs">
+                          <span className="block truncate font-semibold">{member.name}</span>
+                          <span className="font-bold text-primary">{lunch + dinner + unassigned} মিল</span>
+                          <span className="block text-muted-foreground">দুপুর {lunch} · রাত {dinner}</span>
+                          {unassigned > 0 && <span className="block text-orange-700 dark:text-orange-300">অনির্ধারিত {unassigned}</span>}
+                        </div>;
+                      })}
+                    </div>
+                  </div>
+                </div>
+                <div className="relative z-0 hidden max-h-[70vh] overflow-auto xl:block">
+                  <table className="w-full border-separate border-spacing-0 text-xs">
+                    <thead className="bg-muted text-left text-xs font-semibold text-foreground">
                       <tr>
-                        <th className="w-24 px-4 py-3 font-medium">তারিখ</th>
+                        <th scope="col" className="sticky left-0 top-0 z-30 w-16 border-b border-r border-border bg-muted px-2 py-2">তারিখ</th>
                         {members.map((member) => (
-                          <th key={member.id} className="px-3 py-3 font-medium">
-                            {member.name}
-                          </th>
+                          <th scope="col" key={member.id} className="sticky top-0 z-20 w-28 min-w-28 max-w-28 border-b border-r border-border bg-muted px-1 py-2 text-center"><span className="block truncate" title={member.name}>{member.name}</span></th>
                         ))}
-                        <th className="px-4 py-3 text-right font-medium">মোট মিল</th>
+                        <th scope="col" className="sticky top-0 z-20 w-20 border-b border-border bg-muted px-2 py-2 text-right">দিনের মোট</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-border">
+                    <tbody>
                       {days.map((day, index) => (
-                        <tr
-                          key={`${day.date}-${day.label}`}
-                          className={`transition ${day.total > 0 ? "bg-primary/[0.02] hover:bg-muted/40" : "hover:bg-muted/30"}`}
-                        >
-                          <td className="px-4 py-2.5">
-                            <span className={`font-semibold ${day.total > 0 ? "text-foreground" : "text-muted-foreground/60"}`}>
-                              {day.date}
-                            </span>
-                            <span className="ml-2 text-xs text-muted-foreground/60">{day.label}</span>
-                          </td>
+                        <tr key={`${day.date}-${day.label}`} className="group hover:bg-muted/25">
+                          <th scope="row" className="sticky left-0 z-10 border-b border-r border-border bg-card px-2 py-2 text-left group-hover:bg-muted">
+                            <span className="block font-bold tabular-nums">{day.date}</span>
+                            <span className="text-[10px] font-normal text-muted-foreground">{day.label}</span>
+                          </th>
                           {members.map((member) => {
+                            const lunch = day.lunchCounts[member.id] ?? 0;
+                            const dinner = day.dinnerCounts[member.id] ?? 0;
+                            const unassigned = day.unassignedCounts[member.id] ?? 0;
                             const count = day.counts[member.id] ?? 0;
-                            const hasMeal = count >= 1;
                             return (
-                              <td
-                                key={member.id}
-                                className={`px-3 py-2.5 transition-colors ${
-                                  hasMeal ? "bg-emerald-500/[0.04]" : ""
-                                }`}
-                              >
-                                <input
-                                  aria-label={`${member.name} meals on ${day.label} ${day.date}`}
-                                  type="number"
-                                  min="0"
-                                  max="3"
-                                  value={count}
-                                  onChange={(event) => updateMeal(index, member.id, event.target.value)}
-                                  title={day.sources[member.id] === 'planned' ? 'আগাম পরিকল্পনা; এখানে বদলালে এই দিনের জন্য হাতে দেওয়া মিল কার্যকর হবে' : day.sources[member.id] === 'manual' ? 'হাতে দেওয়া মিল' : 'স্বয়ংক্রিয় মিল'}
-                                  className={`w-16 rounded-lg border px-2 py-1.5 text-center font-medium outline-none transition-all ring-offset-background focus:ring-2 focus:ring-ring ${
-                                    count >= 2
-                                      ? "border-emerald-500/70 bg-emerald-500/20 font-bold text-emerald-700 dark:text-emerald-300 shadow-xs ring-1 ring-emerald-500/40"
-                                      : count === 1
-                                      ? "border-emerald-500/50 bg-emerald-500/15 font-semibold text-emerald-700 dark:text-emerald-400 shadow-xs ring-1 ring-emerald-500/20"
-                                      : "border-input/60 bg-background/50 text-muted-foreground/40 hover:border-input hover:text-foreground"
-                                  }`}
-                                />
+                              <td key={member.id} className={`border-b border-r px-1 py-1.5 align-middle ${count > 0 ? 'border-emerald-500/30 bg-emerald-500/15 ring-1 ring-inset ring-emerald-500/25' : 'border-border'}`}>
+                                <MealCountEditor memberName={member.name} date={`${selectedMonth}-${day.date}`} lunch={lunch} dinner={dinner} source={day.sources[member.id]} onLunchChange={(value) => updateMeal(index, member.id, 'lunch', value)} onDinnerChange={(value) => updateMeal(index, member.id, 'dinner', value)} onBlur={() => saveMeal(index, member.id)} />
+                                <div className={`mt-0.5 text-center text-[10px] font-semibold ${count > 0 ? 'text-emerald-800 dark:text-emerald-200' : 'text-muted-foreground'}`}>{count > 0 ? `● ${count} মিল` : 'মিল নেই'}</div>
+                                {unassigned > 0 && <div className="mt-0.5 text-center text-[10px] text-orange-700 dark:text-orange-300" title="পুরোনো এন্ট্রিতে কোন বেলায় মিল ছিল জানা নেই। নতুন সংখ্যা লিখে ঠিক করুন।">পুরোনো {unassigned} অনির্ধারিত</div>}
                               </td>
                             );
                           })}
-                          <td className={`px-4 py-2.5 text-right font-semibold ${day.total > 0 ? "text-primary font-bold" : "text-muted-foreground/30 font-normal"}`}>
-                            {day.total}
-                          </td>
+                          <td className="border-b border-border px-2 py-2 text-right align-middle font-bold tabular-nums text-primary">{day.total}</td>
                         </tr>
                       ))}
                     </tbody>
-                    <tfoot className="border-t-2 border-border bg-muted/60 font-semibold">
+                    <tfoot className="bg-muted/70 font-semibold">
                       <tr>
-                        <td className="px-4 py-3 font-bold text-foreground">মাসিক মোট মিল</td>
+                        <th scope="row" className="sticky left-0 z-10 border-r border-border bg-muted px-2 py-2 text-left">মাসিক মোট</th>
                         {members.map((member) => {
-                          const memberTotalMeals = days.reduce((sum, day) => sum + (day.counts[member.id] ?? 0), 0);
-                          return (
-                            <td key={member.id} className="px-3 py-3 text-center font-bold text-primary">
-                              {memberTotalMeals}
-                            </td>
-                          );
+                          const lunch = days.reduce((sum, day) => sum + (day.lunchCounts[member.id] ?? 0), 0);
+                          const dinner = days.reduce((sum, day) => sum + (day.dinnerCounts[member.id] ?? 0), 0);
+                          const unassigned = days.reduce((sum, day) => sum + (day.unassignedCounts[member.id] ?? 0), 0);
+                          return <td key={member.id} className="border-r border-border px-1 py-2 text-center">
+                            <span className="block font-bold text-primary">{lunch + dinner + unassigned} মিল</span>
+                            <span className="block text-[11px] text-muted-foreground">দুপুর {lunch} · রাত {dinner}</span>
+                            {unassigned > 0 && <span className="block text-[11px] text-orange-700 dark:text-orange-300">অনির্ধারিত {unassigned}</span>}
+                          </td>;
                         })}
-                        <td className="px-4 py-3 text-right font-bold text-primary text-base">
-                          {calculated.totalMeals}
-                        </td>
+                        <td className="px-2 py-2 text-right text-sm font-bold text-primary">{calculated.totalMeals}</td>
                       </tr>
                     </tfoot>
                   </table>
                 </div>
-                <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-4 py-3 text-xs text-muted-foreground">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-emerald-600 dark:text-emerald-400 font-medium">
-                      <span className="size-2 rounded-full bg-emerald-500" />
-                      মিল এন্ট্রি হাইলাইট (১ বা তার বেশি)
-                    </span>
-                    <span>দৈনিক সর্বোচ্চ ৩ টি মিল গণনা।</span>
-                    <span>কোনো দিনের ঘর হাতে বদলালে সেই দিনের পরিকল্পনার ওপর সেটি কার্যকর হবে।</span>
-                    <span className="font-semibold text-foreground">মেম্বারওয়ারী মোট মিল:</span>
-                    {members.map((member) => {
-                      const total = days.reduce((sum, day) => sum + (day.counts[member.id] ?? 0), 0);
-                      return (
-                        <span key={member.id} className="rounded-md bg-muted px-2 py-1 text-foreground font-medium">
-                          {member.name}: <strong className="text-primary">{total} টি মিল</strong>
-                        </span>
-                      );
-                    })}
-                  </div>
-                  <span className="font-semibold text-foreground text-sm">
-                    {calculated.totalMeals} টি মোট মিল এন্ট্রি
-                  </span>
-                </div>
+                <div className="border-t border-border px-4 py-3 text-xs text-muted-foreground">পুরোনো অনির্ধারিত মিল মোট হিসাবে আছে। দুপুর বা রাতের ঘরে সংখ্যা লিখলে ওই দিনের পুরোনো এন্ট্রি নতুন দুই বেলার সংখ্যা দিয়ে বদলাবে।</div>
               </div>
             </section>
           )}
@@ -3071,11 +3187,16 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
                   <input type="date" required min={scheduleStartDate} value={scheduleEndDate} onChange={(event) => setScheduleEndDate(event.target.value)} className="w-full rounded-lg border border-input bg-background px-3 py-2" />
                 </label>
               </div>
-              <label className="block space-y-1 text-sm font-medium">প্রতিদিন কত মিল
-                <select value={scheduleCount} onChange={(event) => setScheduleCount(Number(event.target.value))} className="w-full rounded-lg border border-input bg-background px-3 py-2">
-                  {[0, 1, 2, 3].map((count) => <option key={count} value={count}>{count} মিল{count === 0 ? ' — মিল বন্ধ' : ''}</option>)}
-                </select>
-              </label>
+              {editingMealScheduleId && scheduleLunchCount === '' && scheduleDinnerCount === '' && <p className="rounded-lg bg-orange-500/10 px-3 py-2 text-xs text-orange-700 dark:text-orange-300">পুরোনো পরিকল্পনায় কোন বেলায় মিল ছিল জানা নেই। দুপুর ও রাতের সংখ্যা লিখে পরিকল্পনাটি আপডেট করুন।</p>}
+              <div className="grid grid-cols-2 gap-3">
+                <label className="block space-y-1 text-sm font-medium">দুপুরে প্রতিদিন কত মিল
+                  <input type="number" min="0" step="1" required value={scheduleLunchCount} onChange={(event) => setScheduleLunchCount(event.target.value)} className="w-full rounded-lg border border-input bg-background px-3 py-2 tabular-nums" />
+                </label>
+                <label className="block space-y-1 text-sm font-medium">রাতে প্রতিদিন কত মিল
+                  <input type="number" min="0" step="1" required value={scheduleDinnerCount} onChange={(event) => setScheduleDinnerCount(event.target.value)} className="w-full rounded-lg border border-input bg-background px-3 py-2 tabular-nums" />
+                </label>
+              </div>
+              {scheduleLunchCount !== '' && scheduleDinnerCount !== '' && <p className="rounded-lg bg-primary/10 px-3 py-2 text-sm font-semibold text-primary">প্রতিদিন মোট {Number(scheduleLunchCount) + Number(scheduleDinnerCount)} মিল{Number(scheduleLunchCount) + Number(scheduleDinnerCount) === 0 ? ' — দুই বেলাই বন্ধ' : ''}</p>}
               <p className="text-xs text-muted-foreground">আগে হাতে বদলানো দিনের মিল একই থাকবে। পরিকল্পনার পরে কোনো ঘর হাতে বদলালে সেই দিনের জন্য নতুন সংখ্যাটি কার্যকর হবে।</p>
               {scheduleError && <p role="alert" className="text-sm text-destructive">{scheduleError}</p>}
               <div className="flex justify-end gap-2">
@@ -3268,6 +3389,42 @@ function MetricCard({
       </div>
       <p className="mt-4 text-2xl font-semibold tracking-tight">{value}</p>
       <p className="mt-1 text-xs text-muted-foreground">{note}</p>
+    </div>
+  );
+}
+
+function MealCountEditor({
+  memberName,
+  date,
+  lunch,
+  dinner,
+  source,
+  onLunchChange,
+  onDinnerChange,
+  onBlur,
+}: {
+  memberName: string;
+  date: string;
+  lunch: number;
+  dinner: number;
+  source: 'manual' | 'planned' | 'automatic';
+  onLunchChange: (value: string) => void;
+  onDinnerChange: (value: string) => void;
+  onBlur: () => void;
+}) {
+  const sourceTitle = source === 'planned' ? 'আগাম পরিকল্পনা' : source === 'manual' ? 'হাতে দেওয়া মিল' : 'স্বয়ংক্রিয় মিল';
+  const inputClass = 'w-12 rounded-md border border-border bg-background px-1 py-1 text-center text-sm font-bold tabular-nums text-foreground outline-none focus:ring-2 focus:ring-primary/40 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none';
+
+  return (
+    <div className="flex items-center justify-center gap-1.5">
+      <label className="flex flex-col items-center gap-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-300">
+        দুপুর
+        <input aria-label={`${memberName} ${date} দুপুরের মিল`} title={sourceTitle} type="number" inputMode="numeric" min="0" step="1" value={lunch} onChange={(event) => onLunchChange(event.target.value)} onBlur={onBlur} onKeyDown={(event) => { if (event.key === 'Enter') event.currentTarget.blur(); }} className={inputClass} />
+      </label>
+      <label className="flex flex-col items-center gap-0.5 text-[10px] font-semibold text-indigo-700 dark:text-indigo-300">
+        রাত
+        <input aria-label={`${memberName} ${date} রাতের মিল`} title={sourceTitle} type="number" inputMode="numeric" min="0" step="1" value={dinner} onChange={(event) => onDinnerChange(event.target.value)} onBlur={onBlur} onKeyDown={(event) => { if (event.key === 'Enter') event.currentTarget.blur(); }} className={inputClass} />
+      </label>
     </div>
   );
 }

@@ -5,7 +5,8 @@ import { getSessionFromRequest } from '@/lib/auth'
 import { dhakaToday, monthBounds, resolveMealCount, validDate } from '@/lib/meal-calendar'
 
 const expenseSchema = z.object({ action: z.literal('expense'), memberId: z.string(), category: z.string().trim().min(1).max(60), amount: z.number().finite().min(0) })
-const mealSchema = z.object({ action: z.literal('meal'), dayId: z.string(), memberId: z.string(), count: z.number().int().min(0).max(3) })
+const mealQuantity = z.number().int().min(0).refine(Number.isSafeInteger, 'Meal count is too large')
+const mealSchema = z.object({ action: z.literal('meal'), dayId: z.string(), memberId: z.string(), lunchCount: mealQuantity, dinnerCount: mealQuantity })
 const utilitySchema = z.object({ action: z.literal('utility'), id: z.string().optional(), name: z.string().trim().min(1).max(60), amount: z.number().finite().min(0) })
 const memberSchema = z.object({ action: z.literal('member'), name: z.string().trim().min(1).max(60), externalId: z.string().optional(), houseRent: z.number().finite().min(0).optional() })
 const memberUpdateSchema = z.object({ action: z.literal('memberUpdate'), memberId: z.string(), name: z.string().trim().min(1).max(60) })
@@ -16,7 +17,7 @@ const rentSchema = z.object({ action: z.literal('rent'), memberId: z.string(), h
 const actualGrocerySchema = z.object({ action: z.literal('actualGrocery'), amount: z.number().finite().min(0).nullable().optional(), note: z.string().optional() })
 const marketDutySchema = z.object({ action: z.literal('marketDuty'), id: z.string().optional(), memberId: z.string(), startDay: z.number().int().min(1).max(31), endDay: z.number().int().min(1).max(31), note: z.string().optional().nullable() })
 const marketDutyRemoveSchema = z.object({ action: z.literal('marketDutyRemove'), id: z.string() })
-const mealScheduleSchema = z.object({ action: z.literal('mealSchedule'), id: z.string().optional(), memberId: z.string(), startDate: z.string().refine(validDate, 'Invalid start date'), endDate: z.string().refine(validDate, 'Invalid end date'), count: z.number().int().min(0).max(3) })
+const mealScheduleSchema = z.object({ action: z.literal('mealSchedule'), id: z.string().optional(), memberId: z.string(), startDate: z.string().refine(validDate, 'Invalid start date'), endDate: z.string().refine(validDate, 'Invalid end date'), lunchCount: mealQuantity, dinnerCount: mealQuantity })
 const mealScheduleRemoveSchema = z.object({ action: z.literal('mealScheduleRemove'), id: z.string() })
 const bodySchema = z.discriminatedUnion('action', [expenseSchema, mealSchema, mealScheduleSchema, mealScheduleRemoveSchema, utilitySchema, memberSchema, memberUpdateSchema, memberRemoveSchema, utilityRemoveSchema, overrideSchema, rentSchema, actualGrocerySchema, marketDutySchema, marketDutyRemoveSchema])
 
@@ -124,7 +125,7 @@ export async function GET(request: Request) {
         const autoStart = member.autoMealStartDate ?? data.autoMealStartDate ?? today
         return {
           memberId: member.id,
-          ...resolveMealCount({ manualCount: manual?.count, plannedCount: schedule?.count, date, autoStart, today }),
+          ...resolveMealCount({ manual, planned: schedule, date, autoStart, today }),
         }
       })
       return { ...day, entries }
@@ -155,6 +156,8 @@ async function handleMutation(request: Request) {
     await ensureMonthDays(mess.id, monthKey)
 
     if (input.action === 'meal') {
+      const count = input.lunchCount + input.dinnerCount
+      if (!Number.isSafeInteger(count)) return NextResponse.json({ error: 'Meal count is too large' }, { status: 400 })
       const [day, member] = await Promise.all([
         prisma.mealDay.findUnique({ where: { messId_monthKey_date: { messId: mess.id, monthKey, date: input.dayId } } }),
         prisma.member.findUnique({ where: { messId_externalId: { messId: mess.id, externalId: input.memberId } } }),
@@ -162,12 +165,14 @@ async function handleMutation(request: Request) {
       if (!day || !member) throw new Error('Meal record not found')
       await prisma.mealEntry.upsert({
         where: { dayId_memberId: { dayId: day.id, memberId: member.id } },
-        update: { count: input.count },
-        create: { dayId: day.id, memberId: member.id, count: input.count },
+        update: { count, lunchCount: input.lunchCount, dinnerCount: input.dinnerCount },
+        create: { dayId: day.id, memberId: member.id, count, lunchCount: input.lunchCount, dinnerCount: input.dinnerCount },
       })
     }
 
     if (input.action === 'mealSchedule') {
+      const count = input.lunchCount + input.dinnerCount
+      if (!Number.isSafeInteger(count)) return NextResponse.json({ error: 'Meal count is too large' }, { status: 400 })
       if (input.startDate > input.endDate) return NextResponse.json({ error: 'Start date must be before end date' }, { status: 400 })
       const duration = (Date.parse(input.endDate) - Date.parse(input.startDate)) / 86400000
       if (duration > 366) return NextResponse.json({ error: 'Schedule cannot exceed 366 days' }, { status: 400 })
@@ -182,9 +187,9 @@ async function handleMutation(request: Request) {
       })
       if (overlap) return NextResponse.json({ error: 'This member already has a schedule in the selected dates' }, { status: 409 })
       if (input.id) {
-        await prisma.mealSchedule.update({ where: { id: input.id }, data: { memberId: member.id, startDate: input.startDate, endDate: input.endDate, count: input.count } })
+        await prisma.mealSchedule.update({ where: { id: input.id }, data: { memberId: member.id, startDate: input.startDate, endDate: input.endDate, count, lunchCount: input.lunchCount, dinnerCount: input.dinnerCount } })
       } else {
-        await prisma.mealSchedule.create({ data: { messId: mess.id, memberId: member.id, startDate: input.startDate, endDate: input.endDate, count: input.count } })
+        await prisma.mealSchedule.create({ data: { messId: mess.id, memberId: member.id, startDate: input.startDate, endDate: input.endDate, count, lunchCount: input.lunchCount, dinnerCount: input.dinnerCount } })
       }
     }
 

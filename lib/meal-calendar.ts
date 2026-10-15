@@ -24,14 +24,26 @@ export function monthBounds(monthKey: string) {
   }
 }
 
-export function resolveMealCount({ manualCount, plannedCount, date, autoStart, today }: {
-  manualCount?: number
-  plannedCount?: number
+type MealValue = { count: number; lunchCount?: number | null; dinnerCount?: number | null }
+
+export function resolveMealCount({ manual, planned, date, autoStart, today }: {
+  manual?: MealValue
+  planned?: MealValue
   date: string
   autoStart: string
   today: string
-}): { count: number; source: 'manual' | 'planned' | 'automatic' } {
-  if (manualCount !== undefined) return { count: manualCount, source: 'manual' }
-  if (plannedCount !== undefined) return { count: plannedCount, source: 'planned' }
-  return { count: date >= autoStart && date <= today ? 2 : 0, source: 'automatic' }
+}): { count: number; lunchCount: number; dinnerCount: number; unassignedCount: number; source: 'manual' | 'planned' | 'automatic' } {
+  const saved = manual ?? planned
+  if (saved) {
+    const source = manual ? 'manual' : 'planned'
+    if (saved.lunchCount != null && saved.dinnerCount != null) {
+      return { count: saved.lunchCount + saved.dinnerCount, lunchCount: saved.lunchCount, dinnerCount: saved.dinnerCount, unassignedCount: 0, source }
+    }
+    // Older records contain only a daily total. One or three meals cannot be assigned to a sitting safely.
+    const lunchCount = saved.count === 2 ? 1 : 0
+    const dinnerCount = saved.count === 2 ? 1 : 0
+    return { count: saved.count, lunchCount, dinnerCount, unassignedCount: saved.count - lunchCount - dinnerCount, source }
+  }
+  const active = date >= autoStart && date <= today
+  return { count: active ? 2 : 0, lunchCount: active ? 1 : 0, dinnerCount: active ? 1 : 0, unassignedCount: 0, source: 'automatic' }
 }
