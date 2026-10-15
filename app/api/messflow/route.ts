@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { getSessionFromRequest } from '@/lib/auth'
+import { dhakaToday, monthBounds, resolveMealCount, validDate } from '@/lib/meal-calendar'
 
 const expenseSchema = z.object({ action: z.literal('expense'), memberId: z.string(), category: z.string().trim().min(1).max(60), amount: z.number().finite().min(0) })
 const mealSchema = z.object({ action: z.literal('meal'), dayId: z.string(), memberId: z.string(), count: z.number().int().min(0).max(3) })
@@ -15,25 +16,27 @@ const rentSchema = z.object({ action: z.literal('rent'), memberId: z.string(), h
 const actualGrocerySchema = z.object({ action: z.literal('actualGrocery'), amount: z.number().finite().min(0).nullable().optional(), note: z.string().optional() })
 const marketDutySchema = z.object({ action: z.literal('marketDuty'), id: z.string().optional(), memberId: z.string(), startDay: z.number().int().min(1).max(31), endDay: z.number().int().min(1).max(31), note: z.string().optional().nullable() })
 const marketDutyRemoveSchema = z.object({ action: z.literal('marketDutyRemove'), id: z.string() })
-const bodySchema = z.discriminatedUnion('action', [expenseSchema, mealSchema, utilitySchema, memberSchema, memberUpdateSchema, memberRemoveSchema, utilityRemoveSchema, overrideSchema, rentSchema, actualGrocerySchema, marketDutySchema, marketDutyRemoveSchema])
+const mealScheduleSchema = z.object({ action: z.literal('mealSchedule'), id: z.string().optional(), memberId: z.string(), startDate: z.string().refine(validDate, 'Invalid start date'), endDate: z.string().refine(validDate, 'Invalid end date'), count: z.number().int().min(0).max(3) })
+const mealScheduleRemoveSchema = z.object({ action: z.literal('mealScheduleRemove'), id: z.string() })
+const bodySchema = z.discriminatedUnion('action', [expenseSchema, mealSchema, mealScheduleSchema, mealScheduleRemoveSchema, utilitySchema, memberSchema, memberUpdateSchema, memberRemoveSchema, utilityRemoveSchema, overrideSchema, rentSchema, actualGrocerySchema, marketDutySchema, marketDutyRemoveSchema])
 
-function currentMonthKey() {
-  const now = new Date()
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+function requestedMonth(request: Request) {
+  const monthKey = new URL(request.url).searchParams.get('month') ?? dhakaToday().slice(0, 7)
+  return /^\d{4}-(0[1-9]|1[0-2])$/.test(monthKey) ? monthKey : null
 }
 
 function getMonthDays(monthKey: string) {
   const [year, month] = monthKey.split('-').map(Number)
-  const firstDay = new Date(year, month - 1, 1)
+  const firstDay = new Date(Date.UTC(year, month - 1, 1))
   const days = [] as Array<{ date: string; label: string }>
   const weekdayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
   let current = new Date(firstDay)
-  while (current.getMonth() === firstDay.getMonth()) {
+  while (current.getUTCMonth() === firstDay.getUTCMonth()) {
     days.push({
-      date: String(current.getDate()).padStart(2, '0'),
-      label: weekdayNames[current.getDay()],
+      date: String(current.getUTCDate()).padStart(2, '0'),
+      label: weekdayNames[current.getUTCDay()],
     })
-    current.setDate(current.getDate() + 1)
+    current.setUTCDate(current.getUTCDate() + 1)
   }
   return days
 }
@@ -59,7 +62,14 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
     }
 
-    const monthKey = new URL(request.url).searchParams.get('month') ?? currentMonthKey()
+    const monthKey = requestedMonth(request)
+    if (!monthKey) return NextResponse.json({ error: 'Invalid month' }, { status: 400 })
+
+    const today = dhakaToday()
+    await prisma.mess.updateMany({
+      where: { id: session.messId, OR: [{ autoMealStartDate: null }, { autoMealStartDate: { isSet: false } }] },
+      data: { autoMealStartDate: today },
+    })
 
     await ensureMonthDays(session.messId, monthKey)
 
@@ -67,6 +77,10 @@ export async function GET(request: Request) {
       where: { id: session.messId },
       include: {
         members: true,
+        mealSchedules: {
+          where: { startDate: { lte: monthBounds(monthKey).end }, endDate: { gte: monthBounds(monthKey).start } },
+          orderBy: { startDate: 'asc' },
+        },
         days: {
           where: { monthKey },
           include: { entries: true },
@@ -99,7 +113,24 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Mess not found' }, { status: 404 })
     }
 
-    return NextResponse.json(data)
+    const days = data.days.map((day) => {
+      const date = `${monthKey}-${day.date}`
+      const manualEntries = new Map(day.entries.map((entry) => [entry.memberId, entry]))
+      const entries = data.members.map((member) => {
+        const manual = manualEntries.get(member.id)
+        const schedule = data.mealSchedules.find((item) =>
+          item.memberId === member.id && item.startDate <= date && item.endDate >= date,
+        )
+        const autoStart = member.autoMealStartDate ?? data.autoMealStartDate ?? today
+        return {
+          memberId: member.id,
+          ...resolveMealCount({ manualCount: manual?.count, plannedCount: schedule?.count, date, autoStart, today }),
+        }
+      })
+      return { ...day, entries }
+    })
+
+    return NextResponse.json({ ...data, days })
   } catch (error) {
     console.error('messflow GET error:', error)
     return NextResponse.json({ error: 'Unable to load data from MongoDB' }, { status: 500 })
@@ -113,7 +144,8 @@ async function handleMutation(request: Request) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
     }
 
-    const monthKey = new URL(request.url).searchParams.get('month') ?? currentMonthKey()
+    const monthKey = requestedMonth(request)
+    if (!monthKey) return NextResponse.json({ error: 'Invalid month' }, { status: 400 })
     const input = bodySchema.parse(await request.json())
     const mess = await prisma.mess.findUnique({ where: { id: session.messId } })
     if (!mess) {
@@ -133,6 +165,31 @@ async function handleMutation(request: Request) {
         update: { count: input.count },
         create: { dayId: day.id, memberId: member.id, count: input.count },
       })
+    }
+
+    if (input.action === 'mealSchedule') {
+      if (input.startDate > input.endDate) return NextResponse.json({ error: 'Start date must be before end date' }, { status: 400 })
+      const duration = (Date.parse(input.endDate) - Date.parse(input.startDate)) / 86400000
+      if (duration > 366) return NextResponse.json({ error: 'Schedule cannot exceed 366 days' }, { status: 400 })
+      const member = await prisma.member.findUnique({ where: { messId_externalId: { messId: mess.id, externalId: input.memberId } } })
+      if (!member) return NextResponse.json({ error: 'Member not found' }, { status: 404 })
+      if (input.id) {
+        const existing = await prisma.mealSchedule.findFirst({ where: { id: input.id, messId: mess.id } })
+        if (!existing) return NextResponse.json({ error: 'Schedule not found' }, { status: 404 })
+      }
+      const overlap = await prisma.mealSchedule.findFirst({
+        where: { messId: mess.id, memberId: member.id, startDate: { lte: input.endDate }, endDate: { gte: input.startDate }, ...(input.id ? { id: { not: input.id } } : {}) },
+      })
+      if (overlap) return NextResponse.json({ error: 'This member already has a schedule in the selected dates' }, { status: 409 })
+      if (input.id) {
+        await prisma.mealSchedule.update({ where: { id: input.id }, data: { memberId: member.id, startDate: input.startDate, endDate: input.endDate, count: input.count } })
+      } else {
+        await prisma.mealSchedule.create({ data: { messId: mess.id, memberId: member.id, startDate: input.startDate, endDate: input.endDate, count: input.count } })
+      }
+    }
+
+    if (input.action === 'mealScheduleRemove') {
+      await prisma.mealSchedule.deleteMany({ where: { id: input.id, messId: mess.id } })
     }
 
     if (input.action === 'expense') {
@@ -163,6 +220,7 @@ async function handleMutation(request: Request) {
           initials: input.name.slice(0, 2).toUpperCase(),
           color: 'bg-primary',
           houseRent: input.houseRent ?? 0,
+          autoMealStartDate: dhakaToday(),
         },
       })
       if (typeof input.houseRent === 'number' && input.houseRent >= 0) {

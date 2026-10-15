@@ -42,8 +42,10 @@ type MealDay = {
   date: string;
   label: string;
   counts: Record<string, number>;
+  sources: Record<string, 'manual' | 'planned' | 'automatic'>;
   total: number;
 };
+type MealSchedule = { id: string; memberId: string; startDate: string; endDate: string; count: number };
 type Utility = { id: string; name: string; amount: number };
 type Override = { utilities?: number; mealRate?: number };
 type MemberExpenses = Record<string, Record<string, number>>;
@@ -100,8 +102,11 @@ function monthKeyToLabel(monthKey: string) {
 }
 
 function getCurrentMonthKey() {
-  const now = new Date()
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+  return getDhakaToday().slice(0, 7)
+}
+
+function getDhakaToday() {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Dhaka', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())
 }
 
 function changeMonthKey(monthKey: string, delta: number) {
@@ -610,6 +615,27 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
   const router = useRouter()
   const [members, setMembers] = useState<Member[]>([]);
   const [days, setDays] = useState<MealDay[]>([]);
+  const [mealSchedules, setMealSchedules] = useState<MealSchedule[]>([]);
+  const [isMealScheduleOpen, setIsMealScheduleOpen] = useState(false);
+  const [editingMealScheduleId, setEditingMealScheduleId] = useState<string | null>(null);
+  const [scheduleMemberId, setScheduleMemberId] = useState('');
+  const [scheduleStartDate, setScheduleStartDate] = useState('');
+  const [scheduleEndDate, setScheduleEndDate] = useState('');
+  const [scheduleCount, setScheduleCount] = useState(0);
+  const [scheduleError, setScheduleError] = useState('');
+  const [scheduleSaving, setScheduleSaving] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
+  useEffect(() => {
+    let lastDate = getDhakaToday();
+    const timer = window.setInterval(() => {
+      const today = getDhakaToday();
+      if (today !== lastDate) {
+        lastDate = today;
+        setReloadKey((key) => key + 1);
+      }
+    }, 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
   const [expenses, setExpenses] = useState<MemberExpenses>({});
   const [utilities, setUtilities] = useState<Utility[]>([]);
   const [overrides, setOverrides] = useState<Record<string, Override>>({});
@@ -652,8 +678,10 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
       });
       if (!response.ok) throw new Error("Save failed");
       setSyncStatus("Saved to MongoDB");
+      return true;
     } catch {
       setSyncStatus("Local changes only — add MONGODB_URI to sync");
+      return false;
     }
   }
 
@@ -680,7 +708,7 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
       })
       .catch(() => undefined);
 
-    fetch(`/api/messflow?month=${selectedMonth}`)
+    fetch(`/api/messflow?month=${selectedMonth}`, { cache: 'no-store' })
       .then(async (response) => {
         if (!response.ok) throw new Error("Database unavailable");
         const data = await response.json();
@@ -699,12 +727,16 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
           },
         );
         setMembers(nextMembers);
+        setMealSchedules((data.mealSchedules || []).map((schedule: MealSchedule) => ({
+          ...schedule,
+          memberId: data.members.find((member: { id: string; externalId: string }) => member.id === schedule.memberId)?.externalId ?? schedule.memberId,
+        })));
         setDays(
           data.days.map(
             (day: {
               date: string;
               label: string;
-              entries: { memberId: string; count: number }[];
+              entries: { memberId: string; count: number; source: 'manual' | 'planned' | 'automatic' }[];
             }) => ({
               date: day.date,
               label: day.label,
@@ -715,6 +747,12 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
                       member.id === entry.memberId,
                   )?.externalId,
                   entry.count,
+                ]),
+              ),
+              sources: Object.fromEntries(
+                day.entries.map((entry) => [
+                  data.members.find((member: { id: string; externalId: string }) => member.id === entry.memberId)?.externalId,
+                  entry.source,
                 ]),
               ),
               total: day.entries.reduce((sum, entry) => sum + entry.count, 0),
@@ -808,7 +846,7 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
         }
         setSyncStatus("Unable to sync with MongoDB");
       });
-  }, [selectedMonth]);
+  }, [selectedMonth, reloadKey]);
 
   const calculated = useMemo(() => {
     const totalMeals = days.reduce(
@@ -945,6 +983,7 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
           ? {
               ...day,
               counts: { ...day.counts, [memberId]: count },
+              sources: { ...day.sources, [memberId]: 'manual' },
               total: Object.values({ ...day.counts, [memberId]: count }).reduce(
                 (sum, item) => sum + item,
                 0,
@@ -959,6 +998,62 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
       memberId,
       count,
     });
+  }
+
+  function openMealSchedule(schedule?: MealSchedule) {
+    setEditingMealScheduleId(schedule?.id ?? null);
+    setScheduleMemberId(schedule?.memberId ?? members[0]?.id ?? '');
+    const today = getDhakaToday();
+    const defaultDate = selectedMonth === today.slice(0, 7) ? today : `${selectedMonth}-01`;
+    setScheduleStartDate(schedule?.startDate ?? defaultDate);
+    setScheduleEndDate(schedule?.endDate ?? defaultDate);
+    setScheduleCount(schedule?.count ?? 0);
+    setScheduleError('');
+    setIsMealScheduleOpen(true);
+  }
+
+  async function submitMealSchedule(event: React.FormEvent) {
+    event.preventDefault();
+    if (!scheduleMemberId || scheduleStartDate > scheduleEndDate) {
+      setScheduleError('সঠিক সদস্য ও তারিখ নির্বাচন করুন।');
+      return;
+    }
+    setScheduleSaving(true);
+    setScheduleError('');
+    try {
+      const response = await fetch(`/api/messflow?month=${selectedMonth}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'mealSchedule', id: editingMealScheduleId ?? undefined, memberId: scheduleMemberId, startDate: scheduleStartDate, endDate: scheduleEndDate, count: scheduleCount }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'পরিকল্পনা সংরক্ষণ করা যায়নি।');
+      setIsMealScheduleOpen(false);
+      if (selectedMonth === scheduleStartDate.slice(0, 7)) {
+        setReloadKey((key) => key + 1);
+      } else {
+        setSelectedMonth(scheduleStartDate.slice(0, 7));
+      }
+    } catch (error) {
+      setScheduleError(error instanceof Error ? error.message : 'পরিকল্পনা সংরক্ষণ করা যায়নি।');
+    } finally {
+      setScheduleSaving(false);
+    }
+  }
+
+  async function removeMealSchedule(schedule: MealSchedule) {
+    if (!window.confirm('এই মিল পরিকল্পনাটি বাতিল করবেন?')) return;
+    try {
+      const response = await fetch(`/api/messflow?month=${selectedMonth}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'mealScheduleRemove', id: schedule.id }),
+      });
+      if (!response.ok) throw new Error('পরিকল্পনা বাতিল করা যায়নি।');
+      setReloadKey((key) => key + 1);
+    } catch (error) {
+      setScheduleError(error instanceof Error ? error.message : 'পরিকল্পনা বাতিল করা যায়নি।');
+    }
   }
 
   function addMember() {
@@ -984,7 +1079,9 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
       },
     ]);
     setExpenses((current) => ({ ...current, [id]: {} }));
-    void persist({ action: "member", externalId: id, name, houseRent });
+    void persist({ action: "member", externalId: id, name, houseRent }).then((saved) => {
+      if (saved) setReloadKey((key) => key + 1);
+    });
 
     setNewMemberName("");
     setNewMemberRent("");
@@ -1843,6 +1940,31 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
                   </div>
                 }
               />
+              <div className="rounded-2xl border border-border bg-card p-4 space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h3 className="font-semibold">আগাম মিল পরিকল্পনা</h3>
+                    <p className="text-xs text-muted-foreground">প্রতিদিন স্বয়ংক্রিয়ভাবে ২ মিল। বাড়ি গেলে তারিখ বেছে ০ মিল সেট করুন।</p>
+                  </div>
+                  <button type="button" onClick={() => openMealSchedule()} disabled={members.length === 0} className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
+                    <Plus size={16} /> পরিকল্পনা যোগ করুন
+                  </button>
+                </div>
+                {scheduleError && <p role="alert" className="text-sm text-destructive">{scheduleError}</p>}
+                {mealSchedules.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {mealSchedules.map((schedule) => (
+                      <div key={schedule.id} className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 py-2 text-xs">
+                        <span className="font-semibold">{members.find((member) => member.id === schedule.memberId)?.name ?? 'মেম্বার'}</span>
+                        <span>{schedule.startDate} → {schedule.endDate}</span>
+                        <span className="font-bold text-primary">{schedule.count} মিল</span>
+                        <button type="button" onClick={() => openMealSchedule(schedule)} className="font-semibold text-primary hover:underline">এডিট</button>
+                        <button type="button" onClick={() => void removeMealSchedule(schedule)} aria-label="পরিকল্পনা বাতিল" className="text-destructive hover:opacity-70"><Trash2 size={14} /></button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
               <div className="overflow-hidden rounded-2xl border border-border bg-card">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm sm:min-w-[780px]">
@@ -1886,6 +2008,7 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
                                   max="3"
                                   value={count}
                                   onChange={(event) => updateMeal(index, member.id, event.target.value)}
+                                  title={day.sources[member.id] === 'planned' ? 'আগাম পরিকল্পনা; এখানে বদলালে এই দিনের জন্য হাতে দেওয়া মিল কার্যকর হবে' : day.sources[member.id] === 'manual' ? 'হাতে দেওয়া মিল' : 'স্বয়ংক্রিয় মিল'}
                                   className={`w-16 rounded-lg border px-2 py-1.5 text-center font-medium outline-none transition-all ring-offset-background focus:ring-2 focus:ring-ring ${
                                     count >= 2
                                       ? "border-emerald-500/70 bg-emerald-500/20 font-bold text-emerald-700 dark:text-emerald-300 shadow-xs ring-1 ring-emerald-500/40"
@@ -1928,6 +2051,7 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
                       মিল এন্ট্রি হাইলাইট (১ বা তার বেশি)
                     </span>
                     <span>দৈনিক সর্বোচ্চ ৩ টি মিল গণনা।</span>
+                    <span>কোনো দিনের ঘর হাতে বদলালে সেই দিনের পরিকল্পনার ওপর সেটি কার্যকর হবে।</span>
                     <span className="font-semibold text-foreground">মেম্বারওয়ারী মোট মিল:</span>
                     {members.map((member) => {
                       const total = days.reduce((sum, day) => sum + (day.counts[member.id] ?? 0), 0);
@@ -2922,6 +3046,43 @@ export default function MessFlowDashboard({ defaultTab }: { defaultTab?: string 
                 মুছে ফেলুন
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {isMealScheduleOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm">
+          <div role="dialog" aria-modal="true" aria-labelledby="meal-schedule-title" className="w-full max-w-md space-y-4 rounded-3xl border border-border bg-card p-6 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <h3 id="meal-schedule-title" className="text-lg font-bold">{editingMealScheduleId ? 'মিল পরিকল্পনা এডিট' : 'আগাম মিল পরিকল্পনা'}</h3>
+              <button type="button" onClick={() => setIsMealScheduleOpen(false)} aria-label="বন্ধ করুন" className="rounded-full p-1 hover:bg-accent"><X size={18} /></button>
+            </div>
+            <form onSubmit={submitMealSchedule} className="space-y-4">
+              <label className="block space-y-1 text-sm font-medium">সদস্য
+                <select value={scheduleMemberId} onChange={(event) => setScheduleMemberId(event.target.value)} required className="w-full rounded-lg border border-input bg-background px-3 py-2">
+                  {members.map((member) => <option key={member.id} value={member.id}>{member.name}</option>)}
+                </select>
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <label className="block space-y-1 text-sm font-medium">শুরুর তারিখ
+                  <input type="date" required value={scheduleStartDate} onChange={(event) => setScheduleStartDate(event.target.value)} className="w-full rounded-lg border border-input bg-background px-3 py-2" />
+                </label>
+                <label className="block space-y-1 text-sm font-medium">শেষ তারিখ
+                  <input type="date" required min={scheduleStartDate} value={scheduleEndDate} onChange={(event) => setScheduleEndDate(event.target.value)} className="w-full rounded-lg border border-input bg-background px-3 py-2" />
+                </label>
+              </div>
+              <label className="block space-y-1 text-sm font-medium">প্রতিদিন কত মিল
+                <select value={scheduleCount} onChange={(event) => setScheduleCount(Number(event.target.value))} className="w-full rounded-lg border border-input bg-background px-3 py-2">
+                  {[0, 1, 2, 3].map((count) => <option key={count} value={count}>{count} মিল{count === 0 ? ' — মিল বন্ধ' : ''}</option>)}
+                </select>
+              </label>
+              <p className="text-xs text-muted-foreground">আগে হাতে বদলানো দিনের মিল একই থাকবে। পরিকল্পনার পরে কোনো ঘর হাতে বদলালে সেই দিনের জন্য নতুন সংখ্যাটি কার্যকর হবে।</p>
+              {scheduleError && <p role="alert" className="text-sm text-destructive">{scheduleError}</p>}
+              <div className="flex justify-end gap-2">
+                <button type="button" onClick={() => setIsMealScheduleOpen(false)} className="rounded-lg border border-border px-4 py-2 text-sm">বাতিল</button>
+                <button type="submit" disabled={scheduleSaving} className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">{scheduleSaving ? 'সংরক্ষণ হচ্ছে…' : 'সংরক্ষণ করুন'}</button>
+              </div>
+            </form>
           </div>
         </div>
       )}
